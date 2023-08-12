@@ -9,7 +9,7 @@ const Department = require('../models/department.model')
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
   };
-
+//testing
 
 //Get admin
 const getAdmin = asyncHandler(async (req, res) => {
