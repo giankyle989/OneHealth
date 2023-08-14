@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler")
 const Admin = require('../models/adminModel')
 
 
-const protect = asyncHandler(async (req,res, next) => {
+const protect = (model) => asyncHandler(async (req,res, next) => {
     let token
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
@@ -15,12 +15,12 @@ const protect = asyncHandler(async (req,res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             //Get user from the token
-            req.admin = await Admin.findById(decoded.id)
+            req.user = await model.findById(decoded.id)
             next()
         }catch (error){
             console.log(error)
             res.status(401)
-            throw new Error("Not authorized")
+            throw new Error("Not authorized,zzzzzz")
         }
     }
 

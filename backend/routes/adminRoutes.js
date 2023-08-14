@@ -1,15 +1,16 @@
 const router = require("express").Router();
-const {registerAdmin, loginAdmin, logoutAdmin, registerDoctor, getAdmin, getDoctor, createDepartment} = require('../controllers/adminController')
-const {protect} = require('../middlewares/authMiddleware')
+const {registerAdmin, loginAdmin, logoutAdmin, getAdmin} = require('../controllers/adminController');
+const {protect} = require('../middlewares/authMiddleware');
+const AdminModel = require("../models/adminModel");
 
-router.get('/', protect ,getAdmin)
-router.post('/create', protect, registerAdmin)
-router.post('/login', protect, loginAdmin)
-router.post('/logout', protect, logoutAdmin)
 
-router.post('/create/department', protect, createDepartment)
+router.get('/', protect(AdminModel), getAdmin)
+router.post('/register', registerAdmin)
+router.post('/login', loginAdmin)
+router.post('/logout', logoutAdmin)
 
-router.get('/get/doctor', protect ,getDoctor)
-router.post('/create/doctor', protect, registerDoctor)
+
+
+
 
 module.exports = router;

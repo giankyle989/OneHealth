@@ -1,17 +1,17 @@
-const asyncHandler = require('express-async-handler')
+const router = require("express").Router();
+const { getDoctor, registerDoctor, loginDoctor, logoutDoctor, deleteDoctor, updateDoctor } = require("../controllers/doctorController");
+const {protect} = require('../middlewares/authMiddleware');
+const AdminModel = require("../models/adminModel");
 
-const getDoctor = asyncHandler(async (req,res) => {
 
-})
+router.get("/get", protect(AdminModel), getDoctor);
+router.post("/create", protect(AdminModel), registerDoctor);
+router.put('/:id', protect(AdminModel), updateDoctor)
+router.delete('/:id', protect(AdminModel), deleteDoctor)
+router.post('/login', loginDoctor)
+router.post('/logout', logoutDoctor)
 
-const registerDoctor = asyncHandler(async (req,res) => {
-    
-})
 
-const loginDoctor = asyncHandler(async (req,res) => {
-    
-})
 
-const logoutDoctor = asyncHandler(async (req,res) => {
-    
-})
+
+module.exports = router;

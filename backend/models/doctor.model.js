@@ -39,9 +39,11 @@ const doctorSchema = new Schema(
 doctorSchema.virtual('department', {
   ref: 'Department',
   localField: 'dept_id',
-  foreignField: '_id',
+  foreignField: '_id', 
   justOne: true,
 })
+
+
 
 const DoctorModel = mongoose.model("doctor", doctorSchema);
 
