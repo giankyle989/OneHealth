@@ -5,7 +5,7 @@ require("dotenv").config();
 const articleRoutes = require('./routes/articleRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 const doctorRoutes = require('./routes/doctorRoutes')
-const departmentRoutes = require('./routes/departmentRoutes')
+const patientRoutes = require('./routes/patientRoutes')
 
 
 const app = express();
@@ -28,7 +28,7 @@ connection.once("open", () => {
 app.use("/api/article", articleRoutes);
 app.use('/api/admin', adminRoutes)
 app.use('/api/doctor', doctorRoutes)
-app.use('/api/department', departmentRoutes)
+app.use('/api/patient', patientRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running in port : ${port}`);

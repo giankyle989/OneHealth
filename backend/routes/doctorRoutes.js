@@ -1,15 +1,17 @@
 const router = require("express").Router();
-const { getDoctor, registerDoctor, loginDoctor, logoutDoctor, deleteDoctor, updateDoctor } = require("../controllers/doctorController");
+const {  updateAppointment, doctorGetAppointments } = require("../controllers/appointmentController");
+const { loginDoctor, logoutDoctor, } = require("../controllers/doctorController");
 const {protect} = require('../middlewares/authMiddleware');
-const AdminModel = require("../models/adminModel");
+const DoctorModel = require("../models/doctor.model");
 
 
-router.get("/get", protect(AdminModel), getDoctor);
-router.post("/create", protect(AdminModel), registerDoctor);
-router.put('/:id', protect(AdminModel), updateDoctor)
-router.delete('/:id', protect(AdminModel), deleteDoctor)
+
 router.post('/login', loginDoctor)
 router.post('/logout', logoutDoctor)
+
+router.get('/appointment/get', protect(DoctorModel), doctorGetAppointments )
+router.put('/appointment/:id', updateAppointment )
+
 
 
 
