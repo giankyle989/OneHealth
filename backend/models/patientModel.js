@@ -18,7 +18,7 @@ const patientSchema = new Schema(
         type: String,
         required: true,
         trim: true,
-    }
+    },
   },
   {
     timestamps: true,

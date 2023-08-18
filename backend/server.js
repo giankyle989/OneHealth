@@ -6,6 +6,7 @@ const articleRoutes = require('./routes/articleRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 const doctorRoutes = require('./routes/doctorRoutes')
 const patientRoutes = require('./routes/patientRoutes')
+const departmentRoutes = require('./routes/departmentRoutes')
 
 
 const app = express();
@@ -29,6 +30,7 @@ app.use("/api/article", articleRoutes);
 app.use('/api/admin', adminRoutes)
 app.use('/api/doctor', doctorRoutes)
 app.use('/api/patient', patientRoutes)
+app.use('/api/department', departmentRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running in port : ${port}`);

@@ -13,7 +13,7 @@ const departmentSchema = new Schema(
     admin: {
       type: mongoose.Schema.Types.ObjectId,
       required:true,
-      ref: 'Admin'
+      ref: 'admin'
     },
   },
   {

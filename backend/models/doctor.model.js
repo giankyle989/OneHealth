@@ -22,12 +22,12 @@ const doctorSchema = new Schema(
     admin: {
       type: mongoose.Schema.Types.ObjectId,
       required:true,
-      ref: 'Admin'
+      ref: 'admin'
     },
     dept_id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'Department'
+        ref: 'department'
     },
   },
   {
@@ -37,7 +37,7 @@ const doctorSchema = new Schema(
 );
 
 doctorSchema.virtual('department', {
-  ref: 'Department',
+  ref: 'department',
   localField: 'dept_id',
   foreignField: '_id', 
   justOne: true,

@@ -7,10 +7,20 @@ const { generateToken } = require("../middlewares/generateToken");
 
 //Get Doctor
 const getDoctor = asyncHandler(async (req, res) => {
-  Doctor.find({})
+  Doctor.find({}).populate('dept_id', 'name')
     .then((doctor) => res.json(doctor))
     .catch((err) => res.status(400).json("Error: " + err));
 });
+
+const getDoctorByDepartment = asyncHandler(async (req,res) => {
+  try{
+    const dept_id = req.params.id
+    const doctors = await Doctor.find({dept_id: dept_id})
+    res.json(doctors)
+  } catch(error){
+    res.status(500).json("Error: " + error)
+  }
+})
 
 //Register doctor
 const registerDoctor = asyncHandler(async (req, res) => {
@@ -172,5 +182,5 @@ module.exports = {
   updateDoctor,
   loginDoctor,
   logoutDoctor,
-
+  getDoctorByDepartment
 };
