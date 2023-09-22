@@ -2,47 +2,32 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const patientSchema = new Schema(
+const addressSchema = new Schema(
   {
-    first_name: {
+    address_line_1: {
       type: String,
       required: true,
       trim: true,
     },
-    last_name: {
+    address_line_2: {
       type: String,
       required: true,
       trim: true,
     },
-    email: {
+    barangay: {
       type: String,
       required: true,
       trim: true,
     },
-    password: {
+    city: {
         type: String,
         required: true,
         trim: true,
     },
-    address: {
+    province: {
       type: String,
       required: true,
       trim: true,
-  },
-  phone_number: {
-    type: String,
-    required: true,
-    trim: true,
-},
-  birthday: {
-    type: Date,
-    required: true,
-    trim: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-    trim: true,
   },
   },
   {
@@ -50,6 +35,6 @@ const patientSchema = new Schema(
   }
 );
 
-const PatientModel = mongoose.model("patient", patientSchema);
+const AddressModel = mongoose.model("address", addressSchema);
 
-module.exports = PatientModel;
+module.exports = AddressModel;

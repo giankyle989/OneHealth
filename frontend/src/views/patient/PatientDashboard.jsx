@@ -34,7 +34,7 @@ const PatientDashboard = () => {
     <>
       <Navbar />
       <header className="pt-14 max-w-xs mx-auto">
-        <h1 className="text-xl  font-bold pt-10 text-center">{username}'s Appointment</h1>
+        <h1 className="text-xl  font-bold pt-10 text-center">{tokenObject.first_name}'s Appointment</h1>
       </header>
       <section className="pt-10">
         <div className="overflox-x-auto relative">

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
-
+import logo from '../assets/OneHealthPNG.png'
 
 const Navbar = () => {
 
@@ -27,14 +27,14 @@ const Navbar = () => {
   
   return (
     <>
-      <div className="w-full h-[70px] flex justify-between items-center px-4 bg-sky-900 text-white  ">
-        <h1 className="font-bold">One Health</h1>
-        <div >
+      <div className="w-full h-[70px] flex justify-between items-center px-4 bg-[#4867D6] text-white  ">
+        <img src={logo} width='200px'/>
+        <div>
         <Link to="/" className="hover:font-bold p-2">
             Home
           </Link>
           <Link to="/create" className="hover:font-bold p-2">
-            New Appointment
+            Book an Appointment
           </Link>
           <button onClick={handleLogout}>Logout</button>
         </div>

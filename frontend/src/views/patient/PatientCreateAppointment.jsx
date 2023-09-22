@@ -6,13 +6,12 @@ const PatientCreateAppointment = () => {
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [doctors, setDoctors] = useState([]);
-  //Get token object
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [appointmentDateTime, setAppointmentDateTime] = useState("");
+  const [patientName, setPatientName] = useState("");
+  
   const tokenObject = JSON.parse(localStorage.getItem("token"));
-
-  //Get token string only
-
   const token = tokenObject.token;
-  const username = tokenObject.name;
 
   const headerToken = {
     headers: {
@@ -21,8 +20,7 @@ const PatientCreateAppointment = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/department/get")
+    axios.get("http://localhost:5000/api/department/get")
       .then((res) => {
         setDepartments(res.data);
       })
@@ -31,10 +29,7 @@ const PatientCreateAppointment = () => {
 
   useEffect(() => {
     if (selectedDepartment) {
-      axios
-        .get(
-          `http://localhost:5000/api/doctor/department/${selectedDepartment}`
-        )
+      axios.get(`http://localhost:5000/api/doctor/department/${selectedDepartment}`)
         .then((res) => {
           setDoctors(res.data);
         });
@@ -43,22 +38,21 @@ const PatientCreateAppointment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+    
     const appointment = {
       patientName,
-      temperature,
-      email,
-      phonenumber,
+      doctorId: selectedDoctor,
+      appointmentDateTime,
     };
-  
-    axios
-      .post("http://localhost:5000/api/patient/appointment/create", appointment, headerToken)
+
+    
+    axios.post("http://localhost:5000/api/patient/appointment/create", appointment, headerToken)
       .then((res) => {
         console.log(res.data);
-        setFullName("");
-        setTemperature("");
-        setEmail("");
-        setPhoneNumber("");
+        setPatientName("");
+        setSelectedDoctor("");
+        setAppointmentDateTime("");
+        console.log(appointment)
         window.location = "/";
       })
       .catch((err) => console.log("Error: " + err));
@@ -75,7 +69,12 @@ const PatientCreateAppointment = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block">Name:</label>
-              <input className="border border-gray-300 p-2 w-full" type="text" />
+              <input
+                className="border border-gray-300 p-2 w-full"
+                type="text"
+                value={patientName}
+                onChange={(e) => setPatientName(e.target.value)}
+              />
             </div>
             <div className="mb-4">
               <label className="block">Choose Department:</label>
@@ -94,7 +93,12 @@ const PatientCreateAppointment = () => {
             </div>
             <div className="mb-4">
               <label>Select Doctor:</label>
-              <select className="border border-gray-300 p-2 w-full">
+              <select
+                value={selectedDoctor}
+                onChange={(event) => setSelectedDoctor(event.target.value)}
+                className="border border-gray-300 p-2 w-full"
+              >
+                <option value="">Select a Doctor</option>
                 {doctors.map((doctor) => (
                   <option key={doctor._id} value={doctor._id}>
                     {doctor.name}
@@ -103,8 +107,13 @@ const PatientCreateAppointment = () => {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block">Date:</label>
-              <input className="border border-gray-300 p-2 w-full" type="datetime-local" />
+              <label className="block">Date and Time:</label>
+              <input
+                className="border border-gray-300 p-2 w-full"
+                type="datetime-local"
+                value={appointmentDateTime}
+                onChange={(e) => setAppointmentDateTime(e.target.value)}
+              />
             </div>
             <div className="text-center">
               <button
