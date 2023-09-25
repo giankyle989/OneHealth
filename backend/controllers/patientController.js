@@ -1,59 +1,86 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
-const Patient = require('../models/patientModel')
+const Patient = require("../models/patientModel");
 
 const { generateToken } = require("../middlewares/generateToken");
+const AddressModel = require("../models/addressModel");
 
 //Get Patient
 const getPatient = asyncHandler(async (req, res) => {
-    Patient.find({})
+  Patient.find({})
     .then((patient) => res.json(patient))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-//Register Admin
+//Register Patient
 const registerPatient = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    sex,
+    birthday,
+    mobileNumber,
+    landline,
+    addressLine1,
+    addressLine2,
+    barangay,
+    city,
+    province,
+  } = req.body;
 
-  if (!name || !email || !password) {
+  if (
+    !firstName ||
+    !lastName ||
+    !password ||
+    !sex ||
+    !birthday ||
+    !addressLine1 ||
+    !barangay ||
+    !city ||
+    !province
+  ) {
     res.status(400);
     throw new Error("Please fill all fields");
   }
 
   //Check if patient exists
-  const patientExists = await Patient.findOne({ email });
+  const patientExists = await Patient.findOne({ $or: [ { email }, { mobileNumber } ] });
   if (patientExists) {
     res.status(400);
     throw new Error("Patient already exists");
   }
 
-  //Create Admin
+  //Create Patient
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const address = await AddressModel.create({
+    addressLine1,
+    addressLine2,
+    barangay,
+    city,
+    province
+  })
+
   const patient = await Patient.create({
-    name,
+    firstName,
+    lastName,
     email,
     password: hashedPassword,
+    sex,
+    birthday,
+    mobileNumber,
+    landline,
+    addressId: address._id
   });
 
-  if (patient) {
-    res.status(200).json({
-      _id: patient.id,
-      name: patient.name,
-      email: patient.email,
-      token: generateToken(patient._id),
-    });
-  } else {
-    res.status(400);
-    throw new Error("Invalid patient data");
-  }
-
+  res.status(201).json(patient);
 });
 
 //Login Patient
 const loginPatient = asyncHandler(async (req, res) => {
-
   const { email, password } = req.body;
 
   const patient = await Patient.findOne({ email });
@@ -71,7 +98,7 @@ const loginPatient = asyncHandler(async (req, res) => {
   }
 });
 
-//Logout Admin
+//Logout Patient
 const logoutPatient = asyncHandler(async (req, res) => {
   try {
     res.clearCookie("token");
@@ -80,6 +107,6 @@ const logoutPatient = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Error while logging out" });
   }
 });
-//Update Admin
+//Update Patient
 
-module.exports = {getPatient, registerPatient, loginPatient, logoutPatient};
+module.exports = { getPatient, registerPatient, loginPatient, logoutPatient };

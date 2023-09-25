@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 
 const addressSchema = new Schema(
   {
-    address_line_1: {
+    addressLine1: {
       type: String,
       required: true,
       trim: true,
     },
-    address_line_2: {
+    addressLine2: {
       type: String,
       required: true,
       trim: true,
