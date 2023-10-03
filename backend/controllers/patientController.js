@@ -6,9 +6,9 @@ const Patient = require("../models/patientModel");
 const { generateToken } = require("../middlewares/generateToken");
 const AddressModel = require("../models/addressModel");
 
-//Get Patient
+//Get All Patient
 const getPatient = asyncHandler(async (req, res) => {
-  Patient.find({})
+  Patient.findById(req.user.id)
     .then((patient) => res.json(patient))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -81,15 +81,14 @@ const registerPatient = asyncHandler(async (req, res) => {
 
 //Login Patient
 const loginPatient = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, mobileNumber, password } = req.body;
 
-  const patient = await Patient.findOne({ email });
+  const patient = await Patient.findOne({ $or: [ { email }, { mobileNumber } ] });
 
   if (patient && (await bcrypt.compare(password, patient.password))) {
     res.json({
       _id: patient.id,
-      name: patient.name,
-      email: patient.email,
+      name: patient.firstName,
       token: generateToken(patient._id),
     });
   } else {

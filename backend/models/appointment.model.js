@@ -14,20 +14,41 @@ const appointmentSchema = new Schema(
       ref: "doctor",
       required: true,
     },
-    patientName: { 
+    patientFirstName: { 
       type: String,
       required: true,
+      trim:true
+    },
+    patientLastName: { 
+      type: String,
+      required: true,
+      trim:true
+    },
+    email: { 
+      type: String,
+      trim:true
+    },
+    mobileNumber: { 
+      type: String,
       trim:true
     },
     appointmentDateTime: { 
       type: Date,
       required: true
     },
-    appt_status: {
+    reason: { 
       type: String,
       required: true,
-      enum: ["Pending", "Approved", "Declined"],
-      default: "Pending",
+      trim:true
+    },
+    diagnosis: { 
+      type: String,
+      trim:true
+    },
+    appt_status: {
+      type: String,
+      enum:["Upcoming", "Done"],
+      default:"Upcoming",
       trim: true,
     },
   },

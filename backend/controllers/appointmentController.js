@@ -36,13 +36,17 @@ const doctorGetAppointments = asyncHandler(async (req, res) => {
 
 const createAppointment = asyncHandler(async (req, res) => {
   const patientId = req.user.id;
-  const { patientName, doctorId, appointmentDateTime } = req.body;
+  const { patientFirstName, patientLastName, email, mobileNumber, doctorId, appointmentDateTime, reason } = req.body;
 
   const newAppointment = new Appointment({
-    patientName,
+    patientFirstName,
+    patientLastName,
+    email,
+    mobileNumber,
     patientId,
     doctorId,
     appointmentDateTime,
+    reason
   });
 
 

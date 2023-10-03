@@ -50,8 +50,8 @@ const PatientRegister = () => {
       <Navbar />
       <div className="flex justify-center">
         <div className="lg:w-2/3">
-          <form className="p-2" onSubmit={handleSubmit}>
-            <h1 className="text-[#4867D6] font-bold text-2xl text-center">
+          <form className="mt-4 p-2" onSubmit={handleSubmit}>
+            <h1 className="text-[#4867D6] font-bold text-2xl text-center mb-4">
               Register Form
             </h1>
             <div className="mt-2">
@@ -182,7 +182,7 @@ const PatientRegister = () => {
                 />
               </div>
             </div>
-            <div className="text-center  text-white font-semibold mt-4">
+            <div className="text-center  text-white font-semibold mt-16">
               <button className="bg-[#4867D6] p-4 rounded-full w-full">
                 Register
               </button>
