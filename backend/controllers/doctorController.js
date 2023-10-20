@@ -25,9 +25,9 @@ const getDoctorByDepartment = asyncHandler(async (req,res) => {
 //Register doctor
 const registerDoctor = asyncHandler(async (req, res) => {
   const admin = req.user.id;
-  const { name, email, password, departmentName } = req.body;
+  const { firstName, lastName, email, password, specialization, licenseNumber, departmentName } = req.body;
 
-  if (!name || !email || !password || !departmentName) {
+  if (!firstName || !lastName || !email || !password || !specialization || !licenseNumber || !departmentName) {
     res.status(400);
     throw new Error("Please fill all fields");
   }
@@ -42,7 +42,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
   const department = await Department.findOne({ name: departmentName });
   if (!department) {
     res.status(400);
-    throw new Error("Department not found");
+    throw new Error("Department not found tangina");
   }
 
   //Create Doctor
@@ -50,9 +50,12 @@ const registerDoctor = asyncHandler(async (req, res) => {
 
   const doctor = await Doctor.create({
     admin,
-    name,
+    firstName,
+    lastName,
     email,
     password: hashedPassword,
+    specialization,
+    licenseNumber,
     dept_id: department._id,
   });
 
@@ -69,6 +72,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
     throw new Error("Invalid doctor data");
   }
 });
+
 // Update doctor
 const updateDoctor = asyncHandler(async (req, res) => {
     const admin = await Admin.findById(req.user.id);
@@ -144,7 +148,7 @@ const deleteDoctor = asyncHandler(async (req, res) => {
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
-// login doctor
+// Login doctor
 const loginDoctor = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -160,7 +164,7 @@ const loginDoctor = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(400);
-    throw new Error("Invalid admin data");
+    throw new Error("Invalid doctor data");
   }
 });
 

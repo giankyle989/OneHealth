@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 
 const doctorSchema = new Schema(
   {
-    first_name: {
+    firstName: {
       type: String,
       required: true,
       trim: true,
     },
-    last_name: {
+    lastName: {
       type: String,
       required: true,
       trim: true,
@@ -23,6 +23,16 @@ const doctorSchema = new Schema(
         type: String,
         required: true,
         trim: true,
+    },
+    specialization: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    licenseNumber: {
+      type: String,
+      required: true,
+      trim: true,
     },
     admin: {
       type: mongoose.Schema.Types.ObjectId,

@@ -27,7 +27,7 @@ const Navbar = () => {
       if (response.status === 200) {
         // Logout successful, clear user info from local storage and redirect to the login page
         localStorage.removeItem("token");
-        navigate("/patient/login"); // Assuming you're using Reach Router for navigation
+        navigate("/"); // Assuming you're using Reach Router for navigation
       } else {
         // Handle server-side errors
         throw new Error(response.data.message);
@@ -49,7 +49,7 @@ const Navbar = () => {
         <div className="w-1/3">
           <ul className="hidden md:flex md:justify-end gap-x-4 font-semibold">
             <li className="">
-              <Link to="/patient" >
+              <Link to="/" >
                 Home
               </Link>
             </li>
@@ -76,7 +76,7 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <button onClick={handleLogout}>Logout</button>
               ) : (
-                <Link to="/patient/login">Login</Link>
+                <Link to="/login">Login</Link>
               )}
             </li>
           </ul>
@@ -99,7 +99,7 @@ const Navbar = () => {
           }
         >
           <li className="p-2 text-4xl w-full">
-            <Link onClick={handleClick} to="/patient">
+            <Link onClick={handleClick} to="/">
               Home
             </Link>
           </li>
@@ -122,7 +122,7 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <button onClick={handleLogout}>Logout</button>
               ) : (
-                <Link to="/patient/login">Login</Link>
+                <Link to="/login">Login</Link>
               )}
             </li>
         </ul>

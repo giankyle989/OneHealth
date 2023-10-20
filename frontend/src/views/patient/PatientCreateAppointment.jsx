@@ -16,7 +16,7 @@ const PatientCreateAppointment = () => {
   const [patientLastName, setPatientLastName] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState("Medical Check up");
 
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   const token = tokenObject.token;
@@ -76,7 +76,7 @@ const PatientCreateAppointment = () => {
         setSelectedDoctor("");
         setAppointmentDateTime("");
         console.log(appointment);
-        window.location = "/patient";
+        window.location = "/";
       })
       .catch((err) => console.log("Error: " + err));
   };
@@ -164,7 +164,7 @@ const PatientCreateAppointment = () => {
                   <option value="">Select a Doctor</option>
                   {doctors.map((doctor) => (
                     <option key={doctor._id} value={doctor._id}>
-                      {doctor.name}
+                     Dr. {doctor.firstName} {doctor.lastName}
                     </option>
                   ))}
                 </select>

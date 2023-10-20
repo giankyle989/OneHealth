@@ -7,7 +7,6 @@ const departmentSchema = new Schema(
     name: {
       type: String,
       required: true,
-      enum: ['General Medicine', 'Internal Medicine', 'Pediatrics', 'OB-GYN'],
       trim: true,
     },
     admin: {

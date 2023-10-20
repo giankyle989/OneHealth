@@ -49,10 +49,6 @@ const deleteDepartment = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("Department not found");
       }
-      if (department.admin.toString() !== admin.id) {
-        res.status(401);
-        throw new Error("User not authorized");
-      }
       
       // If the user is authorized, proceed with the deletion
       return Department.findByIdAndDelete(req.params.id);

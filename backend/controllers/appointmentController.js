@@ -5,7 +5,7 @@ const getAppointment = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({patientId:req.user.id}).populate({
       path: "doctorId",
-      select: "name  dept_id ",
+      select: "firstName lastName  dept_id ",
       populate: {
         path: "dept_id",
         select: "name",
@@ -38,6 +38,16 @@ const createAppointment = asyncHandler(async (req, res) => {
   const patientId = req.user.id;
   const { patientFirstName, patientLastName, email, mobileNumber, doctorId, appointmentDateTime, reason } = req.body;
 
+  if (
+    !patientFirstName ||
+    !patientLastName ||
+    !doctorId ||
+    !appointmentDateTime ||
+    !reason
+  ) {
+    res.status(400);
+    throw new Error("Please fill all fields");
+  }
   const newAppointment = new Appointment({
     patientFirstName,
     patientLastName,

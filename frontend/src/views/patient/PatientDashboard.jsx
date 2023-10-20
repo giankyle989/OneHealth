@@ -4,6 +4,7 @@ import axios from "axios";
 
 const PatientDashboard = () => {
   const [appointments, setAppointments] = useState([]);
+  
   //Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
 
@@ -41,8 +42,8 @@ const PatientDashboard = () => {
         </h1>
       </header>
       <section className="pt-10">
-        <div className="overflow-auto relative">
-          <table className="text-sm text-left mx-auto">
+        <div className="overflow-auto">
+          <table className=" text-sm text-left">
             <thead className="text-xs bg-grey-300 uppercase bg-gray-50">
               <tr>
                 <th className="py-3 px-6 border border-black">Date</th>
@@ -81,7 +82,7 @@ const PatientDashboard = () => {
                       ).toLocaleTimeString()}
                     </td>
                     <td className="border border-black">
-                      {appointment.patientFirstName}{" "}
+                      {appointment.patientFirstName}
                       {appointment.patientLastName}
                     </td>
                     <td className="border border-black">
@@ -91,7 +92,7 @@ const PatientDashboard = () => {
                       {appointment.doctorId.dept_id.name}
                     </td>
                     <td className="border border-black">
-                      Dr. {appointment.doctorId.name}
+                      Dr. {appointment.doctorId.firstName} {appointment.doctorId.lastName}
                     </td>
                     <td className="border border-black">
                       {appointment.reason}
