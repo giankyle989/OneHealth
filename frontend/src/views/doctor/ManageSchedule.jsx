@@ -48,6 +48,7 @@ const ManageSchedule = () => {
         title,
         start: start.toISOString(),
         end: end.toISOString(),
+        eventTimezone: "Asia/Manila", // Specify the event time zone
         allDay: false, // Set to false since it's not an all-day event
       };
 
@@ -58,8 +59,9 @@ const ManageSchedule = () => {
           headerToken
         )
         .then((res) => {
-          console.log('Added New Availability');
-          window.location.reload()
+          console.log(eventObject)
+          console.log(res.data);
+          
         })
         .catch((err) => console.log("Error: " + err));
 
@@ -106,7 +108,7 @@ const ManageSchedule = () => {
               center: "title",
               end: "today prev,next",
             }}
-            timeZone="UTC"
+            timeZone="Asia/Manila"
             selectable={true}
             select={handleDateSelect}
             validRange={validDate}

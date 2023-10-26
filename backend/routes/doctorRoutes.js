@@ -14,7 +14,7 @@ router.post('/logout', logoutDoctor)
 router.get('/appointment/get', protect(Doctor), doctorGetAppointments )
 router.put('/appointment/:id', updateAppointment )
 
-router.get('/availability/get', protect(Doctor),getAvailability)
+router.get('/availability/:id',getAvailability)
 router.post('/availability/create', protect(Doctor),createAvailability)
 router.delete('/availability/:id', protect(Doctor),deleteAvailability)
 

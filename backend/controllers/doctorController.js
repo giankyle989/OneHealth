@@ -13,13 +13,14 @@ const getDoctor = asyncHandler(async (req, res) => {
 });
 
 const getDoctorByDepartment = asyncHandler(async (req,res) => {
-  try{
-    const dept_id = req.params.id
-    const doctors = await Doctor.find({dept_id: dept_id})
-    res.json(doctors)
-  } catch(error){
-    res.status(500).json("Error: " + error)
-  }
+  const dept_id = req.params.id;
+  Doctor.find({ dept_id: dept_id })
+    .then(doctors => {
+      res.json(doctors);
+    })
+    .catch(error => {
+      res.status(500).json("Error: " + error);
+    });
 })
 
 //Register doctor

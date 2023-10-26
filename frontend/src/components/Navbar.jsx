@@ -64,7 +64,7 @@ const Navbar = () => {
           {isDropdownOpen && (
             <ul className="absolute mt-2 p-2 bg-[#4867D6] shadow-lg rounded-md font-medium">
               <li className="my-4">
-                <Link to="/patient/profile">View Profile</Link>
+                <Link to="/patient/profile">Update Profile</Link>
               </li>
               <li className="my-4">
                 <Link to="/patient/view-appointment">View Appointments</Link>
@@ -110,12 +110,12 @@ const Navbar = () => {
           </li>
           <li className="p-2 text-4xl w-full">
             <Link onClick={handleClick} to="/patient/profile">
-              Profile
+              Update Profile
             </Link>
           </li>
           <li className="p-2 text-4xl w-full">
             <Link onClick={handleClick} to="/patient/view-appointment">
-              Appointment History
+              View Appointments
             </Link>
           </li>
           <li className="p-2 text-4xl w-full">

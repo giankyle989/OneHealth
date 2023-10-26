@@ -4,17 +4,16 @@ const Doctor = require('../models/doctor.model')
 const moment = require('moment-timezone'); // Import moment-timezone
 
 const getAvailability = asyncHandler(async (req, res) => {
-  try {
-    const availabilities = await Availability.find({ doctorId: req.user.id });
+  const doctorId = req.params.id;
+  Availability.find({ doctorId: doctorId })
+    .then(availabilities => {
+      res.json(availabilities);
+    })
+    .catch(error => {
+      res.status(500).json("Error: " + error);
+    });
 
-    if (availabilities.length === 0) {
-      return res.status(200).json("No Availability");
-    }
 
-    res.json(availabilities);
-  } catch (err) {
-    res.status(400).json("Error: " + err);
-  }
 });
 
 const createAvailability = asyncHandler(async (req, res) => {

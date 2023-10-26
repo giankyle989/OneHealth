@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./datepicker.css";
+import { setMinutes, setHours } from "date-fns";
 
 const PatientCreateAppointment = () => {
   {
@@ -10,15 +14,21 @@ const PatientCreateAppointment = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
-
+  const [availabilities, setAvailabilities] = useState([]);
+  const [selectedAvailability, setSelectedAvailability] = useState("");
   const [appointmentDateTime, setAppointmentDateTime] = useState("");
   const [patientFirstName, setPatientFirstName] = useState("");
   const [patientLastName, setPatientLastName] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [reason, setReason] = useState("Medical Check up");
-
+  const [availableDates, setAvailableDates] = useState([]);
+  const [startDate, setStartDate] = useState(
+    setHours(setMinutes(new Date(), 0), 8)
+  );
+  const [errorMessage, setErrorMessage] = useState("");
   const tokenObject = JSON.parse(localStorage.getItem("token"));
+
   const token = tokenObject.token;
 
   const headerToken = {
@@ -48,8 +58,62 @@ const PatientCreateAppointment = () => {
     }
   }, [selectedDepartment]);
 
+  useEffect(() => {
+    if (selectedDoctor) {
+      axios
+        .get(`http://localhost:5000/api/doctor/availability/${selectedDoctor}`)
+        .then((res) => {
+          // console.log(selectedDoctor);
+          setAvailabilities(res.data);
+          // console.log(res.data);
+        });
+    }
+  }, [selectedDoctor]);
+
+  useEffect(() => {
+    if (availabilities.length > 0) {
+      const validDateRange = availabilities
+        .map((availability) => {
+          const startDate = new Date(availability.start); // Convert the start date to a Date object
+          const endDate = new Date(availability.end); // Convert the end date to a Date object
+          const dates = [];
+          for (
+            let date = startDate;
+            date <= endDate;
+            date.setDate(date.getDate() + 1)
+          ) {
+            dates.push(new Date(date)); // Create a new Date object to avoid reference issues
+          }
+          return dates;
+        })
+        .flat()
+        .filter((date) => date >= new Date()); // Filter out dates that are in the past
+
+      setAvailableDates(validDateRange);
+    }
+  }, [availabilities]);
+
+  const handleDateChange = (date) => {
+    const selectedDate = new Date(date);
+
+    setStartDate(selectedDate);
+    setAppointmentDateTime(selectedDate);
+  };
+
+  const filterPassedTime = (time) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!appointmentDateTime) {
+      setErrorMessage("Please select a date and time for the appointment.");
+      return;
+    }
 
     const appointment = {
       patientFirstName,
@@ -58,8 +122,10 @@ const PatientCreateAppointment = () => {
       mobileNumber,
       doctorId: selectedDoctor,
       appointmentDateTime,
-      reason
+      reason,
     };
+
+    // console.log(appointment);
 
     axios
       .post(
@@ -68,14 +134,14 @@ const PatientCreateAppointment = () => {
         headerToken
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setPatientFirstName("");
         setPatientLastName("");
         setEmail("");
         setMobileNumber("");
         setSelectedDoctor("");
         setAppointmentDateTime("");
-        console.log(appointment);
+        // console.log(appointment);
         window.location = "/";
       })
       .catch((err) => console.log("Error: " + err));
@@ -138,13 +204,13 @@ const PatientCreateAppointment = () => {
 
             <div className="grid grid-cols-2 gap-x-2">
               <div className="mb-4">
-                <label className="block">Choose Department:</label>
+                <label className="block">Department:</label>
                 <select
                   value={selectedDepartment}
                   onChange={(event) =>
                     setSelectedDepartment(event.target.value)
                   }
-                  className="border border-gray-300 p-2 w-full"
+                  className="border border-gray-300 p-2 w-full bg-white"
                 >
                   <option value="">Select a Department</option>
                   {departments.map((department) => (
@@ -155,16 +221,16 @@ const PatientCreateAppointment = () => {
                 </select>
               </div>
               <div className="mb-4">
-                <label>Select Doctor:</label>
+                <label>Doctor:</label>
                 <select
                   value={selectedDoctor}
                   onChange={(event) => setSelectedDoctor(event.target.value)}
-                  className="border border-gray-300 p-2 w-full"
+                  className="border border-gray-300 p-2 w-full bg-white"
                 >
                   <option value="">Select a Doctor</option>
                   {doctors.map((doctor) => (
                     <option key={doctor._id} value={doctor._id}>
-                     Dr. {doctor.firstName} {doctor.lastName}
+                      Dr. {doctor.firstName} {doctor.lastName}
                     </option>
                   ))}
                 </select>
@@ -174,7 +240,7 @@ const PatientCreateAppointment = () => {
               <div className="mb-4">
                 <label className="block">Reason for Appointment</label>
                 <select
-                  className="border border-gray-300 p-2 w-full"
+                  className="border border-gray-300 p-2 w-full bg-white"
                   type="text"
                   placeholder="Select reason"
                   value={reason}
@@ -185,13 +251,35 @@ const PatientCreateAppointment = () => {
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block">Select Date and Time:</label>
-                <input
-                  className="border border-gray-300 p-2 w-full"
-                  type="datetime-local"
-                  value={appointmentDateTime}
-                  onChange={(e) => setAppointmentDateTime(e.target.value)}
+                <label className="block">
+                  Date and Time:{" "}
+                  <span className="text-xs font-semibold italic">
+                    {" "}
+                    (Choose a doctor first)
+                  </span>
+                </label>
+                <DatePicker
+                  includeTimes={[
+                    new Date().setHours(8, 0, 0, 0),
+                    new Date().setHours(9, 0, 0, 0),
+                    new Date().setHours(10, 0),
+                    new Date().setHours(11, 0),
+                    new Date().setHours(13, 0),
+                    new Date().setHours(14, 0),
+                  ]}
+                  filterTime={filterPassedTime}
+                  selected={startDate}
+                  onChange={handleDateChange}
+                  dateFormat="yyyy/MM/d h:mm aa"
+                  includeDates={availableDates}
+                  showTimeSelect
+                  timeIntervals={60} // Set the time intervals as needed
+                  minTime={new Date().setHours(8, 0, 0)} // 8:00 AM
+                  maxTime={new Date().setHours(14, 0, 0)} // 2:00 PM
+                  disabled={!selectedDoctor}
+                  placeholderText="Select Date and Time "
                 />
+                <div className="text-red-500 text-sm mb-2">{errorMessage}</div>
               </div>
             </div>
 

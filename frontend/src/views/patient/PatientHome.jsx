@@ -8,8 +8,17 @@ import obgynIcon from "../../assets/female_reproductive_system.svg";
 import genMedIcon from "../../assets/stethoscope.svg";
 import interMedIcon from "../../assets/viral_lung_infection.svg";
 import pediaIcon from "../../assets/pediatrics.svg";
+import { useNavigate } from "react-router-dom";
+
 
 const PatientHome = () => {
+
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate('/patient/book')
+  }
+
   return (
     <>
       <div className="w-full h-screen">
@@ -24,7 +33,7 @@ const PatientHome = () => {
                 ONE CAINTA HOSPITAL
               </h1>
               <p className="font-semibold text-4xl">Welcome to OneHealth</p>
-              <button className="bg-[#4867D6] uppercase w-full p-4 text-white mt-8">
+              <button  onClick={handleClick} className="bg-[#4867D6] uppercase w-full p-4 text-white mt-8">
                 Book an appointment
               </button>
             </div>
@@ -34,7 +43,7 @@ const PatientHome = () => {
         {/**Services */}
         <div className="md:h-screen bg-[#4867D6]">
           <div className="py-4 text-white ">
-            <h1 className="font-bold text-4xl text-center text-white mb-4">Our Services</h1>
+            <h1 className="font-bold text-4xl text-center pt-4 text-white mb-4">Our Services</h1>
             <p className="md:w-2/3 lg:w-3/5 mx-auto text-center">
               The Cainta Municipal Hospital is a government-owned, general,
               level 1 that provides free medigal and surgical treatment.
