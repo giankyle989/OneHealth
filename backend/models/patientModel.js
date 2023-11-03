@@ -33,18 +33,15 @@ const patientSchema = new Schema(
     },
     birthday: {
       type: Date,
-      required: true,
       trim: true,
     },
     sex: {
       type: String,
-      required: true,
       trim: true,
     },
     addressId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "address",
-      required: true,
     },
   },
   {

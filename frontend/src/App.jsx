@@ -17,6 +17,11 @@ import HospitalLogin from "./views/auth/HospitalLogin";
 import DocHistory from "./views/doctor/DocHistory";
 import DocSchedule from "./views/doctor/DocSchedule";
 import ManageSchedule from "./views/doctor/ManageSchedule";
+import FindAppointment from './views/staff/appointment/FindAppointment'
+import CreateAppointment from './views/staff/appointment/CreateAppointment'
+import DoctorInformation from './views/staff/doctor/DoctorInformation'
+import CreatePatient from "./views/staff/patient/CreatePatient";
+import FindPatient from './views/staff/patient/FindPatient'
 function App() {
   return (
   <>
@@ -51,9 +56,13 @@ function App() {
       
 
       {/**Nurse Routes */}
-
-      {/**Staff Routes */}
-
+      
+      {/**Receptionist Routes */}
+      <Route path="/hospital/receptionist/appointment" element={<FindAppointment/>} />
+      <Route path="/hospital/receptionist/appointment/create" element={<CreateAppointment/>} />
+      <Route path="/hospital/receptionist/doctor" element={<DoctorInformation/>} />
+      <Route path="/hospital/receptionist/patient/create" element={<CreatePatient/>} />
+      <Route path="/hospital/receptionist/patient/find" element={<FindPatient/>} />
 
 
     </Routes>

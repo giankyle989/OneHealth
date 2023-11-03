@@ -32,7 +32,22 @@ const HospitalLogin = () => {
       .catch((err) => console.log("Error: " + err))
     }
     else if (role === "Nurse"){
-      console.log("This is nurse")
+      axios.post('http://localhost:5000/api/nurse/login', {email, password})
+      .then((res) =>{
+        localStorage.setItem("token", JSON.stringify(res.data));
+        console.log("Login Successfully as Nurse")
+        navigate('/hospital/nurse')
+      })
+      .catch((err) => console.log('Error: '+ err))
+    }
+    else if (role === "Staff"){
+      axios.post('http://localhost:5000/api/receptionist/login', {email, password})
+            .then((res) =>{
+              localStorage.setItem("token", JSON.stringify(res.data));
+              console.log("Login Successfully as Staff")
+              navigate('/hospital/receptionist/appointment')
+            })
+            .catch((err) => console.log('Error: '+ err))
     }
 
 

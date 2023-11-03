@@ -5,8 +5,15 @@ const Department = require("../models/department.model");
 const Admin = require("../models/adminModel");
 const { generateToken } = require("../middlewares/generateToken");
 
-//Get Doctor
+//Get Doctor by Admin User
 const getDoctor = asyncHandler(async (req, res) => {
+  Doctor.find({}).populate('dept_id', 'name')
+    .then((doctor) => res.json(doctor))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
+//Get Doctor By Receptionist User
+const getDoctorByReceptionist = asyncHandler(async (req, res) => {
   Doctor.find({}).populate('dept_id', 'name')
     .then((doctor) => res.json(doctor))
     .catch((err) => res.status(400).json("Error: " + err));
@@ -187,5 +194,6 @@ module.exports = {
   updateDoctor,
   loginDoctor,
   logoutDoctor,
-  getDoctorByDepartment
+  getDoctorByDepartment,
+  getDoctorByReceptionist
 };

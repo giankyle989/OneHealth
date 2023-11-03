@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 
 const StaffNavigation = () => {
-  const [showDoctorMenu, setShowDoctorMenu] = useState(false);
   const [showPatientMenu, setShowPatientMenu] = useState(false);
   const [showAppointmentsMenu, setShowAppointmentsMenu] = useState(false);
 
-  const toggleDoctorMenu = () => {
-    setShowDoctorMenu(!showDoctorMenu);
-  };
 
   const togglePatientMenu = () => {
     setShowPatientMenu(!showPatientMenu);
@@ -20,37 +16,31 @@ const StaffNavigation = () => {
   return (
     <>
       <li className='py-4'>
-        <a href="#" onClick={toggleDoctorMenu}>
+        <a href="/hospital/receptionist/doctor">
           Doctor
-          {showDoctorMenu ? ' ▲' : ' ▼'}
         </a>
-        {showDoctorMenu && (
-          <ul>
-            <li><a className='text-base' href="/staff">- Doctor Information</a></li>
-          </ul>
-        )}
       </li>
       <li className='py-4'>
-        <a href="#" onClick={togglePatientMenu}>
+        <a className='cursor-pointer' onClick={togglePatientMenu}>
           Patient
           {showPatientMenu ? ' ▲' : ' ▼'}
         </a>
         {showPatientMenu && (
           <ul>
-            <li><a className='text-base' href="/staff/findpatient">- Find Patient</a></li>
-            <li><a className='text-base' href="/staff/createpatient">- Create Patient Account</a></li>
+            <li><a className='text-base' href="/hospital/receptionist/patient/find">- Find Patient</a></li>
+            <li><a className='text-base' href="/hospital/receptionist/patient/create">- Create Patient Account</a></li>
           </ul>
         )}
       </li>
       <li className='py-4'>
-        <a href="#" onClick={toggleAppointmentsMenu}>
+        <a className='cursor-pointer' onClick={toggleAppointmentsMenu}>
           Appointments
           {showAppointmentsMenu ? ' ▲' : ' ▼'}
         </a>
         {showAppointmentsMenu && (
           <ul>
-            <li><a className='text-base' href="/staff/findappointment">- Find Appointment</a></li>
-            <li><a className='text-base' href="/staff/createappointment">- Create new appointment</a></li>
+            <li><a className='text-base' href="/hospital/receptionist/appointment">- Find Appointment</a></li>
+            <li><a className='text-base' href="/hospital/receptionist/appointment/create">- Create new appointment</a></li>
           </ul>
         )}
       </li>

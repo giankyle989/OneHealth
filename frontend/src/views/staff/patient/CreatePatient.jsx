@@ -1,27 +1,46 @@
 import React, { useState } from "react";
 import Sidebar from "../../../components/Sidebar";
-
+import axios from 'axios'
 const CreatePatient = () => {
   const [userRole, setUserRole] = useState('staff');
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    message: "",
-  });
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [mobileNumber, setMobileNumber] = useState('')
+  const [password, setPassword] = useState('')
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const tokenObject = JSON.parse(localStorage.getItem("token"));
+  //Get token string only
+  const token = tokenObject.token;
+  const username = tokenObject.name;
+  const headerToken = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here, e.g., send data to a server
-    console.log(formData);
+    const payload = {
+      firstName,
+      lastName,
+      email,
+      mobileNumber,
+      password
+    }
+
+    axios.post('http://localhost:5000/api/receptionist/patient/register', payload)
+          .then((res) => {
+            setFirstName('')
+            setLastName('')
+            setEmail('')
+            setMobileNumber('')
+            setPassword('')
+            location.reload()
+            
+          })
+          .catch((err) => console.log('Error: '+ err))
+          console.log(payload)
   };
   return (
 <>
@@ -45,11 +64,8 @@ const CreatePatient = () => {
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type="text"
-                    id="firstName"
-                    name="firstName"
                     placeholder="First Name"
-                    value={formData.firstName}
-                    onChange={handleChange}
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
                 </div>
                 <div className="mb-4">
@@ -62,79 +78,63 @@ const CreatePatient = () => {
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type="text"
-                    id="lastName"
-                    name="lastName"
                     placeholder="Last Name"
-                    value={formData.lastName}
-                    onChange={handleChange}
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="firstName"
+                    htmlFor="Email"
                   >
                     Email
                   </label>
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    id="firstName"
-                    name="firstName"
+                    type="email"
                     placeholder="Email"
-                    value={formData.firstName}
-                    onChange={handleChange}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="lastName"
+                    htmlFor="mobileNumber"
                   >
-                    Phone Number
+                    Mobile Number
                   </label>
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     type="text"
-                    id="lastName"
-                    name="lastName"
-                    placeholder="Phone Number"
-                    value={formData.lastName}
-                    onChange={handleChange}
+                    placeholder="Mobile Number"
+                    onChange={(e) => setMobileNumber(e.target.value)}
                   />
                 </div>
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="firstName"
+                    htmlFor="password"
                   >
                     Password
                   </label>
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    id="firstName"
-                    name="firstName"
+                    type="password"
                     placeholder="Password"
-                    value={formData.firstName}
-                    onChange={handleChange}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
-                    htmlFor="lastName"
+                    htmlFor="password"
                   >
                     Retype Password
                   </label>
                   <input
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    id="lastName"
-                    name="lastName"
+                    type="password"
                     placeholder="Retype Password"
-                    value={formData.lastName}
-                    onChange={handleChange}
                   />
                 </div>
               </div>
