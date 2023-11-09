@@ -4,6 +4,7 @@ import axios from "axios";
 import { BiEdit } from "react-icons/bi";
 
 const PatientProfile = () => {
+  const [userRole, setUserRole] = useState("patient");
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [sex, setSex] = useState();
@@ -44,7 +45,7 @@ const PatientProfile = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar userRole={userRole}/>
       <div>
         <section>
           <h1 className="text-center font-semibold text-2xl mt-8 text-[#4867D6] mb-8">

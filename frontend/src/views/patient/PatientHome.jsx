@@ -1,4 +1,4 @@
-import React from "react";
+import {useState, React} from "react";
 import Navbar from "../../components/Navbar";
 import hero from "../../assets/Hero.png";
 import { MdLocationOn } from "react-icons/md";
@@ -11,18 +11,20 @@ import pediaIcon from "../../assets/pediatrics.svg";
 import { useNavigate } from "react-router-dom";
 
 
-const PatientHome = () => {
 
+const PatientHome = () => {
+  const [userRole, setUserRole] = useState("patient");
   const navigate = useNavigate()
 
   const handleClick = () => {
     navigate('/patient/book')
   }
 
+
   return (
     <>
       <div className="w-full h-screen">
-        <Navbar />
+      <Navbar userRole={userRole}/>
 
         {/**Hero */}
         <div className="h-[91vh]">

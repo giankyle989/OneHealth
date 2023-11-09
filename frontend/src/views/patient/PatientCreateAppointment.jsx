@@ -7,6 +7,7 @@ import "./datepicker.css";
 import { setMinutes, setHours } from "date-fns";
 
 const PatientCreateAppointment = () => {
+  const [userRole, setUserRole] = useState("patient");
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [doctors, setDoctors] = useState([]);
@@ -146,7 +147,7 @@ const PatientCreateAppointment = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar userRole={userRole}/>
       <div className="flex justify-center items-center ">
         <div className=" p-6 md:w-4/5">
           <h1 className="text-3xl font-semibold mb-4 text-center text-[#4867D6]">

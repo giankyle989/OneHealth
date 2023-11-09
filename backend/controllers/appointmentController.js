@@ -2,6 +2,12 @@ const asyncHandler = require("express-async-handler");
 const Appointment = require("../models/appointment.model");
 const Patient = require('../models/patientModel')
 
+
+const getAllAppointment = asyncHandler(async (req, res) => {
+  Appointment.find()
+  .then((appointment) => res.json(appointment))
+  .catch((err) => res.status(400).json("Error: " + err))
+})
 const getAppointment = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({patientId:req.user.id}).populate({
@@ -102,29 +108,63 @@ const createAppointmentByReceptionist = asyncHandler(async (req, res) => {
 });
 
 const updateAppointment = asyncHandler(async (req, res) => {
+  const appointmentId = req.params.id;
+  const { status } = req.body;
+
   try {
-    const { appointmentId, newStatus } = req.body;
+    const appointment = await Appointment.findById(appointmentId);
 
-    const updatedAppointment = await Appointment.findByIdAndUpdate(
-      appointmentId,
-      { appt_status: newStatus },
-      { new: true } // Return the updated appointment
-    );
-
-    if (!updatedAppointment) {
-      return res.status(404).json("Appointment not found");
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
     }
 
-    res.json(updatedAppointment);
+    // Check if the requested status is in the allowed states
+    const allowedStatus = ["Reception", "Assessment", "Testing", "Consultation", "Done"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+
+    // Update the appointment status
+    appointment.appt_status = status;
+
+    // Save the updated appointment
+    await appointment.save();
+
+    return res.json(appointment);
   } catch (err) {
-    res.status(400).json("Error: " + err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
+const addDiagnosis = asyncHandler(async (req, res) => {
+  const appointmentId = req.params.id;
+  const { diagnosis } = req.body;
+
+  try {
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    // Update the appointment status
+    appointment.diagnosis = diagnosis;
+
+    // Save the updated appointment
+    await appointment.save();
+
+    return res.json(appointment);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
+
 module.exports = {
+  getAllAppointment,
   getAppointment,
   createAppointment,
   updateAppointment,
   doctorGetAppointments,
-  createAppointmentByReceptionist
+  createAppointmentByReceptionist,
+  addDiagnosis
 };

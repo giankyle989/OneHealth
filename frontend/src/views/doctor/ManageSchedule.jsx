@@ -7,6 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import axios from "axios";
 
 const ManageSchedule = () => {
+  const [userRole, setUserRole] = useState("doctor");
   const [events, setEvents] = useState([]);
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   const token = tokenObject.token;
@@ -92,6 +93,7 @@ const ManageSchedule = () => {
 
   return (
     <div className="min-h-screen">
+      <Navbar userRole={userRole}/>
       <div className="bg-white h-screen p-4">
         <div>
           <h1 className="text-center text-2xl font-bold">

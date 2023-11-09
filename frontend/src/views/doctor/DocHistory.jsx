@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import Navbar from "../../components/Navbar";
 
 const DocHistory = () => {
   const [appointments, setAppointments] = useState([])
-
+  const [userRole, setUserRole] = useState("doctor");
 
     //Get token object
     const tokenObject = JSON.parse(localStorage.getItem("token"));
@@ -32,6 +32,7 @@ const DocHistory = () => {
 
   return (
     <div className="h-screen">
+      <Navbar userRole={userRole}/>
       <div>
         <div className="bg-white p-4">
           <div>
@@ -44,16 +45,16 @@ const DocHistory = () => {
             placeholder="Search by Patient Name"
             className="my-4 p-4 border rounded"
           />
-              <table className="w-full border-collapse border">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border p-2">Date</th>
-                    <th className="border p-2">Time</th>
-                    <th className="border p-2">Patient Name</th>
-                    <th className="border p-2">Appointment ID</th>
-                    <th className="border p-2">Diagnosis</th>
-                    <th className="border p-2">Status</th>
-                    <th className="border p-2">Action</th>
+              <table className="w-full border-collapse border text-sm mx-auto">
+                <thead className="text-xs bg-grey-300 uppercase bg-gray-50">
+                  <tr className="text-white text-center">
+                    <th className="py-6 px-6 bg-[#4867D6]">Date</th>
+                    <th className="py-6 px-6 bg-[#4867D6]">Time</th>
+                    <th className="py-6 px-6 bg-[#4867D6]">Patient Name</th>
+                    <th className="py-6 px-6 bg-[#4867D6]">Appointment ID</th>
+                    <th className="py-6 px-6 bg-[#4867D6]">Diagnosis</th>
+                    <th className="py-6 px-6 bg-[#4867D6]">Status</th>
+                    <th className="py-6 px-6 bg-[#4867D6]">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -62,14 +63,14 @@ const DocHistory = () => {
                       <td>No data</td>
                     </tr>
                   ):(appointments.map((appointment) => (
-                    <tr key={appointment._id}>
-                    <td className="border text-center p-2">09-23-23</td>
-                    <td className="border text-center p-2">10:30 AM</td>
-                    <td className="border text-center p-2">{appointment.patientFirstName}{}</td>
-                    <td className="border text-center p-2">{appointment._id}</td>
-                    <td className="border text-center p-2">Headache</td>
-                    <td className="border text-center p-2">Complete</td>
-                    <td className="border text-center p-2">
+                    <tr className="text-center" key={appointment._id}>
+                    <td className="py-3 px-6">{new Date(appointment.appointmentDateTime).toLocaleDateString()}</td>
+                    <td className="py-3 px-6">{new Date(appointment.appointmentDateTime).toLocaleTimeString()}</td>
+                    <td className="py-3 px-6">{appointment.patientFirstName}{}</td>
+                    <td className="py-3 px-6">{appointment._id}</td>
+                    <td className="py-3 px-6">{appointment.diagnosis}</td>
+                    <td className="py-3 px-6">{appointment.appt_status}</td>
+                    <td className="py-3 px-6">
                       <button
                         className="px-4 py-2 bg-[#4867D6] text-white rounded mr-2"
                         

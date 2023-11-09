@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import axios from 'axios'
 const StaffNavigation = () => {
   const [showPatientMenu, setShowPatientMenu] = useState(false);
   const [showAppointmentsMenu, setShowAppointmentsMenu] = useState(false);
@@ -12,6 +12,27 @@ const StaffNavigation = () => {
   const toggleAppointmentsMenu = () => {
     setShowAppointmentsMenu(!showAppointmentsMenu);
   };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/admin/logout",
+        null
+      );
+
+      if (response.status === 200) {
+        // Logout successful, clear user info from local storage and redirect to the login page
+        localStorage.removeItem("token");
+        navigate("/hospital/auth/login"); // Assuming you're using Reach Router for navigation
+      } else {
+        // Handle server-side errors
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      // Handle any network or other client-side errors
+      console.error("Error during logout:", error.message);
+    }
+  }
 
   return (
     <>
@@ -44,7 +65,7 @@ const StaffNavigation = () => {
           </ul>
         )}
       </li>
-      <li className='underline'><a href="#">Logout</a></li>
+      <li className='pt-16 underline'><button onClick={handleLogout}>Logout</button></li>
     </>
   );
 }

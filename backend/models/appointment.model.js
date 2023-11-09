@@ -47,7 +47,7 @@ const appointmentSchema = new Schema(
     },
     appt_status: {
       type: String,
-      enum:["Upcoming", "Done"],
+      enum:["Upcoming", "Reception", "Assessment", "Testing", "Consultation", "Done"],
       default:"Upcoming",
       trim: true,
     },

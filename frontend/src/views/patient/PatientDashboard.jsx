@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import axios from "axios";
 
 const PatientDashboard = () => {
+  const [userRole, setUserRole] = useState("patient");
   const [appointments, setAppointments] = useState([]);
 
   //Get token object
@@ -35,7 +36,7 @@ const PatientDashboard = () => {
   }, []);
   return (
     <>
-      <Navbar />
+      <Navbar userRole={userRole}/>
       <header className="pt-14 max-w-xs mx-auto">
         <h1 className="text-2xl  font-semibold text-[#4867D6] pt-10 text-center">
           {username}'s Appointment
@@ -53,6 +54,7 @@ const PatientDashboard = () => {
                 <th className="py-6 px-6 bg-[#4867D6] ">Department</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Doctor's Name</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Reason</th>
+                <th className="py-6 px-6 bg-[#4867D6]">Diagnosis</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Status</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Action</th>
               </tr>
@@ -93,6 +95,7 @@ const PatientDashboard = () => {
                       {appointment.doctorId.lastName}
                     </td>
                     <td className="py-3 px-6">{appointment.reason}</td>
+                    <td className="py-3 px-6">{appointment.diagnosis}</td>
                     <td className="py-3 px-6">{appointment.appt_status}</td>
                     <td className="py-3 px-6">Action | Action</td>
                   </tr>

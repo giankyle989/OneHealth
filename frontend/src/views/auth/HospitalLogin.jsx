@@ -27,7 +27,7 @@ const HospitalLogin = () => {
       .then((res) => {
         localStorage.setItem("token", JSON.stringify(res.data));
         console.log("Login Successfully as Doctor")
-        navigate('/hospital/doctor/appointments')
+        navigate('/hospital/doctor/')
       })
       .catch((err) => console.log("Error: " + err))
     }

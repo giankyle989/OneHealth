@@ -1,117 +1,263 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
-
+import { useStore } from "../../store";
+import AddPrescriptionModal from "../../components/modals/AddPrescriptionModal";
+import Diagnose from "../../components/modals/Diagnose";
 
 const DocSchedule = () => {
+  const [userRole, setUserRole] = useState("doctor");
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [showDiagnose, setShowDiagnose] = useState(false);
   const handleClose = () => setShowDiagnose(false);
   const [showAddPrescriptionModal, setShowAddPrescriptionModal] =
     useState(false);
   const handleOnClose = () => setShowAddPrescriptionModal(false);
 
+  const { appointments, getTodaysAppointments, updateAppointmentStatus } =
+    useStore();
+
+  useEffect(() => {
+    // Get token object
+    const tokenObject = JSON.parse(localStorage.getItem("token"));
+    const token = tokenObject.token;
+    // Fetch appointments and update the store
+    getTodaysAppointments(token);
+  }, []);
+
+  const handleUpdate = (id, currentStatus) => {
+    let nextStatus;
+
+    switch (currentStatus) {
+      case "Upcoming":
+        nextStatus = "Reception";
+        break;
+      case "Reception":
+        nextStatus = "Assessment";
+        break;
+      case "Assessment":
+        nextStatus = "Testing";
+        break;
+      case "Testing":
+        nextStatus = "Consultation";
+        break;
+      case "Consultation":
+        nextStatus = "Done";
+        break;
+      default:
+        return;
+    }
+
+    updateAppointmentStatus(id, nextStatus);
+  };
+
+  const upcomingAppointments = appointments.filter(
+    (appointment) => appointment.appt_status === "Upcoming"
+  );
+
+  const receptionAppointments = appointments.filter(
+    (appointment) => appointment.appt_status === "Reception"
+  );
+  const assessmentAppointments = appointments.filter(
+    (appointment) => appointment.appt_status === "Assessment"
+  );
+  const testingAppointments = appointments.filter(
+    (appointment) => appointment.appt_status === "Testing"
+  );
+
+  const consultationAppointments = appointments.filter(
+    (appointment) => appointment.appt_status === "Consultation"
+  );
+
   return (
-    <>
-      <div className="min-h-screen">
-        <Navbar />
-        <div>
-          <div className="bg-white p-4">
-            <div>
-              <h1 className="text-center text-2xl font-bold">
-                Visit Status Dashboard
-              </h1>
-            </div>
-            <div className="mt-4">
-              <div className="p-4 text-center">
-                <div>
-                <input
+    <div className="min-h-screen bg-gray-100">
+      <Navbar userRole={userRole} />
+
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold text-center mb-4">
+          Patient Status Dashboard
+        </h1>
+
+        <div className="flex justify-center mb-4">
+          <input
             type="text"
             placeholder="Search by Patient Name"
-            className="my-4 p-4 border rounded"
-
+            className="px-4 py-2 border rounded"
           />
-          <button className="p-4 bg-[#4867D6] text-white rounded ml-4">Search</button>
-                </div>
-                <table className="w-full border">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border-2 py-8">Patient Name</th>
-                      <th className="border-2 py-8">
-                        Waiting in Reception Area
-                      </th>
-                      <th className="border-2 py-8">Initial Assessment</th>
-                      <th className="border-2 py-8">Undergoing Test</th>
-                      <th className="border-2 py-8">
-                        Consultation with Doctor
-                      </th>
-                      <th className="border-2 py-8">Done</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  <tr className="text-center">
-                      <td>John Doe</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="py-8 border-4 border-l-[#4867D6] text-[#4867D6]">
-                        Complete
-                      </td>
-                    </tr>
-                    <tr className="text-center">
-                      <td>John Doe</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="py-8 border-4 border-l-[#4867D6] text-[#4867D6]">
-                        <p>In Progress</p>
-
-                      </td>
-                    </tr>
-                    <tr className="text-center">
-                      <td>John Doe</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="py-8 border-4 border-l-[#4867D6] text-[#4867D6]">
-                        
-                        <p>In Progress</p>
-                        <button className="mr-2 mt-4">
-                          
-                        </button>
-                        <button >
-                          
-                        </button>
-                      </td>
-                    </tr>
-                    <tr className="text-center">
-                      <td>John Doe</td>
-                      <td className="border-2 py-8">Complete</td>
-                      <td className="py-8 border-4 border-l-[#4867D6] text-[#4867D6]">
-                        In Progress
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr className="text-center">
-                      <td>John Doe</td>
-                      <td className="py-8 border-4 border-l-[#4867D6] text-[#4867D6]">
-                        In Progress
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <button className="px-4 py-2 bg-blue-500 text-white rounded ml-4">
+            Search
+          </button>
         </div>
+
+        <table className="w-full border-collapse border">
+          <thead className="bg-[#4867D6] text-white">
+            <tr>
+              <th className="py-4">Patient Name</th>
+              <th className="py-4">Upcoming</th>
+              <th className="py-4">Reception</th>
+              <th className="py-4">Assessment</th>
+              <th className="py-4">Testing</th>
+              <th className="py-4">Consultation</th>
+            </tr>
+          </thead>
+          <tbody>
+            {appointments.length === 0 ? (
+              <tr>
+                <td>No Appointment for today</td>
+              </tr>
+            ) : (
+              appointments.map((appointment) => (
+                <tr key={appointment._id} className="text-center">
+                  <td className="p-2">
+                    {appointment.patientFirstName} {appointment.patientLastName}
+                  </td>
+
+                  
+                  <td className="p-2" key={`upcoming-${appointment._id}`}>
+                    {upcomingAppointments.map((upcomingAppt) => {
+                      if (upcomingAppt._id === appointment._id) {
+                        return (
+                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
+                            <span className="text-blue-700 font-semibold">
+                              In Progress
+                            </span>
+                            <button
+                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                              onClick={() =>
+                                handleUpdate(appointment._id, "Upcoming")
+                              }
+                            >
+                              Update
+                            </button>
+                          </div>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                  </td>
+
+                  <td className="p-2" key={`reception-${appointment._id}`}>
+                    {receptionAppointments.map((receptionAppt) => {
+                      if (receptionAppt._id === appointment._id) {
+                        return (
+                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
+                            <span className="text-blue-700 font-semibold">
+                              In Progress
+                            </span>
+                            <button
+                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                              onClick={() =>
+                                handleUpdate(appointment._id, "Reception")
+                              }
+                            >
+                              Update
+                            </button>
+                          </div>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                  </td>
+
+                  <td className="p-2" key={`assessment-${appointment._id}`}>
+                    {assessmentAppointments.map((assessmentAppt) => {
+                      if (assessmentAppt._id === appointment._id) {
+                        return (
+                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
+                            <span className="text-blue-700 font-semibold">
+                              In Progress
+                            </span>
+                            <button
+                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                              onClick={() =>
+                                handleUpdate(appointment._id, "Assessment")
+                              }
+                            >
+                              Update
+                            </button>
+                          </div>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                  </td>
+
+                  <td className="p-2" key={`testing-${appointment._id}`}>
+                    {testingAppointments.map((testingAppt) => {
+                      if (testingAppt._id === appointment._id) {
+                        return (
+                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
+                            <span className="text-blue-700 font-semibold">
+                              In Progress
+                            </span>
+                            <button
+                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                              onClick={() =>
+                                handleUpdate(appointment._id, "Testing")
+                              }
+                            >
+                              Update
+                            </button>
+                          </div>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                  </td>
+
+                  <td className="p-2" key={`consultation-${appointment._id}`}>
+                    {consultationAppointments.map((consultationAppt) => {
+                      if (consultationAppt._id === appointment._id) {
+                        const currentAppointmentId = appointment._id;
+                        
+                        return (
+                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
+                            <span className="text-blue-700 font-semibold">
+                              In Progress
+                            </span>
+                            <div>
+                              <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
+                                onClick={() =>
+                                  handleUpdate(appointment._id, "Consultation")
+                                }
+                              >
+                                U
+                              </button>
+                              <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
+                                onClick={() => {
+                                  setSelectedAppointmentId(appointment._id);
+                                  setShowDiagnose(true)}}
+                              >
+                                D
+                              </button>
+                              <Diagnose
+                                id={selectedAppointmentId}
+                                visible={showDiagnose}
+                                onClose={() => {
+                                  setSelectedAppointmentId(null);
+                                  setShowDiagnose(false)}
+                                }
+                              />
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        return null;
+                      }
+                    })}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-
-
-    </>
+    </div>
   );
 };
 

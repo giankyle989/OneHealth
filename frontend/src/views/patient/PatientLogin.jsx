@@ -4,6 +4,7 @@ import axios from "axios";
 import Navbar from "../../components/Navbar";
 
 const PatientLogin = () => {
+  const [userRole, setUserRole] = useState("patient");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("")
   const [password, setPassword] = useState("");
@@ -24,7 +25,7 @@ const PatientLogin = () => {
   return (
     <>
     <div className="h-screen">
-    <Navbar/>
+    <Navbar userRole={userRole}/>
       <div className="flex justify-center items-center">
         <form
           className="absolute top-1/4  shadow-2xl p-8 space-y-4 rounded-lg bg-slate-200"

@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const PatientRegister = () => {
+  const [userRole, setUserRole] = useState("patient");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -47,7 +48,7 @@ const PatientRegister = () => {
   };
   return (
     <>
-      <Navbar />
+      <Navbar userRole={userRole}/>
       <div className="flex justify-center">
         <div className="lg:w-2/3">
           <form className="mt-4 p-2" onSubmit={handleSubmit}>
