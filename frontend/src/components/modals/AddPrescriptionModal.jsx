@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-
-const AddPrescriptionModal = ({ visible, onClose }) => {
-  const [medicines, setMedicines] = useState([{ medicineName: '', dosage: '', quantity: '', notes: '' }]);
-
+import { useStore } from '../../store';
+import axios from 'axios'
+const AddPrescriptionModal = ({ visible, onClose, id }) => {
+  const [medicines, setMedicines] = useState([{ name: '', dosage: '', quantity: '', notes: '' }]);
+  const { createPrescription } = useStore() // Access the createPrescriptionWithMedicines method from your store
+  
   const handleAddMedicine = () => {
-    setMedicines([...medicines, { medicineName: '', dosage: '', quantity: '', notes: '' }]);
+    setMedicines([...medicines, { name: '', dosage: '', quantity: '', notes: '' }]);
   };
 
   const handleMedicineChange = (index, event) => {
@@ -20,10 +22,9 @@ const AddPrescriptionModal = ({ visible, onClose }) => {
     setMedicines(updatedMedicines);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission here, e.g., send the prescription data to an API
-    console.log(medicines);
+    createPrescription(id, medicines);// Pass the medicines array along with the appointment ID
   };
 
   if (!visible) return null;
@@ -63,12 +64,12 @@ const AddPrescriptionModal = ({ visible, onClose }) => {
                   {/* Group inputs horizontally */}
                   <div className="flex">
                     <div className="w-1/4 pr-4">
-                      <label htmlFor={`medicineName-${index}`}>Medicine Name</label>
+                      <label htmlFor={`name-${index}`}>Medicine Name</label>
                       <input
                         type="text"
-                        id={`medicineName-${index}`}
-                        name="medicineName"
-                        value={medicine.medicineName}
+                        id={`name-${index}`}
+                        name="name"
+                        value={medicine.name}
                         onChange={(event) => handleMedicineChange(index, event)}
                         className="w-full p-2 border border-gray-300 rounded"
                       />
@@ -87,7 +88,7 @@ const AddPrescriptionModal = ({ visible, onClose }) => {
                     <div className="w-1/4 pr-4">
                       <label htmlFor={`quantity-${index}`}>Quantity</label>
                       <input
-                        type="text"
+                        type="number"
                         id={`quantity-${index}`}
                         name="quantity"
                         value={medicine.quantity}

@@ -211,7 +211,7 @@ const DocSchedule = () => {
                   <td className="p-2" key={`consultation-${appointment._id}`}>
                     {consultationAppointments.map((consultationAppt) => {
                       if (consultationAppt._id === appointment._id) {
-                        const currentAppointmentId = appointment._id;
+                        
                         
                         return (
                           <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
@@ -235,6 +235,14 @@ const DocSchedule = () => {
                               >
                                 D
                               </button>
+                              <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
+                                onClick={() => {
+                                  setSelectedAppointmentId(appointment._id);
+                                  setShowAddPrescriptionModal(true)}}
+                              >
+                                P
+                              </button>
                               <Diagnose
                                 id={selectedAppointmentId}
                                 visible={showDiagnose}
@@ -242,6 +250,14 @@ const DocSchedule = () => {
                                   setSelectedAppointmentId(null);
                                   setShowDiagnose(false)}
                                 }
+                              />
+                              <AddPrescriptionModal
+                              id={selectedAppointmentId}
+                              visible={showAddPrescriptionModal}
+                              onClose={() => {
+                                setSelectedAppointmentId(null)
+                                setShowAddPrescriptionModal(false)
+                              }}
                               />
                             </div>
                           </div>

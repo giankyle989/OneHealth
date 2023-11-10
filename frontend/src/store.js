@@ -17,7 +17,7 @@ export const useStore = create((set) => ({
         );
 
         const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate()); // Tomorrow's date
+        tomorrow.setDate(tomorrow.getDate() - 1); // Tomorrow's date
 
         const tomorrowAppointments = sortedAppointments.filter((appointment) => {
           const appointmentDate = new Date(appointment.appointmentDateTime);
@@ -55,6 +55,20 @@ export const useStore = create((set) => ({
         }));
       })
       .catch((err) => console.log(`Error: ${err}`));
-  }
+  },
+  createPrescription: async (id, medicines) => {
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/doctor/appointment/prescription/create", {
+        appointmentId: id,
+        medicines: medicines // Assuming 'medicines' is an array of objects containing medicine details
+      });
+      console.log("Prescription created:", response.data);
+      // Handle any state update or other actions after successfully creating the prescription
+    } catch (error) {
+      console.error("Error creating prescription:", error);
+      // Handle error scenarios or inform the user accordingly
+    }
+ }
 
 }));

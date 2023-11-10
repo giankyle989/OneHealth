@@ -22,11 +22,13 @@ import CreateAppointment from './views/staff/appointment/CreateAppointment'
 import DoctorInformation from './views/staff/doctor/DoctorInformation'
 import CreatePatient from "./views/staff/patient/CreatePatient";
 import FindPatient from './views/staff/patient/FindPatient'
+import ViewPdf from "./views/ViewPdf";
 function App() {
   return (
   <>
     <Routes>
       {/**Visitor Routes */}
+      <Route path="/pdf" element={<ViewPdf/>}/>
       <Route path="/" element={<PatientHome/>}/>
       <Route path="/login" element={<PatientLogin/>}/>
       <Route path="/register" element={<PatientRegister/>}/>

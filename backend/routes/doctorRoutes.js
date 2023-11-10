@@ -2,19 +2,25 @@ const router = require("express").Router();
 const {  updateAppointment, doctorGetAppointments, addDiagnosis } = require("../controllers/appointmentController");
 const { createAvailability, getAvailability, deleteAvailability } = require("../controllers/availabilityController");
 const { loginDoctor, logoutDoctor, getDoctorByDepartment, } = require("../controllers/doctorController");
+const { createMedicine } = require("../controllers/medicineController");
+const { createPrescription } = require("../controllers/prescriptionController");
 const {protect} = require('../middlewares/authMiddleware');
 const Doctor = require("../models/doctor.model");
 
-
+//Department Route
 router.get('/department/:id', getDoctorByDepartment)
 
+//Auth Routes
 router.post('/login', loginDoctor)
 router.post('/logout', logoutDoctor)
 
+//Appointment Routes
 router.get('/appointment/get', protect(Doctor), doctorGetAppointments )
 router.put('/appointment/diagnosis/:id', addDiagnosis)
 router.put('/appointment/:id', updateAppointment )
+router.post('/appointment/prescription/create', createPrescription)
 
+//Availability Route
 router.get('/availability/:id',getAvailability)
 router.post('/availability/create', protect(Doctor),createAvailability)
 router.delete('/availability/:id', protect(Doctor),deleteAvailability)
