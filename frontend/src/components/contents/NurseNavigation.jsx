@@ -1,35 +1,31 @@
-import React, { useState } from "react";
-
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 const NurseNavigation = () => {
-  const [showAppointmentsMenu, setShowAppointmentsMenu] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleAppointmentsMenu = () => {
-    setShowAppointmentsMenu(!showAppointmentsMenu);
+  const handleLogout = async () => {
+    axios.post('http://localhost:5000/api/nurse/logout', null)
+          .then((res) => {
+            localStorage.removeItem("token")
+            navigate('/hospital/auth/login')
+          })
+          .catch((err) => console.log("Error: " + err))
   };
+
+  // Check if the token exists in local storage
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token; // Convert token to a boolean value
 
   return (
     <>
-      <li className="py-4">
-        <a href="#" onClick={toggleAppointmentsMenu}>
-          Appointments
-          {showAppointmentsMenu ? " ▲" : " ▼"}
-        </a>
-        {showAppointmentsMenu && (
-          <ul>
-            <li>
-              <a className="text-base" href="/nurse">
-                - Requests
-              </a>
-            </li>
-            <li>
-              <a className="text-base" href="/nurse/schedule">
-                - Schedule
-              </a>
-            </li>
-          </ul>
+      <li className="">
+        {isLoggedIn ? (
+          <button onClick={handleLogout}>Logout</button>
+        ) : (
+          <Link to="/hospital/auth/login">Login</Link>
         )}
       </li>
-      <li className='underline'><a href="#">Logout</a></li>
     </>
   );
 };

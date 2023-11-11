@@ -5,16 +5,13 @@ import AddPrescriptionModal from "../../components/modals/AddPrescriptionModal";
 import Diagnose from "../../components/modals/Diagnose";
 import {GrLinkNext} from 'react-icons/gr'
 
-const DocSchedule = () => {
-  const [userRole, setUserRole] = useState("doctor");
+const NurseSchedule = () => {
+  const [userRole, setUserRole] = useState("nurse");
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [showDiagnose, setShowDiagnose] = useState(false);
   const handleClose = () => setShowDiagnose(false);
-  const [showAddPrescriptionModal, setShowAddPrescriptionModal] =
-    useState(false);
-  const handleOnClose = () => setShowAddPrescriptionModal(false);
-
-  const { appointments, getTodaysAppointments, updateAppointmentStatus } =
+    const today = new Date()
+  const { appointments, getAllTodaysAppointments, updateAppointmentStatus } =
     useStore();
 
   useEffect(() => {
@@ -22,7 +19,7 @@ const DocSchedule = () => {
     const tokenObject = JSON.parse(localStorage.getItem("token"));
     const token = tokenObject.token;
     // Fetch appointments and update the store
-    getTodaysAppointments(token);
+    getAllTodaysAppointments(token);
   }, []);
 
   const handleUpdate = (id, currentStatus) => {
@@ -68,15 +65,16 @@ const DocSchedule = () => {
   const consultationAppointments = appointments.filter(
     (appointment) => appointment.appt_status === "Consultation"
   );
-
+  
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar userRole={userRole} />
+      <Navbar userRole={userRole}/>
 
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-[#4867D6] text-center mb-4">
           Patient Status Dashboard
         </h1>
+
 
         <div className="flex justify-center mb-4">
           <input
@@ -93,6 +91,7 @@ const DocSchedule = () => {
           <thead className="bg-[#4867D6] text-white">
             <tr>
               <th className="py-4">Patient Name</th>
+              <th className="py-4">Doctor Name</th>
               <th className="py-4">Upcoming</th>
               <th className="py-4">Reception</th>
               <th className="py-4">Assessment</th>
@@ -110,6 +109,9 @@ const DocSchedule = () => {
                 <tr key={appointment._id} className="text-center">
                   <td className="p-2">
                     {appointment.patientFirstName} {appointment.patientLastName}
+                  </td>
+                  <td className="p-2">
+                    {appointment.doctorId.firstName} {appointment.doctorId.lastName}
                   </td>
 
                   <td className="p-2" key={`upcoming-${appointment._id}`}>
@@ -218,47 +220,13 @@ const DocSchedule = () => {
                             </span>
                             <div>
                               <button
-                                className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
-                                onClick={() => {
-                                  setSelectedAppointmentId(appointment._id);
-                                  setShowDiagnose(true);
-                                }}
-                              >
-                                D
-                              </button>
-                              <button
-                                className="bg-blue-500 text-white px-3 py-1 rounded-md mr-4"
-                                onClick={() => {
-                                  setSelectedAppointmentId(appointment._id);
-                                  setShowAddPrescriptionModal(true);
-                                }}
-                              >
-                                P
-                              </button>
-                              <button
-                                
+                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
                                 onClick={() =>
                                   handleUpdate(appointment._id, "Consultation")
                                 }
                               >
-                                <GrLinkNext/>
+                                Update
                               </button>
-                              <Diagnose
-                                id={selectedAppointmentId}
-                                visible={showDiagnose}
-                                onClose={() => {
-                                  setSelectedAppointmentId(null);
-                                  setShowDiagnose(false);
-                                }}
-                              />
-                              <AddPrescriptionModal
-                                id={selectedAppointmentId}
-                                visible={showAddPrescriptionModal}
-                                onClose={() => {
-                                  setSelectedAppointmentId(null);
-                                  setShowAddPrescriptionModal(false);
-                                }}
-                              />
                             </div>
                           </div>
                         );
@@ -277,4 +245,4 @@ const DocSchedule = () => {
   );
 };
 
-export default DocSchedule;
+export default NurseSchedule;

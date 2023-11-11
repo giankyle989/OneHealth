@@ -1,13 +1,23 @@
 const asyncHandler = require("express-async-handler");
 const Appointment = require("../models/appointment.model");
 const Patient = require('../models/patientModel')
+const { DateTime } = require('luxon');
 
+const getAllTodaysAppointment = asyncHandler(async (req, res) => {
+  // Get today's date in Singapore time zone
+  const todayInSingapore = DateTime.now().setZone('Asia/Singapore');
+  const startOfToday = todayInSingapore.startOf('day');
+  const endOfToday = todayInSingapore.endOf('day');
 
-const getAllAppointment = asyncHandler(async (req, res) => {
-  Appointment.find()
-  .then((appointment) => res.json(appointment))
-  .catch((err) => res.status(400).json("Error: " + err))
-})
+  Appointment.find({
+    appointmentDateTime: {
+      $gte: startOfToday.toJSDate(),
+      $lt: endOfToday.toJSDate()
+    }
+  }).populate('doctorId')
+    .then((appointments) => res.json(appointments))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
 const getAppointment = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({patientId:req.user.id}).populate({
@@ -22,6 +32,21 @@ const getAppointment = asyncHandler(async (req, res) => {
       return res.status(200).json("No Appointments");
     }
     res.json(appointments);
+  } catch (err) {
+    res.status(400).json("Error: " + err);
+  }
+});
+const getAppointmentById = asyncHandler(async (req, res) => {
+  try {
+    const appointmentId = req.params.appointmentId; // Assuming the ID is in the request parameters
+    const appointment = await Appointment.findById(appointmentId).populate('doctorId').populate('prescription').populate('patientId')
+
+
+    if (!appointment) {
+      return res.status(404).json("Appointment not found");
+    }
+
+    res.json(appointment);
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
@@ -160,11 +185,12 @@ const addDiagnosis = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-  getAllAppointment,
+  getAllTodaysAppointment,
   getAppointment,
   createAppointment,
   updateAppointment,
   doctorGetAppointments,
   createAppointmentByReceptionist,
-  addDiagnosis
+  addDiagnosis,
+  getAppointmentById
 };

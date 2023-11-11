@@ -36,7 +36,7 @@ const DocHistory = () => {
       <div>
         <div className="bg-white p-4">
           <div>
-            <h1 className="text-center text-2xl font-bold">Appointment History</h1>
+            <h1 className="text-center text-2xl text-[#4867D6] font-bold">Appointment History</h1>
           </div>
           <div className="mt-4">
             <div className="mt-2 text-center overflow-x-auto">

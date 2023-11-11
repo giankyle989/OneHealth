@@ -96,7 +96,7 @@ const ManageSchedule = () => {
       <Navbar userRole={userRole}/>
       <div className="bg-white h-screen p-4">
         <div>
-          <h1 className="text-center text-2xl font-bold">
+          <h1 className="text-center text-2xl text-[#4867D6] font-bold">
             Manage Availability
           </h1>
         </div>

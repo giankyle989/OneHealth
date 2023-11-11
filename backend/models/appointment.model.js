@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
@@ -13,6 +14,10 @@ const appointmentSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "doctor",
       required: true,
+    },
+    prescription: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "prescription",
     },
     patientFirstName: { 
       type: String,

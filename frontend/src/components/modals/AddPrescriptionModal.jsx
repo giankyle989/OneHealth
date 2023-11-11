@@ -25,6 +25,7 @@ const AddPrescriptionModal = ({ visible, onClose, id }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     createPrescription(id, medicines);// Pass the medicines array along with the appointment ID
+    onClose()
   };
 
   if (!visible) return null;
@@ -89,6 +90,7 @@ const AddPrescriptionModal = ({ visible, onClose, id }) => {
                       <label htmlFor={`quantity-${index}`}>Quantity</label>
                       <input
                         type="number"
+                        step={1}
                         id={`quantity-${index}`}
                         name="quantity"
                         value={medicine.quantity}

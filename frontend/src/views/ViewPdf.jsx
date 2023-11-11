@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   PDFViewer,
   Document,
@@ -8,6 +8,8 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import Rx from "../assets/Rx.png";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 const styles = {
   container: {
@@ -41,122 +43,189 @@ const styles = {
 };
 
 const ViewPdf = () => {
+  // Retrieve the appointment ID from react-router's location state
+  const location = useLocation();
+  const appointmentId = location.state.appointmentId;
+
+  // State to store appointment data
+  const [appointmentData, setAppointmentData] = useState(null);
+
+  useEffect(() => {
+    // Fetch the appointment data using the appointment ID
+    axios
+      .get(`http://localhost:5000/api/patient/appointment/${appointmentId}`)
+      .then((res) => {
+        // Set the appointment data in the state
+        setAppointmentData(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, [appointmentId]);
+
+  const calculateAge = (birthday) => {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const options = { month: "long", day: "numeric", year: "numeric" };
+    return date.toLocaleDateString("en-US", options);
+  };
+
   return (
     <div style={styles.container}>
-      <PDFViewer style={{ width: "100%", height: "100%" }}>
-        <Document>
-          <Page size="A4">
-            <View style={styles.content}>
-              <View style={styles.header}>
-                <Text style={{ fontSize: 32, marginBottom: 10 }}>
-                  One Cainta Hospital
-                </Text>
-                <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                  PhilHealth Accredited Level-1 Hospital
-                </Text>
-                <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                  Municipal Compound, Brgy. Sto. Domingo, Cainta, Rizal
-                </Text>
-                <Text style={{ fontSize: 12, marginBottom: 10 }}>
-                  8696-26-04 to 05
-                </Text>
-              </View>
-
-              <View style={{ marginTop: 10, borderTop: 10 }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-end",
-                    marginBottom: 10,
-                    marginTop: 10,
-                  }}
-                >
-                  <View style={{ width: "70%" }}>
-                    <Text style={{ fontSize: 16, marginBottom: 5 }}>
-                      Patient Name:{" "}
-                    </Text>
-                    <Text style={{ fontSize: 16 }}>Sex: </Text>
-                  </View>
-                  <View style={{ width: "30%" }}>
-                    <Text style={{ fontSize: 16, marginBottom: 5 }}>Age: </Text>
-                    <Text style={{ fontSize: 16 }}>Date: </Text>
-                  </View>
+      {appointmentData && (
+        <PDFViewer style={{ width: "100%", height: "100%" }}>
+          <Document>
+            <Page size="A4">
+              <View style={styles.content}>
+                <View style={styles.header}>
+                  <Text style={{ fontSize: 32, marginBottom: 10 }}>
+                    One Cainta Hospital
+                  </Text>
+                  <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                    PhilHealth Accredited Level-1 Hospital
+                  </Text>
+                  <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                    Municipal Compound, Brgy. Sto. Domingo, Cainta, Rizal
+                  </Text>
+                  <Text style={{ fontSize: 12, marginBottom: 10 }}>
+                    8696-26-04 to 05
+                  </Text>
                 </View>
 
-                <View style={styles.medicineSection}>
-                  <Image style={{ width: 100 }} src={Rx} />
-
+                <View style={{ marginTop: 10, borderTop: 10 }}>
                   <View
                     style={{
                       flexDirection: "row",
-                      textAlign: "center",
-                      marginLeft: 20,
+                      justifyContent: "flex-end",
+                      marginBottom: 10,
+                      marginTop: 10,
                     }}
                   >
+                    <View style={{ width: "70%" }}>
+                      <Text style={{ fontSize: 16, marginBottom: 5 }}>
+                        Patient Name: {appointmentData.patientFirstName}{" "}
+                        {appointmentData.patientLastName}
+                      </Text>
+                      <Text style={{ fontSize: 16 }}>
+                        Date:{" "}
+                        {formatDate(appointmentData.prescription.createdAt)}
+                      </Text>
+                    </View>
+                    <View style={{ width: "30%" }}>
+                      <Text style={{ fontSize: 16, marginBottom: 5 }}>
+                        Age: {calculateAge(appointmentData.patientId.birthday)}
+                      </Text>
+                      <Text style={{ fontSize: 16 }}>
+                        Sex: {appointmentData.patientId.sex}{" "}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.medicineSection}>
+                    <Image style={{ width: 100 }} src={Rx} />
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        marginBottom: 10,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{ flex: 1, fontSize: 16, fontWeight: "bold" }}
+                      >
+                        Medicine Name:
+                      </Text>
+                      <Text style={{ flex: 1, fontSize: 16 }}>Dosage:</Text>
+                      <Text style={{ flex: 1, fontSize: 16 }}>Quantity:</Text>
+                      <Text style={{ flex: 1, fontSize: 16 }}>Notes:</Text>
+                    </View>
+                    {appointmentData.prescription.medicines.map((medicine) => (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            marginBottom: 5,
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            width: 200,
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          {medicine.name}
+                        </Text>
+                        <Text
+                          style={{
+                            marginLeft: 10,
+                            fontSize: 16,
+                            width: 200,
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          {medicine.dosage}
+                        </Text>
+                        <Text
+                          style={{
+                            marginLeft: 10,
+                            fontSize: 16,
+                            width: 200,
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          {medicine.quantity}
+                        </Text>
+                        <Text
+                          style={{
+                            marginLeft: 10,
+                            fontSize: 16,
+                            width: 200,
+                            wordWrap: "break-word",
+                          }}
+                        >
+                          {medicine.notes}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+
+                  <View style={styles.footer}>
                     <Text
                       style={{
                         marginBottom: 5,
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: "bold",
-                        width: 200,
-                        wordWrap: "break-word",
                       }}
                     >
-                      Medicine
-                      Names
+                      {appointmentData.doctorId.firstName}{" "}
+                      {appointmentData.doctorId.lastName}, M.D.
                     </Text>
-                    <Text
-                      style={{
-                        marginLeft: 10,
-                        fontSize: 16,
-                        width: 200,
-                        wordWrap: "break-word",
-                      }}
-                    >
-                      Dosage
+                    <Text style={{ fontSize: 14 }}>
+                      Lic No.: {appointmentData.doctorId.licenseNumber}
                     </Text>
-                    <Text
-                      style={{
-                        marginLeft: 10,
-                        fontSize: 16,
-                        width: 200,
-                        wordWrap: "break-word",
-                      }}
-                    >
-                      Quantity
-                    </Text>
-                    <Text
-                      style={{
-                        marginLeft: 10,
-                        fontSize: 16,
-                        width: 200,
-                        wordWrap: "break-word",
-                      }}
-                    >
-                      Frequency
-                    </Text>
+                    <Text style={{ fontSize: 14 }}>PTR No.</Text>
+                    <Text style={{ fontSize: 14 }}>S2 No.</Text>
                   </View>
                 </View>
-
-                <View style={styles.footer}>
-                  <Text
-                    style={{
-                      marginBottom: 5,
-                      fontSize: 18,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Doctor's Name
-                  </Text>
-                  <Text style={{ fontSize: 14 }}>Lic No.</Text>
-                  <Text style={{ fontSize: 14 }}>PTR No.</Text>
-                  <Text style={{ fontSize: 14 }}>S2 No.</Text>
-                </View>
               </View>
-            </View>
-          </Page>
-        </Document>
-      </PDFViewer>
+            </Page>
+          </Document>
+        </PDFViewer>
+      )}
     </div>
   );
 };

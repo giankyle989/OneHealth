@@ -3,6 +3,8 @@ import axios from 'axios';
 
 export const useStore = create((set) => ({
   appointments: [],
+  
+  //Doctor Functions
   getTodaysAppointments: (token) => {
     axios
       .get("http://localhost:5000/api/doctor/appointment/get", {
@@ -17,7 +19,7 @@ export const useStore = create((set) => ({
         );
 
         const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() - 1); // Tomorrow's date
+        tomorrow.setDate(tomorrow.getDate()); // Tomorrow's date
 
         const tomorrowAppointments = sortedAppointments.filter((appointment) => {
           const appointmentDate = new Date(appointment.appointmentDateTime);
@@ -57,7 +59,6 @@ export const useStore = create((set) => ({
       .catch((err) => console.log(`Error: ${err}`));
   },
   createPrescription: async (id, medicines) => {
-
     try {
       const response = await axios.post("http://localhost:5000/api/doctor/appointment/prescription/create", {
         appointmentId: id,
@@ -69,6 +70,26 @@ export const useStore = create((set) => ({
       console.error("Error creating prescription:", error);
       // Handle error scenarios or inform the user accordingly
     }
- }
+ },
+
+ //Nurse Functions
+ getAllTodaysAppointments: (token) => {
+  axios
+    .get("http://localhost:5000/api/nurse/appointment/get", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      // Process your data as needed
+      const sortedAppointments = res.data.sort(
+        (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
+      );
+
+
+      set({ appointments: sortedAppointments });
+    })
+    .catch((err) => console.log(err));
+},
 
 }));

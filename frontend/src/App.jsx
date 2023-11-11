@@ -23,6 +23,7 @@ import DoctorInformation from './views/staff/doctor/DoctorInformation'
 import CreatePatient from "./views/staff/patient/CreatePatient";
 import FindPatient from './views/staff/patient/FindPatient'
 import ViewPdf from "./views/ViewPdf";
+import NurseSchedule from "./views/nurse/NurseSchedule";
 function App() {
   return (
   <>
@@ -58,6 +59,7 @@ function App() {
       
 
       {/**Nurse Routes */}
+      <Route path="/hospital/nurse/" element={<NurseSchedule/>} />
       
       {/**Receptionist Routes */}
       <Route path="/hospital/receptionist/appointment" element={<FindAppointment/>} />

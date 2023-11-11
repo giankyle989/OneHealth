@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PatientDashboard = () => {
   const [userRole, setUserRole] = useState("patient");
@@ -8,9 +9,7 @@ const PatientDashboard = () => {
 
   //Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
-
   //Get token string only
-
   const token = tokenObject.token;
   const username = tokenObject.name;
 
@@ -34,9 +33,19 @@ const PatientDashboard = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  // Initialize react-router's navigate function
+  const navigate = useNavigate();
+
+  // Function to handle opening the PDF in a new page
+  const openPdfPage = (appointmentId) => {
+    // Navigate to the PDF view page and pass appointment data via state
+    navigate("/pdf", { state: { appointmentId: appointmentId } });
+    
+  };
   return (
     <>
-      <Navbar userRole={userRole}/>
+      <Navbar userRole={userRole} />
       <header className="pt-14 max-w-xs mx-auto">
         <h1 className="text-2xl  font-semibold text-[#4867D6] pt-10 text-center">
           {username}'s Appointment
@@ -51,7 +60,7 @@ const PatientDashboard = () => {
                 <th className="py-6 px-6 bg-[#4867D6]">Time</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Patient's Name</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Appointment ID</th>
-                <th className="py-6 px-6 bg-[#4867D6] ">Department</th>
+                <th className="py-6 px-6 bg-[#4867D6]">Department</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Doctor's Name</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Reason</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Diagnosis</th>
@@ -97,7 +106,14 @@ const PatientDashboard = () => {
                     <td className="py-3 px-6">{appointment.reason}</td>
                     <td className="py-3 px-6">{appointment.diagnosis}</td>
                     <td className="py-3 px-6">{appointment.appt_status}</td>
-                    <td className="py-3 px-6">Action | Action</td>
+                    <td className="py-3 px-6">
+                      <button
+                        className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
+                        onClick={() => openPdfPage(appointment._id)}
+                      >
+                        View PDF here
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}

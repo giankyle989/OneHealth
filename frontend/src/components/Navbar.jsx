@@ -4,9 +4,10 @@ import axios from "axios";
 import logo from "../assets/OneHealthPNG.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai";
-import { BsCaretDownFill } from "react-icons/bs";
+
 import PatientNavigation from "./contents/PatientNavigation";
 import DoctorNavigation from "./contents/DoctorNavigation";
+import NurseNavigation from "./contents/NurseNavigation";
 
 const Navbar = ({ userRole }) => {
   const [open, setOpen] = useState(false);
@@ -50,6 +51,7 @@ const Navbar = ({ userRole }) => {
         <ul className="hidden md:flex md:justify-end gap-x-4 font-semibold">
           {userRole === 'patient' && <PatientNavigation/>}
           {userRole === 'doctor' && <DoctorNavigation/>}
+          {userRole === 'nurse' && <NurseNavigation/>}
         </ul>
       </div>
 

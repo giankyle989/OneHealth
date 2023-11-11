@@ -1,4 +1,4 @@
-const { getAppointment, createAppointment } = require("../controllers/appointmentController");
+const { getAppointment, createAppointment, getAppointmentById } = require("../controllers/appointmentController");
 const { getPatient, registerPatient, loginPatient, logoutPatient } = require("../controllers/patientController");
 const { protect } = require("../middlewares/authMiddleware");
 const PatientModel = require("../models/patientModel");
@@ -12,6 +12,7 @@ router.post('/logout', logoutPatient)
 
 
 router.get('/appointment/get',protect(PatientModel) ,getAppointment )
+router.get('/appointment/:appointmentId', getAppointmentById )
 router.post('/appointment/create', protect(PatientModel),createAppointment )
 
 module.exports = router;
