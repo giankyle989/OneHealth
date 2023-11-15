@@ -5,6 +5,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./datepicker.css";
 import { setMinutes, setHours } from "date-fns";
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const PatientCreateAppointment = () => {
   const [userRole, setUserRole] = useState("patient");
@@ -25,6 +27,16 @@ const PatientCreateAppointment = () => {
     setHours(setMinutes(new Date(), 0), 8)
   );
   const [errorMessage, setErrorMessage] = useState("");
+
+  const notify = () => {
+
+    toast.success("Booked Successfully !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 4500,
+    });
+
+  };
+
   const tokenObject = JSON.parse(localStorage.getItem("token"));
 
   const token = tokenObject.token;
@@ -139,16 +151,23 @@ const PatientCreateAppointment = () => {
         setMobileNumber("");
         setSelectedDoctor("");
         setAppointmentDateTime("");
-        // console.log(appointment);
-        window.location = "/";
+        notify()
+
+        setTimeout(() => {
+          window.location = "/";
+        }, 5000);
+        
       })
       .catch((err) => console.log("Error: " + err));
   };
+
+
 
   return (
     <>
       <Navbar userRole={userRole}/>
       <div className="flex justify-center items-center ">
+        <ToastContainer/>
         <div className=" p-6 md:w-4/5">
           <h1 className="text-3xl font-semibold mb-4 text-center text-[#4867D6]">
             Book an Appointment

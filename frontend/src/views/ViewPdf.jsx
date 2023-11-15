@@ -114,7 +114,6 @@ const ViewPdf = () => {
                       marginTop: 10,
                     }}
                   >
-                    <View style={{ width: "70%" }}>
                       <Text style={{ fontSize: 16, marginBottom: 5 }}>
                         Patient Name: {appointmentData.patientFirstName}{" "}
                         {appointmentData.patientLastName}
@@ -123,15 +122,6 @@ const ViewPdf = () => {
                         Date:{" "}
                         {formatDate(appointmentData.prescription.createdAt)}
                       </Text>
-                    </View>
-                    <View style={{ width: "30%" }}>
-                      <Text style={{ fontSize: 16, marginBottom: 5 }}>
-                        Age: {calculateAge(appointmentData.patientId.birthday)}
-                      </Text>
-                      <Text style={{ fontSize: 16 }}>
-                        Sex: {appointmentData.patientId.sex}{" "}
-                      </Text>
-                    </View>
                   </View>
 
                   <View style={styles.medicineSection}>

@@ -13,7 +13,7 @@ export const useStore = create((set) => ({
         },
       })
       .then((res) => {
-        // Process your data as needed
+        
         const sortedAppointments = res.data.sort(
           (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
         );
@@ -93,3 +93,21 @@ export const useStore = create((set) => ({
 },
 
 }));
+
+
+export const usePatientStore = create((set) => ({
+  appointments:[],
+  getAppointments: (token) => {
+    return axios
+      .get("http://localhost:5000/api/patient/appointment/get", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.log(err);
+        throw err; // Rethrow the error to be caught in the useEffect
+      });
+  },
+}))

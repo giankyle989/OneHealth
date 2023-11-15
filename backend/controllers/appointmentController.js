@@ -1,8 +1,11 @@
 const asyncHandler = require("express-async-handler");
 const Appointment = require("../models/appointment.model");
-const Patient = require('../models/patientModel')
 const { DateTime } = require('luxon');
+const nodemailer = require('nodemailer')
 
+
+
+//Nurse get appointments
 const getAllTodaysAppointment = asyncHandler(async (req, res) => {
   // Get today's date in Singapore time zone
   const todayInSingapore = DateTime.now().setZone('Asia/Singapore');
@@ -18,9 +21,13 @@ const getAllTodaysAppointment = asyncHandler(async (req, res) => {
     .then((appointments) => res.json(appointments))
     .catch((err) => res.status(400).json("Error: " + err));
 });
+
+//Patient get appointments
 const getAppointment = asyncHandler(async (req, res) => {
   try {
-    const appointments = await Appointment.find({patientId:req.user.id}).populate({
+    const appointments = await Appointment.find({patientId:req.user.id})
+    .sort({appointmentDateTime: -1}) //Sort appointment
+    .populate({
       path: "doctorId",
       select: "firstName lastName  dept_id ",
       populate: {
@@ -36,6 +43,7 @@ const getAppointment = asyncHandler(async (req, res) => {
     res.status(400).json("Error: " + err);
   }
 });
+
 const getAppointmentById = asyncHandler(async (req, res) => {
   try {
     const appointmentId = req.params.appointmentId; // Assuming the ID is in the request parameters
@@ -52,6 +60,7 @@ const getAppointmentById = asyncHandler(async (req, res) => {
   }
 });
 
+//Doctor get appointments
 const doctorGetAppointments = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({ doctorId: req.user.id });
@@ -80,6 +89,13 @@ const createAppointment = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please fill all fields");
   }
+
+
+  // Convert appointmentDateTime to a Luxon DateTime object
+  let appointmentDate = DateTime.fromISO(appointmentDateTime, { zone: 'Asia/Singapore' });
+
+  const formattedAppointmentDate = appointmentDate.toFormat("MMMM dd, yyyy - t");
+
   const newAppointment = new Appointment({
     patientFirstName,
     patientLastName,
@@ -87,14 +103,17 @@ const createAppointment = asyncHandler(async (req, res) => {
     mobileNumber,
     patientId,
     doctorId,
-    appointmentDateTime,
+    appointmentDateTime: appointmentDate.toJSDate(),
     reason
   });
 
-
   newAppointment
     .save()
-    .then((appointment) => res.json("Created New Appointment"))
+    .then((appointment) => {
+      // Sending confirmation email after successfully booking the appointment
+      sendAppointmentConfirmationEmail(email, formattedAppointmentDate);
+      res.json("Created New Appointment");
+    })
     .catch((err) => res.status(400).json("Error :" + err));
 });
 
@@ -128,7 +147,9 @@ const createAppointmentByReceptionist = asyncHandler(async (req, res) => {
 
   newAppointment
     .save()
-    .then((appointment) => res.json("Created New Appointment"))
+    .then((appointment) => {
+      sendAppointmentConfirmationEmail(email, appointmentDate)
+      res.json("Created New Appointment")})
     .catch((err) => res.status(400).json("Error :" + err));
 });
 
@@ -194,3 +215,28 @@ module.exports = {
   addDiagnosis,
   getAppointmentById
 };
+
+
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: 'onehealth.cainta@gmail.com',
+    pass: 'iwpn cghe zpua sjyz'
+  }
+});
+
+async function sendAppointmentConfirmationEmail(email, formattedAppointmentDate) {
+  // Send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: '"One Health Cainta" <onehealth.cainta@gmail.com>',
+    to: email,
+    subject: 'Appointment Confirmation',
+    text: `Dear Patient,\n\nYour appointment has been booked for the following date and time: ${formattedAppointmentDate}.\n\nThank you for choosing our clinic.\n\nSincerely,\nOne Health Cainta Team`,
+    html: `<p>Dear Patient,</p><p>Your appointment has been booked for the following date and time: ${formattedAppointmentDate}.</p><p>Thank you for choosing our clinic.</p><p>Sincerely,<br>One Health Cainta Team</p>`
+  });
+
+  console.log("Message sent: %s", info.messageId);
+}

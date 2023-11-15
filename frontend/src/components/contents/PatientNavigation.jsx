@@ -46,7 +46,7 @@ const PatientNavigation = () => {
                   Profile <BsCaretDownFill className=" inline-block align-middle" />
                 </Link>
                 {isDropdownOpen && (
-                  <ul className="absolute mt-2 p-2 bg-[#4867D6] shadow-lg rounded-md font-medium">
+                  <ul className="z-50 absolute mt-2 p-2 bg-[#4867D6] shadow-lg rounded-md font-medium">
                     <li className="my-4">
                       <Link to="/patient/profile">Update Profile</Link>
                     </li>

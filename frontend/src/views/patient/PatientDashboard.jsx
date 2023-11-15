@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import io from 'socket.io-client'; // Import Socket.IO client
+import { usePatientStore } from "../../store";
 
 const PatientDashboard = () => {
   const [userRole, setUserRole] = useState("patient");
-  const [appointments, setAppointments] = useState([]);
 
   //Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
@@ -13,25 +14,12 @@ const PatientDashboard = () => {
   const token = tokenObject.token;
   const username = tokenObject.name;
 
-  const headerToken = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  const {getAppointments, appointments} = usePatientStore()
+
+
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/patient/appointment/get", headerToken)
-      .then((res) => {
-        // Sort the appointments by appointmentDateTime
-        const sortedAppointments = res.data.sort(
-          (a, b) =>
-            new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
-        );
-
-        setAppointments(sortedAppointments);
-      })
-      .catch((err) => console.log(err));
+    getAppointments(token)
   }, []);
 
   // Initialize react-router's navigate function
@@ -111,7 +99,7 @@ const PatientDashboard = () => {
                         className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
                         onClick={() => openPdfPage(appointment._id)}
                       >
-                        View PDF here
+                        View Prescription
                       </button>
                     </td>
                   </tr>

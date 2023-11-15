@@ -10,6 +10,7 @@ const departmentRoutes = require('./routes/departmentRoutes')
 const nurseRoutes = require('./routes/nurseRoutes')
 const receptionistRoutes = require('./routes/receptionistRoutes')
 
+
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -34,6 +35,7 @@ app.use('/api/patient', patientRoutes)
 app.use('/api/department', departmentRoutes)
 app.use('/api/nurse', nurseRoutes)
 app.use('/api/receptionist', receptionistRoutes)
+
 
 app.listen(port, () => {
   console.log(`Server is running in port : ${port}`);

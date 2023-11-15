@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const Patient = require("../models/patientModel");
-
 const { generateToken } = require("../middlewares/generateToken");
 const AddressModel = require("../models/addressModel");
 
@@ -139,6 +138,43 @@ const createPatient = asyncHandler(async (req, res) => {
   res.status(201).json(patient);
 });
 
+//Update Patient
+const updatePatient = asyncHandler(async (req, res) => {
+  const loggedInPatient = await Patient.findById(req.user.id);
+
+  if (!loggedInPatient) {
+    res.status(401);
+    throw new Error("Patient not found");
+  }
+
+  const patientId = req.params.id;
+
+  try {
+    const patientToUpdate = await Patient.findById(patientId);
+
+    if (!patientToUpdate) {
+      res.status(404);
+      throw new Error("Patient data not found");
+    }
+
+    if (loggedInPatient.id !== patientId) {
+      res.status(401);
+      throw new Error("User not authorized");
+    }
+
+    const { firstName, lastName, email, mobileNumber } = req.body;
+
+    patientToUpdate.firstName = firstName;
+    patientToUpdate.lastName = lastName;
+    patientToUpdate.email = email;
+    patientToUpdate.mobileNumber = mobileNumber;
+
+    await patientToUpdate.save();
+    res.json("Record was updated");
+  } catch (err) {
+    res.status(400).json("Error: " + err.message);
+  }
+});
 //Login Patient
 const loginPatient = asyncHandler(async (req, res) => {
   const { email, mobileNumber, password } = req.body;
@@ -168,4 +204,4 @@ const logoutPatient = asyncHandler(async (req, res) => {
 });
 //Update Patient
 
-module.exports = { getPatient, registerPatient, loginPatient, logoutPatient, createPatient, searchPatient };
+module.exports = { getPatient, registerPatient, loginPatient, logoutPatient, createPatient, searchPatient, updatePatient };

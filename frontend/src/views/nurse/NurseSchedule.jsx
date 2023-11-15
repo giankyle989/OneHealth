@@ -194,6 +194,15 @@ const NurseSchedule = () => {
                             <span className="text-blue-700 font-semibold">
                               In Progress
                             </span>
+                            <div>
+                            <button
+                              className="bg-blue-500 text-white px-3 py-1 rounded-md mr-4"
+                              onClick={() =>
+                                handleUpdate(appointment._id, "Testing")
+                              }
+                            >
+                              Lab Result
+                            </button>
                             <button
                               className="bg-blue-500 text-white px-3 py-1 rounded-md"
                               onClick={() =>
@@ -202,6 +211,8 @@ const NurseSchedule = () => {
                             >
                               Update
                             </button>
+                            </div>
+                            
                           </div>
                         );
                       } else {
@@ -219,14 +230,6 @@ const NurseSchedule = () => {
                               In Progress
                             </span>
                             <div>
-                              <button
-                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
-                                onClick={() =>
-                                  handleUpdate(appointment._id, "Consultation")
-                                }
-                              >
-                                Update
-                              </button>
                             </div>
                           </div>
                         );
