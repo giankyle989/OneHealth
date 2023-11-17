@@ -4,7 +4,7 @@ const ReceptionistModel = require("../models/receptionistModel");
 const {protect} = require('../middlewares/authMiddleware');
 const {getDoctorByReceptionist} = require('../controllers/doctorController')
 const {createPatient, searchPatient} = require('../controllers/patientController');
-const { createAppointmentByReceptionist } = require("../controllers/appointmentController");
+const { createAppointmentByReceptionist, getAllTodaysAppointment } = require("../controllers/appointmentController");
 
 
 router.post('/login', loginReceptionist)
@@ -19,5 +19,6 @@ router.get('/patient/search', searchPatient)
 
 //For Appointment
 router.post('/appointment/create' ,createAppointmentByReceptionist)
+router.get('/appointment/get', getAllTodaysAppointment)
 
 module.exports = router;

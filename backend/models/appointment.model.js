@@ -19,6 +19,10 @@ const appointmentSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "prescription",
     },
+    labResult: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "labResult",
+    },
     patientFirstName: { 
       type: String,
       required: true,

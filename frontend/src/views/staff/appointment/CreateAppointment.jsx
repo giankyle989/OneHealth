@@ -7,7 +7,7 @@ import "../../patient/datepicker.css";
 import { setMinutes, setHours } from "date-fns";
 
 const CreateAppointment = () => {
-  const [userRole, setUserRole] = useState("staff");
+  const [userRole, setUserRole] = useState("receptionist");
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [doctors, setDoctors] = useState([]);

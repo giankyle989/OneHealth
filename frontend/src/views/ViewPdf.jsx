@@ -61,22 +61,6 @@ const ViewPdf = () => {
       .catch((err) => console.log(err));
   }, [appointmentId]);
 
-  const calculateAge = (birthday) => {
-    const today = new Date();
-    const birthDate = new Date(birthday);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
-  };
-
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const options = { month: "long", day: "numeric", year: "numeric" };
@@ -109,19 +93,17 @@ const ViewPdf = () => {
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "flex-end",
                       marginBottom: 10,
                       marginTop: 10,
                     }}
                   >
-                      <Text style={{ fontSize: 16, marginBottom: 5 }}>
-                        Patient Name: {appointmentData.patientFirstName}{" "}
-                        {appointmentData.patientLastName}
-                      </Text>
-                      <Text style={{ fontSize: 16 }}>
-                        Date:{" "}
-                        {formatDate(appointmentData.prescription.createdAt)}
-                      </Text>
+                    <Text style={{ fontSize: 16, marginBottom: 5, flex: 1 }}>
+                      Patient Name: {appointmentData.patientFirstName}{" "}
+                      {appointmentData.patientLastName}
+                    </Text>
+                    <Text style={{ fontSize: 16, flex: 1 }}>
+                      Date: {formatDate(appointmentData.prescription.createdAt)}
+                    </Text>
                   </View>
 
                   <View style={styles.medicineSection}>

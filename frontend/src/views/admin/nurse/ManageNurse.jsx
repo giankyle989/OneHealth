@@ -48,7 +48,7 @@ const ManageNurse = () => {
             <h2 className="ml-4">List of Nurses</h2>
             <table className="w-full border">
               <thead>
-                <tr className="bg-gray-100">
+                <tr className="bg-[#4867D6] text-white">
                   <th className="border p-2">Nurse ID</th>
                   <th className="border p-2">Nurse Name</th>
                   <th className="border p-2">Email</th>

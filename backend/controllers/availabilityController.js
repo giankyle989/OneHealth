@@ -4,8 +4,8 @@ const Doctor = require('../models/doctor.model')
 const moment = require('moment-timezone'); // Import moment-timezone
 
 const getAvailability = asyncHandler(async (req, res) => {
-  const doctorId = req.params.id;
-  Availability.find({ doctorId: doctorId })
+  
+  Availability.find({ doctorId: req.user.id })
     .then(availabilities => {
       res.json(availabilities);
     })

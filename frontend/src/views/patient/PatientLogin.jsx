@@ -62,7 +62,7 @@ const PatientLogin = () => {
           <button className="w-full border p-2 rounded-full text-white bg-[#4867D6]">
             Submit
           </button>
-        <p>Don't have an account? Register <a href="#" className="text-[#4867D6]"> here</a></p>
+        <p>Don't have an account? Register <a href="/register" className="text-[#4867D6]"> here</a></p>
         </form>
       </div>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../../components/Sidebar";
 import axios from "axios";
 const DoctorInformation = () => {
-  const [userRole, setUserRole] = useState("staff");
+  const [userRole, setUserRole] = useState("receptionist");
   const [doctors, setDoctors] = useState([]);
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   //Get token string only
@@ -35,7 +35,7 @@ const DoctorInformation = () => {
             <div className="p-4">
               <table className="w-full border">
                 <thead>
-                  <tr className="bg-gray-300">
+                  <tr className="bg-[#4867D6] text-white">
                     <th className="border p-2">Name</th>
                     <th className="border p-2">Department</th>
                     <th className="border p-2">Specialization</th>

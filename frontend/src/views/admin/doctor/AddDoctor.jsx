@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const AddDoctor = () => {
   const [userRole, setUserRole] = useState("admin");
@@ -20,6 +22,14 @@ const AddDoctor = () => {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  };
+  const notify = () => {
+
+    toast.success("Created Successfully !", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 4500,
+    });
+    console.log('Notify')
   };
 
   const handleSubmit = (e) => {
@@ -48,7 +58,11 @@ const AddDoctor = () => {
         setSpecialization("");
         setLicenseNumber("");
         setDepartmentName("");
-        window.location.reload()
+        notify()
+        
+        setTimeout(() => {
+          location.reload()
+        }, 5000);
       })
       .catch((err) => console.log("Error: " + err));
   };
@@ -64,6 +78,7 @@ const AddDoctor = () => {
   return (
     <>
       <div className="w-screen flex">
+      <ToastContainer/>
         <Sidebar userRole={userRole} />
         <div className="w-full">
           <h1 className="mt-8 font-bold text-center">Add New Doctor</h1>

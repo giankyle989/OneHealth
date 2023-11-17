@@ -45,6 +45,14 @@ const Department = () => {
           })
           .catch((err) => console.log(err))
   }
+
+  const handleUpdate = (id) => {
+    axios.delete(`http://localhost:5000/api/admin/department/${id}`, headerToken)
+          .then((res) => {
+            window.location.reload()
+          })
+          .catch((err) => console.log(err))
+  }
   return (
     <>
       <div className="flex w-screen">
@@ -57,12 +65,12 @@ const Department = () => {
             <form className="p-4 text-center mt-4" onSubmit={handleSubmit}>
               <label>Deparment Name:</label>
               <input
-                className="border-2 border-black ml-8"
+                className="p-2 border border-black ml-8"
                 type="text"
                 placeholder="Create new department"
                 onChange={(e) => setName(e.target.value)}
               />
-              <button className="p-2 bg-sky-500 ml-16 rounded-md text-white">
+              <button className="p-2 bg-[#4867D6] ml-16 rounded-md text-white">
                 Create
               </button>
             </form>
@@ -72,7 +80,7 @@ const Department = () => {
             <div className="p-4">
               <table className="w-full border">
                 <thead>
-                  <tr className="bg-gray-100">
+                  <tr className="bg-[#4867D6] text-white">
                     <th className="border p-2">Department ID</th>
                     <th className="border p-2">Department Name</th>
                     <th className="border p-2">Action</th>
@@ -89,9 +97,6 @@ const Department = () => {
                         <td className="border  text-center p-2">DEPT - {department._id}</td>
                         <td className="border  text-center p-2">{department.name}</td>
                         <td className="border  text-center p-2">
-                          <button className="px-4 py-2 bg-blue-500 text-white rounded mr-2">
-                            Edit
-                          </button>
                           <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleDelete(department._id)}>
                             Delete
                           </button>

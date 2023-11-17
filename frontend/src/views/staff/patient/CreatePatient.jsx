@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../../../components/Sidebar";
 import axios from 'axios'
 const CreatePatient = () => {
-  const [userRole, setUserRole] = useState('staff');
+  const [userRole, setUserRole] = useState("receptionist");
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')

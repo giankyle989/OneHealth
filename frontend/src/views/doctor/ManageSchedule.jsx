@@ -20,9 +20,23 @@ const ManageSchedule = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/doctor/availability/get", headerToken)
+      .get(`http://localhost:5000/api/doctor/availability/get`, headerToken)
       .then((res) => {
-        setEvents(res.data);
+        const adjustedEvents = res.data.map((event) => {
+          const adjustedStart = new Date(event.start);
+          adjustedStart.setHours(adjustedStart.getHours());
+  
+          const adjustedEnd = new Date(event.end);
+          adjustedEnd.setHours(adjustedEnd.getHours());
+  
+          return {
+            ...event,
+            start: adjustedStart.toISOString(),
+            end: adjustedEnd.toISOString(),
+          };
+        });
+  
+        setEvents(adjustedEvents);
       })
       .catch((err) => console.log("Error: " + err));
   }, []);
@@ -94,17 +108,15 @@ const ManageSchedule = () => {
   return (
     <div className="min-h-screen">
       <Navbar userRole={userRole}/>
-      <div className="bg-white h-screen p-4">
-        <div>
-          <h1 className="text-center text-2xl text-[#4867D6] font-bold">
+      <div className="bg-white h-screen w-full p-4 flex flex-col justify-center items-center">
+        <div className="w-2/3">
+        <h1 className="text-center text-2xl text-[#4867D6] font-bold mb-8">
             Manage Availability
           </h1>
-        </div>
-        <div className="">
           <FullCalendar
             plugins={[dayGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
-            weekends={false}
+           
             headerToolbar={{
               start: "",
               center: "title",
@@ -116,6 +128,7 @@ const ManageSchedule = () => {
             validRange={validDate}
             events={events}
             eventClick={handleEventClick}
+            height={650}
           />
         </div>
       </div>

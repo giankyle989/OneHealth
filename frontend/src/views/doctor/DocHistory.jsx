@@ -1,20 +1,38 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Navbar from "../../components/Navbar";
 import { useStore } from "../../store";
+import ViewPatientModal from "../../components/modals/ViewPatientModal";
 
 const DocHistory = () => {
   const [userRole, setUserRole] = useState("doctor");
-
-  const { appointments, getTodaysAppointments, updateAppointmentStatus } = useStore()
+  const [showViewPatient, setShowViewPatient] = useState(false);
+  const handleClose = () => setShowViewPatient(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const { appointments, getTodaysAppointments, getAllTimeAppointments } = useStore();
+  const [activeTab, setActiveTab] = useState("today");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     // Get token object
     const tokenObject = JSON.parse(localStorage.getItem("token"));
     const token = tokenObject.token;
     // Fetch appointments and update the store
-    getTodaysAppointments(token);
-  }, []);
+    if (activeTab === 'today'){
+      getTodaysAppointments(token);
+    } else {
+      getAllTimeAppointments(token);
+    }
+  }, [activeTab]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
+  const filteredAppointments = appointments.filter(
+    (appointment) =>
+      appointment.patientFirstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      appointment.appt_status.toLowerCase() === 'done'
+  );
 
   return (
     <div className="h-screen">
@@ -32,7 +50,21 @@ const DocHistory = () => {
                 type="text"
                 placeholder="Search by Patient Name"
                 className="my-4 p-4 border rounded"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
+              <div className="flex justify-center space-x-4">
+                <button className={`${
+                    activeTab === "today" ? "bg-[#4867D6] text-white" : ""
+                  } px-4 py-2 rounded border border-[#4867D6]`} onClick={() => handleTabChange("today")}>
+                  Today
+                </button>
+                <button className={`${
+                    activeTab === "allTime" ? "bg-[#4867D6] text-white" : ""
+                  } px-4 py-2 rounded border border-[#4867D6]`} onClick={() => handleTabChange("allTime")}>
+                  All Time
+                </button>
+              </div>
               <table className="w-full border-collapse border text-sm mx-auto">
                 <thead className="text-xs bg-grey-300 uppercase bg-gray-50">
                   <tr className="text-white text-center">
@@ -46,12 +78,12 @@ const DocHistory = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {appointments.length === 0 ? (
+                  {filteredAppointments.length === 0 ? (
                     <tr>
                       <td>No data</td>
                     </tr>
                   ) : (
-                    appointments.map((appointment) => (
+                    filteredAppointments.map((appointment) => (
                       <tr className="text-center" key={appointment._id}>
                         <td className="py-3 px-6">
                           {new Date(
@@ -71,9 +103,23 @@ const DocHistory = () => {
                         <td className="py-3 px-6">{appointment.diagnosis}</td>
                         <td className="py-3 px-6">{appointment.appt_status}</td>
                         <td className="py-3 px-6">
-                          <button className="px-4 py-2 bg-[#4867D6] text-white rounded mr-2">
+                          <button
+                            className="bg-[#4867D6] text-white px-3 py-1 rounded-md mr-4"
+                            onClick={() => {
+                              setSelectedAppointment(appointment);
+                              setShowViewPatient(true);
+                            }}
+                          >
                             View Patient
                           </button>
+                          <ViewPatientModal
+                            appointment={selectedAppointment}
+                            visible={showViewPatient}
+                            onClose={() => {
+                              setSelectedAppointment(null);
+                              setShowViewPatient(false);
+                            }}
+                          />
                         </td>
                       </tr>
                     ))

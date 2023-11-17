@@ -17,7 +17,14 @@ const getAllTodaysAppointment = asyncHandler(async (req, res) => {
       $gte: startOfToday.toJSDate(),
       $lt: endOfToday.toJSDate()
     }
-  }).populate('doctorId')
+  }).populate({
+    path: "doctorId",
+    select: "firstName lastName  dept_id ",
+    populate: {
+      path: "dept_id",
+      select: "name",
+    },
+  })
     .then((appointments) => res.json(appointments))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -63,7 +70,25 @@ const getAppointmentById = asyncHandler(async (req, res) => {
 //Doctor get appointments
 const doctorGetAppointments = asyncHandler(async (req, res) => {
   try {
-    const appointments = await Appointment.find({ doctorId: req.user.id });
+    const appointments = await Appointment.find({ doctorId: req.user.id }).populate('patientId');
+
+    if (appointments.length === 0) {
+      return res.status(200).json("No Appointments");
+    }
+
+    res.json(appointments);
+  } catch (err) {
+    res.status(400).json("Error: " + err);
+  }
+});
+
+const doctorGetAppointmentsWithPatient = asyncHandler(async (req, res) => {
+  try {
+    const doctorId = req.user.id;
+    const patientId = req.params.patientId; // Assuming the patientId is passed in the URL params
+
+    const appointments = await Appointment.find({ doctorId, patientId })
+                                          .populate('patientId');
 
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
@@ -213,7 +238,8 @@ module.exports = {
   doctorGetAppointments,
   createAppointmentByReceptionist,
   addDiagnosis,
-  getAppointmentById
+  getAppointmentById,
+  doctorGetAppointmentsWithPatient
 };
 
 

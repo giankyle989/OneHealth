@@ -3,7 +3,7 @@ import Axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 
 const FindPatient = () => {
-  const [userRole, setUserRole] = useState("staff");
+  const [userRole, setUserRole] = useState("receptionist");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);

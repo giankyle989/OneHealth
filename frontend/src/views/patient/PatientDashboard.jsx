@@ -17,7 +17,7 @@ const PatientDashboard = () => {
   const {getAppointments, appointments} = usePatientStore()
 
 
-
+  
   useEffect(() => {
     getAppointments(token)
   }, []);

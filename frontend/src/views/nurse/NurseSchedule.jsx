@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { useStore } from "../../store";
-import AddPrescriptionModal from "../../components/modals/AddPrescriptionModal";
-import Diagnose from "../../components/modals/Diagnose";
-import {GrLinkNext} from 'react-icons/gr'
+import UploadFile from "../../components/modals/UploadFile";
 
 const NurseSchedule = () => {
   const [userRole, setUserRole] = useState("nurse");
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
-  const [showDiagnose, setShowDiagnose] = useState(false);
-  const handleClose = () => setShowDiagnose(false);
-    const today = new Date()
+  const [showUpload, setShowUpload] = useState(false);
+  const handleClose = () => setShowUpload(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { appointments, getAllTodaysAppointments, updateAppointmentStatus } =
     useStore();
 
@@ -48,9 +47,7 @@ const NurseSchedule = () => {
     updateAppointmentStatus(id, nextStatus);
   };
 
-  const upcomingAppointments = appointments.filter(
-    (appointment) => appointment.appt_status === "Upcoming"
-  );
+
 
   const receptionAppointments = appointments.filter(
     (appointment) => appointment.appt_status === "Reception"
@@ -65,26 +62,30 @@ const NurseSchedule = () => {
   const consultationAppointments = appointments.filter(
     (appointment) => appointment.appt_status === "Consultation"
   );
-  
+
+  // Filter appointments based on search query and exclude appointments with status 'Done'
+const filteredAppointments = appointments.filter(appointment =>
+  appointment.patientFirstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+  appointment.appt_status !== "Done" && appointment.appt_status !== "Upcoming"
+);
+
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar userRole={userRole}/>
+      <Navbar userRole={userRole} />
 
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-[#4867D6] text-center mb-4">
-          Patient Status Dashboard
+          Patient Status Dashboard (Nurse)
         </h1>
-
 
         <div className="flex justify-center mb-4">
           <input
             type="text"
             placeholder="Search by Patient Name"
             className="px-4 py-2 border rounded"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <button className="px-4 py-2 bg-blue-500 text-white rounded ml-4">
-            Search
-          </button>
         </div>
 
         <table className="w-full border-collapse border">
@@ -92,7 +93,6 @@ const NurseSchedule = () => {
             <tr>
               <th className="py-4">Patient Name</th>
               <th className="py-4">Doctor Name</th>
-              <th className="py-4">Upcoming</th>
               <th className="py-4">Reception</th>
               <th className="py-4">Assessment</th>
               <th className="py-4">Testing</th>
@@ -100,43 +100,21 @@ const NurseSchedule = () => {
             </tr>
           </thead>
           <tbody>
-            {appointments.length === 0 ? (
+            {filteredAppointments.length === 0 ? (
               <tr>
                 <td>No Appointment for today</td>
               </tr>
             ) : (
-              appointments.map((appointment) => (
+              filteredAppointments.map((appointment) => (
                 <tr key={appointment._id} className="text-center">
                   <td className="p-2">
                     {appointment.patientFirstName} {appointment.patientLastName}
                   </td>
                   <td className="p-2">
-                    {appointment.doctorId.firstName} {appointment.doctorId.lastName}
+                    {appointment.doctorId.firstName}{" "}
+                    {appointment.doctorId.lastName}
                   </td>
 
-                  <td className="p-2" key={`upcoming-${appointment._id}`}>
-                    {upcomingAppointments.map((upcomingAppt) => {
-                      if (upcomingAppt._id === appointment._id) {
-                        return (
-                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
-                            <span className="text-blue-700 font-semibold">
-                              In Progress
-                            </span>
-                            <button
-                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
-                              onClick={() =>
-                                handleUpdate(appointment._id, "Upcoming")
-                              }
-                            >
-                              Update
-                            </button>
-                          </div>
-                        );
-                      } else {
-                        return null;
-                      }
-                    })}
-                  </td>
 
                   <td className="p-2" key={`reception-${appointment._id}`}>
                     {receptionAppointments.map((receptionAppt) => {
@@ -195,24 +173,32 @@ const NurseSchedule = () => {
                               In Progress
                             </span>
                             <div>
-                            <button
-                              className="bg-blue-500 text-white px-3 py-1 rounded-md mr-4"
-                              onClick={() =>
-                                handleUpdate(appointment._id, "Testing")
-                              }
-                            >
-                              Lab Result
-                            </button>
-                            <button
-                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
-                              onClick={() =>
-                                handleUpdate(appointment._id, "Testing")
-                              }
-                            >
-                              Update
-                            </button>
+                              <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded-md mr-4"
+                                onClick={() => {
+                                  setSelectedAppointmentId(appointment._id);
+                                  setShowUpload(true);
+                                }}
+                              >
+                                Lab Result
+                              </button>
+                              <button
+                                className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                                onClick={() =>
+                                  handleUpdate(appointment._id, "Testing")
+                                }
+                              >
+                                Update
+                              </button>
                             </div>
-                            
+                            <UploadFile
+                              id={selectedAppointmentId}
+                              visible={showUpload}
+                              onClose={() => {
+                                setSelectedAppointmentId(null);
+                                setShowUpload(false);
+                              }}
+                            />
                           </div>
                         );
                       } else {
@@ -229,8 +215,7 @@ const NurseSchedule = () => {
                             <span className="text-blue-700 font-semibold">
                               In Progress
                             </span>
-                            <div>
-                            </div>
+                            <div></div>
                           </div>
                         );
                       } else {

@@ -77,11 +77,10 @@ const PatientProfile = () => {
         setId(_id)
       })
       .catch((err) => console.log(err));
+
+      getAppointments(token);
   }, []);
 
-  useEffect(() => {
-    getAppointments(token);
-  }, []);
 
   const notify = () => {
 

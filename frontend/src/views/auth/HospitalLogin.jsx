@@ -1,73 +1,74 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const HospitalLogin = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState('Admin')
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("Admin");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-
-    
-    if (role === "Admin"){
-      axios.post("http://localhost:5000/api/admin/login", {email, password} )
-      .then((res) => {
-        localStorage.setItem("token", JSON.stringify(res.data));
-        console.log("Login Successfully as Admin")
-        navigate('/hospital/admin')
-      })
-      .catch((err) => console.log("Error: " + err))
+    if (role === "Admin") {
+      axios
+        .post("http://localhost:5000/api/admin/login", { email, password })
+        .then((res) => {
+          localStorage.setItem("token", JSON.stringify(res.data));
+          console.log("Login Successfully as Admin");
+          navigate("/hospital/admin");
+        })
+        .catch((err) => console.log("Error: " + err));
+    } else if (role === "Doctor") {
+      axios
+        .post("http://localhost:5000/api/doctor/login", { email, password })
+        .then((res) => {
+          localStorage.setItem("token", JSON.stringify(res.data));
+          console.log("Login Successfully as Doctor");
+          navigate("/hospital/doctor/");
+        })
+        .catch((err) => console.log("Error: " + err));
+    } else if (role === "Nurse") {
+      axios
+        .post("http://localhost:5000/api/nurse/login", { email, password })
+        .then((res) => {
+          localStorage.setItem("token", JSON.stringify(res.data));
+          console.log("Login Successfully as Nurse");
+          navigate("/hospital/nurse");
+        })
+        .catch((err) => console.log("Error: " + err));
+    } else if (role === "Staff") {
+      axios
+        .post("http://localhost:5000/api/receptionist/login", {
+          email,
+          password,
+        })
+        .then((res) => {
+          localStorage.setItem("token", JSON.stringify(res.data));
+          console.log("Login Successfully as Staff");
+          navigate("/hospital/receptionist/appointment");
+        })
+        .catch((err) => console.log("Error: " + err));
     }
-    else if (role === "Doctor"){
-      axios.post("http://localhost:5000/api/doctor/login", {email, password} )
-      .then((res) => {
-        localStorage.setItem("token", JSON.stringify(res.data));
-        console.log("Login Successfully as Doctor")
-        navigate('/hospital/doctor/')
-      })
-      .catch((err) => console.log("Error: " + err))
-    }
-    else if (role === "Nurse"){
-      axios.post('http://localhost:5000/api/nurse/login', {email, password})
-      .then((res) =>{
-        localStorage.setItem("token", JSON.stringify(res.data));
-        console.log("Login Successfully as Nurse")
-        navigate('/hospital/nurse')
-      })
-      .catch((err) => console.log('Error: '+ err))
-    }
-    else if (role === "Staff"){
-      axios.post('http://localhost:5000/api/receptionist/login', {email, password})
-            .then((res) =>{
-              localStorage.setItem("token", JSON.stringify(res.data));
-              console.log("Login Successfully as Staff")
-              navigate('/hospital/receptionist/appointment')
-            })
-            .catch((err) => console.log('Error: '+ err))
-    }
-
-
-
-  }
+  };
   return (
     <>
-          <div className="h-screen flex justify-center items-center">
+      <div className="h-screen flex justify-center items-center">
         <form
-          className="shadow-2xl p-8 space-y-4 rounded-lg bg-slate-200"
+          className="shadow-2xl p-8 space-y-4 rounded-lg bg-slate-200 w-[450px]"
           onSubmit={handleSubmit}
         >
-          <h1 className="text-center font-bold text-2xl text-[#4867d6]">Login</h1>
+          <h1 className="text-center font-bold text-2xl text-[#4867d6]">
+            Login
+          </h1>
           <div>
-            <label className="block ml-2">Email or Mobile Number</label>
+            <label className="block ml-2">Email</label>
             <input
               className="p-4 rounded-full text-sm mt-2 w-full"
               onChange={(e) => setEmail(e.target.value)}
               type="email"
-              placeholder="Enter your email or mobile number"
+              placeholder="Enter your email"
             />
           </div>
           <div>
@@ -91,17 +92,13 @@ const HospitalLogin = () => {
               <option value="Staff">Staff</option>
             </select>
           </div>
-          <div className="text-xs text-right font-light">
-          <a href="#" className="hover:text-slate-600">Forgot your password?</a>
-          </div>
           <button className="w-full border p-2 rounded-full text-white bg-[#4867D6]">
             Submit
           </button>
-        <p>Don't have an account? Register <a href="#" className="text-[#4867D6]"> here</a></p>
         </form>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default HospitalLogin
+export default HospitalLogin;

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 const StaffNavigation = () => {
   const [showPatientMenu, setShowPatientMenu] = useState(false);
   const [showAppointmentsMenu, setShowAppointmentsMenu] = useState(false);
 
-
+  const navigate = useNavigate()
+  
   const togglePatientMenu = () => {
     setShowPatientMenu(!showPatientMenu);
   };
@@ -16,7 +18,7 @@ const StaffNavigation = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/admin/logout",
+        "http://localhost:5000/api/receptionist/logout",
         null
       );
 

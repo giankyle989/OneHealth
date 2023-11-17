@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const {registerAdmin, loginAdmin, logoutAdmin, getAdmin} = require('../controllers/adminController');
-const { getDepartment, createDepartment, deleteDepartment } = require("../controllers/departmentController");
+const { getDepartment, createDepartment, deleteDepartment, updateDepartment } = require("../controllers/departmentController");
 const { getDoctor, registerDoctor, updateDoctor, deleteDoctor } = require("../controllers/doctorController");
 const { getNurse, registerNurse, deleteNurse, updateNurse } = require("../controllers/nurseController");
 const { getReceptionist, registerReceptionist, updateReceptionist, deleteReceptionist } = require("../controllers/receptionistController");
@@ -20,6 +20,7 @@ router.post('/logout', logoutAdmin)
 router.get('/department/get', protect(AdminModel), getDepartment)
 router.post('/department/create', protect(AdminModel), createDepartment)
 router.delete('/department/:id', protect(AdminModel), deleteDepartment)
+router.delete('/department/:id', protect(AdminModel), updateDepartment)
 
 //For Doctor
 router.get("/doctor/get", protect(AdminModel), getDoctor);

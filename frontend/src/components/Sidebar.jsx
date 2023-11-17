@@ -15,7 +15,7 @@ const Sidebar = ({ userRole }) => {
         <div>
           <ul className='text-2xl'>
           {userRole === 'admin' && <AdminNavigation />}
-          {userRole === 'staff' && <StaffNavigation />}
+          {userRole === 'receptionist' && <StaffNavigation />}
           {userRole === 'nurse' && <NurseNavigation />}
             </ul>
         </div>

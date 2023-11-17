@@ -34,6 +34,20 @@ export const useStore = create((set) => ({
       })
       .catch((err) => console.log(err));
   },
+  getAllTimeAppointments: (token) => {
+    axios
+      .get("http://localhost:5000/api/doctor/appointment/get", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        
+
+        set({ appointments: res.data });
+      })
+      .catch((err) => console.log(err));
+  },
   updateAppointmentStatus: (id, status, token) => {
     axios.put(`http://localhost:5000/api/doctor/appointment/${id}`, { status }, {
       headers: {
@@ -72,27 +86,67 @@ export const useStore = create((set) => ({
     }
  },
 
+
  //Nurse Functions
- getAllTodaysAppointments: (token) => {
-  axios
-    .get("http://localhost:5000/api/nurse/appointment/get", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      // Process your data as needed
-      const sortedAppointments = res.data.sort(
-        (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
-      );
+  getAllTodaysAppointments: (token) => {
+    axios
+      .get("http://localhost:5000/api/nurse/appointment/get", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        // Process your data as needed
+        const sortedAppointments = res.data.sort(
+          (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
+        );
 
 
-      set({ appointments: sortedAppointments });
-    })
-    .catch((err) => console.log(err));
-},
+        set({ appointments: sortedAppointments });
+      })
+      .catch((err) => console.log(err));
+  },
+
+
+  createLabResult: async (id, formData) => {
+    console.log(formData)
+    try {
+      const response = await axios.post(`http://localhost:5000/api/nurse/appointment/labresult/create/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      console.log('Lab Result created:', response.data);
+    } catch (error) {
+      console.error('Error creating lab result:', error);
+    }
+  },
+
 
 }));
+
+export const useReceptionistStore = create((set) =>({
+  appointments: [],
+  getAllTodaysAppointments: (token) => {
+    axios
+      .get("http://localhost:5000/api/receptionist/appointment/get", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        // Process your data as needed
+        const sortedAppointments = res.data.sort(
+          (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
+        );
+  
+  
+        set({ appointments: sortedAppointments });
+      })
+      .catch((err) => console.log(err));
+  },
+}))
 
 
 export const usePatientStore = create((set) => ({
@@ -104,7 +158,9 @@ export const usePatientStore = create((set) => ({
           Authorization: `Bearer ${token}`,
         },
       })
-      .then((res) => res.data)
+      .then((res) => {
+        set({ appointments: res.data})
+      })
       .catch((err) => {
         console.log(err);
         throw err; // Rethrow the error to be caught in the useEffect
