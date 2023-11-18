@@ -95,12 +95,14 @@ const PatientDashboard = () => {
                     <td className="py-3 px-6">{appointment.diagnosis}</td>
                     <td className="py-3 px-6">{appointment.appt_status}</td>
                     <td className="py-3 px-6">
-                      <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
-                        onClick={() => openPdfPage(appointment._id)}
-                      >
-                        View Prescription
-                      </button>
+                    {appointment.appt_status === "Done" && (
+                        <button
+                          className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
+                          onClick={() => openPdfPage(appointment._id)}
+                        >
+                          View Prescription
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))

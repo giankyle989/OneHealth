@@ -78,7 +78,7 @@ const CreateAppointment = () => {
           for (
             let date = startDate;
             date <= endDate;
-            date.setDate(date.getDate() + 1)
+            date.setDate(date.getDate())
           ) {
             dates.push(new Date(date)); // Create a new Date object to avoid reference issues
           }

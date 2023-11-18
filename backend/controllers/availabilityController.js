@@ -16,6 +16,23 @@ const getAvailability = asyncHandler(async (req, res) => {
 
 });
 
+const getAvailabilityByDoctorId = asyncHandler(async (req, res) => {
+  const doctorId = req.params.id; // Assuming the doctor's ID is in the route parameters
+
+  try {
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const availabilities = await Availability.find({ doctorId });
+    res.json(availabilities);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching doctor's availability", details: error.message });
+  }
+});
+
 const createAvailability = asyncHandler(async (req, res) => {
   const doctorId = req.user.id;
   const { title, start, end } = req.body;
@@ -68,4 +85,4 @@ const deleteAvailability = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = {getAvailability, createAvailability, deleteAvailability };
+module.exports = {getAvailability, createAvailability, deleteAvailability, getAvailabilityByDoctorId };

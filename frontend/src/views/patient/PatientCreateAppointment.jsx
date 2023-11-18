@@ -73,9 +73,9 @@ const PatientCreateAppointment = () => {
       axios
         .get(`http://localhost:5000/api/doctor/availability/${selectedDoctor}`)
         .then((res) => {
-          // console.log(selectedDoctor);
+          console.log(selectedDoctor);
           setAvailabilities(res.data);
-          // console.log(res.data);
+          console.log(res.data);
         });
     }
   }, [selectedDoctor]);
@@ -84,21 +84,23 @@ const PatientCreateAppointment = () => {
     if (availabilities.length > 0) {
       const validDateRange = availabilities
         .map((availability) => {
-          const startDate = new Date(availability.start); // Convert the start date to a Date object
-          const endDate = new Date(availability.end); // Convert the end date to a Date object
+          const startDate = new Date(availability.start);
+          const endDate = new Date(availability.end);
           const dates = [];
           for (
             let date = startDate;
             date <= endDate;
             date.setDate(date.getDate() + 1)
           ) {
-            dates.push(new Date(date)); // Create a new Date object to avoid reference issues
+            dates.push(new Date(date));
           }
           return dates;
         })
         .flat()
-        .filter((date) => date >= new Date()); // Filter out dates that are in the past
-
+        .filter((date) => date >= new Date());
+  
+      console.log("Available Dates:", validDateRange); // Add this line
+  
       setAvailableDates(validDateRange);
     }
   }, [availabilities]);

@@ -18,19 +18,9 @@ export const useStore = create((set) => ({
           (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
         );
 
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate()); // Tomorrow's date
 
-        const tomorrowAppointments = sortedAppointments.filter((appointment) => {
-          const appointmentDate = new Date(appointment.appointmentDateTime);
-          return (
-            appointmentDate.getDate() === tomorrow.getDate() &&
-            appointmentDate.getMonth() === tomorrow.getMonth() &&
-            appointmentDate.getFullYear() === tomorrow.getFullYear()
-          );
-        });
 
-        set({ appointments: tomorrowAppointments });
+        set({ appointments: sortedAppointments });
       })
       .catch((err) => console.log(err));
   },

@@ -127,7 +127,7 @@ const PatientProfile = () => {
                 <label className="font-semibold">First Name:</label>
                 <input
                   type="text"
-                  className="border border-black rounded-full text-sm px-4"
+                  className="border border-black rounded-full text-sm px-4 text-black"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
@@ -136,24 +136,24 @@ const PatientProfile = () => {
                 <label className="font-semibold">Last Name:</label>
                 <input
                   type="text"
-                  className="border border-black rounded-full text-sm px-4"
+                  className="border border-black rounded-full text-sm px-4 text-black"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-2 mb-8">
                 <label className="font-semibold">Sex:</label>
-                <p>{sex}</p>
+                <p className="text-black">{sex}</p>
               </div>
               <div className="grid grid-cols-2 mb-8">
                 <label className="font-semibold">Date of Birth:</label>
-                <p>{birthday}</p>
+                <p className="text-black">{birthday}</p>
               </div>
               <div className="grid grid-cols-2 mb-8">
                 <label className="font-semibold">Email:</label>
                 <input
                   type="text"
-                  className="border border-black rounded-full text-sm px-4"
+                  className="border border-black rounded-full text-sm px-4 text-black"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -162,7 +162,7 @@ const PatientProfile = () => {
                 <label className="font-semibold">Mobile Number:</label>
                 <input
                   type="text"
-                  className="border border-black rounded-full text-sm px-4"
+                  className="border border-black rounded-full text-sm px-4 text-black"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}
                 />
@@ -172,7 +172,7 @@ const PatientProfile = () => {
           </form>
         </section>
         <section className="h-full w-full bg-white shadow-lg rounded-lg border-2 p-8">
-          <div className="text-[#4867D6]">
+          <div className="">
             <FullCalendar
               plugins={[dayGridPlugin, interactionPlugin]}
               initialView="dayGridMonth"

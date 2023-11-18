@@ -7,19 +7,19 @@ const nodemailer = require('nodemailer')
 
 //Nurse get appointments
 const getAllTodaysAppointment = asyncHandler(async (req, res) => {
-  // Get today's date in Singapore time zone
-  const todayInSingapore = DateTime.now().setZone('Asia/Singapore');
-  const startOfToday = todayInSingapore.startOf('day');
-  const endOfToday = todayInSingapore.endOf('day');
+  // Get tomorrow's date in Singapore time zone
+  const tomorrowInSingapore = DateTime.now().setZone('Asia/Singapore').plus({ days: 1 });
+  const startOfTomorrow = tomorrowInSingapore.startOf('day');
+  const endOfTomorrow = tomorrowInSingapore.endOf('day');
 
   Appointment.find({
     appointmentDateTime: {
-      $gte: startOfToday.toJSDate(),
-      $lt: endOfToday.toJSDate()
+      $gte: startOfTomorrow.toJSDate(),
+      $lt: endOfTomorrow.toJSDate()
     }
   }).populate({
     path: "doctorId",
-    select: "firstName lastName  dept_id ",
+    select: "firstName lastName dept_id",
     populate: {
       path: "dept_id",
       select: "name",
