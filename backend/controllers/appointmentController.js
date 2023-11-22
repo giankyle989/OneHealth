@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer')
 //Nurse get appointments
 const getAllTodaysAppointment = asyncHandler(async (req, res) => {
   // Get tomorrow's date in Singapore time zone
-  const tomorrowInSingapore = DateTime.now().setZone('Asia/Singapore').plus({ days: 1 });
+  const tomorrowInSingapore = DateTime.now().setZone('Asia/Singapore')
   const startOfTomorrow = tomorrowInSingapore.startOf('day');
   const endOfTomorrow = tomorrowInSingapore.endOf('day');
 
@@ -41,7 +41,7 @@ const getAppointment = asyncHandler(async (req, res) => {
         path: "dept_id",
         select: "name",
       },
-    });
+    }).populate('diagnosis')
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
     }
@@ -207,9 +207,11 @@ const updateAppointment = asyncHandler(async (req, res) => {
   }
 });
 
+
+
 const addDiagnosis = asyncHandler(async (req, res) => {
   const appointmentId = req.params.id;
-  const { diagnosis } = req.body;
+  const  diagnosisId  = req.params.diagnosisId;
 
   try {
     const appointment = await Appointment.findById(appointmentId);
@@ -219,7 +221,7 @@ const addDiagnosis = asyncHandler(async (req, res) => {
     }
 
     // Update the appointment status
-    appointment.diagnosis = diagnosis;
+    appointment.diagnosis = diagnosisId;
 
     // Save the updated appointment
     await appointment.save();
@@ -228,7 +230,9 @@ const addDiagnosis = asyncHandler(async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
-})
+});
+
+
 
 module.exports = {
   getAllTodaysAppointment,
@@ -239,7 +243,7 @@ module.exports = {
   createAppointmentByReceptionist,
   addDiagnosis,
   getAppointmentById,
-  doctorGetAppointmentsWithPatient
+  doctorGetAppointmentsWithPatient,
 };
 
 

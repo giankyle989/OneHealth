@@ -50,7 +50,7 @@ const registerDoctor = asyncHandler(async (req, res) => {
   const department = await Department.findOne({ name: departmentName });
   if (!department) {
     res.status(400);
-    throw new Error("Department not found tangina");
+    throw new Error("Department not found");
   }
 
   //Create Doctor

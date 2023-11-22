@@ -11,7 +11,6 @@ const Department = () => {
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   //Get token string only
   const token = tokenObject.token;
-  const username = tokenObject.name;
   const headerToken = {
     headers: {
       Authorization: `Bearer ${token}`,

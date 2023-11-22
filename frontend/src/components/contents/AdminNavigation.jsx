@@ -44,6 +44,7 @@ const AdminNavigation = () => {
   return (
     <>
       <li className='py-4'><a href="/hospital/admin">Department</a></li>
+      <li className='py-4'><a href="/hospital/admin/diagnosis">Diagnosis List</a></li>
       <li className='py-4'>
         <a href="#" onClick={toggleDoctorMenu}>
           Doctor

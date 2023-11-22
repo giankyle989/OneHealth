@@ -61,8 +61,6 @@ const deleteDepartment = asyncHandler(async (req, res) => {
 
 
 
-
-
 //Update Department
 const updateDepartment = asyncHandler(async (req, res) => {
   const admin = await Admin.findById(req.user.id);

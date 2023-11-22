@@ -51,8 +51,8 @@ const appointmentSchema = new Schema(
       trim:true
     },
     diagnosis: { 
-      type: String,
-      trim:true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'diagnosis'
     },
     appt_status: {
       type: String,
@@ -65,6 +65,7 @@ const appointmentSchema = new Schema(
     timestamps: true,
   }
 );
+
 
 
 const AppointmentModel = mongoose.model("appointment", appointmentSchema);

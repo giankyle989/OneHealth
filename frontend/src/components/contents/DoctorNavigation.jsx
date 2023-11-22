@@ -6,12 +6,13 @@ const DoctorNavigation = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    axios.post('http://localhost:5000/api/doctor/logout', null)
-          .then((res) => {
-            localStorage.removeItem("token")
-            navigate('/hospital/auth/login')
-          })
-          .catch((err) => console.log("Error: " + err))
+    axios
+      .post("http://localhost:5000/api/doctor/logout", null)
+      .then((res) => {
+        localStorage.removeItem("token");
+        navigate("/hospital/auth/login");
+      })
+      .catch((err) => console.log("Error: " + err));
   };
 
   // Check if the token exists in local storage
@@ -21,15 +22,16 @@ const DoctorNavigation = () => {
   return (
     <>
       <li className="">
-        <Link to="/hospital/doctor">Visit Patient Status</Link>
+        <Link to="/hospital/doctor/">Dashboard</Link>
+      </li>
+      <li className="">
+        <Link to="/hospital/doctor/schedule">Visit Patient Status</Link>
       </li>
       <li className="">
         <Link to="/hospital/doctor/appointments">Appointment History</Link>
       </li>
       <li>
-        <Link to="/hospital/doctor/availability">
-          Availability
-        </Link>
+        <Link to="/hospital/doctor/availability">Availability</Link>
       </li>
       <li className="">
         {isLoggedIn ? (

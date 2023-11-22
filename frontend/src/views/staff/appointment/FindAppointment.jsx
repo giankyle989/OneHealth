@@ -58,13 +58,13 @@ const FindAppointment = () => {
               Appointments for today
             </h1>
             <div className="flex mt-4">
-              <input
+              {/* <input
                 type="text"
                 className="block px-4 py-2 text-sky-700 bg-white border rounded-full focus:border-sky-400 focus:ring-sky-300 focus:outline-none focus:ring focus:ring-opacity-40"
                 placeholder="Name"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              /> */}
             </div>
           </div>
           <div className="mt-32">

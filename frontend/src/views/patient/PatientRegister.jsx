@@ -42,7 +42,7 @@ const PatientRegister = () => {
     .post("http://localhost:5000/api/patient/register", {...payload})
     .then(() => {
       console.log("Register success")
-      navigate("/patient/login");
+      navigate("/login");
     })
     .catch((err) => console.log("Error: " + err));
   };

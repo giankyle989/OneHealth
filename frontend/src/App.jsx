@@ -24,6 +24,9 @@ import CreatePatient from "./views/staff/patient/CreatePatient";
 import FindPatient from './views/staff/patient/FindPatient'
 import ViewPdf from "./views/ViewPdf";
 import NurseSchedule from "./views/nurse/NurseSchedule";
+import DoctorDashboard from "./views/doctor/DoctorDashboard";
+import ReceptionistDashboard from "./views/staff/ReceptionistDashboard";
+import DianosisList from "./views/admin/diagnosis/DianosisList";
 function App() {
   return (
   <>
@@ -43,6 +46,7 @@ function App() {
       {/**Hospital Auth */}
       <Route path="/hospital/auth/login" element={<HospitalLogin/>}/>
       {/**Admin Routes */}
+      <Route path='/hospital/admin/diagnosis' element={<DianosisList/>}/>
       <Route path="/hospital/admin/announcement/add" element={<AddAnnouncement/>}/>
       <Route path="/hospital/admin/announcement/manage" element={<ManageAnnouncement/>}/>
       <Route path="/hospital/admin" element={<ManageDepartment/>}/>
@@ -53,7 +57,9 @@ function App() {
       <Route path="/hospital/admin/staff/manage" element={<ManageStaff/>}/>
 
       {/**Doctor Routes */}
-      <Route path="/hospital/doctor/" element={<DocSchedule/>}/>
+      
+      <Route path="/hospital/doctor" element={<DoctorDashboard/>}/>
+      <Route path="/hospital/doctor/schedule" element={<DocSchedule/>}/>
       <Route path="/hospital/doctor/appointments" element={<DocHistory/>} />
       <Route path="/hospital/doctor/availability" element={<ManageSchedule/>}/>
       
@@ -62,6 +68,7 @@ function App() {
       <Route path="/hospital/nurse/" element={<NurseSchedule/>} />
       
       {/**Receptionist Routes */}
+      <Route path="/hospital/receptionist/" element={<ReceptionistDashboard/>} />
       <Route path="/hospital/receptionist/appointment" element={<FindAppointment/>} />
       <Route path="/hospital/receptionist/appointment/create" element={<CreateAppointment/>} />
       <Route path="/hospital/receptionist/doctor" element={<DoctorInformation/>} />

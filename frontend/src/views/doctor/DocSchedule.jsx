@@ -77,7 +77,7 @@ const filteredAppointments = appointments.filter(appointment =>
 
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-[#4867D6] text-center mb-4">
-          Patient Status Dashboard (Doctor)
+          Patient Status (Doctor)
         </h1>
 
         <div className="flex justify-center mb-4">

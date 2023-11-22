@@ -197,7 +197,6 @@ const PatientCreateAppointment = () => {
                 />
               </div>
             </div>
-            <h1 className=" text-sm italic"> &bull; Fill atleast one</h1>
             <div className="grid grid-cols-2 gap-x-2">
               <div className="mb-4">
                 <label className="block">Email:</label>
@@ -213,7 +212,7 @@ const PatientCreateAppointment = () => {
                 <label className="block">Mobile Number:</label>
                 <input
                   className="border border-gray-300 p-2 w-full"
-                  type="text"
+                  type="number"
                   placeholder="Enter your mobile number"
                   value={mobileNumber}
                   onChange={(e) => setMobileNumber(e.target.value)}

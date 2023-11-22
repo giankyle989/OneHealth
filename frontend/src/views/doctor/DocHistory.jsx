@@ -96,8 +96,7 @@ const DocHistory = () => {
                           ).toLocaleTimeString()}
                         </td>
                         <td className="py-3 px-6">
-                          {appointment.patientFirstName}
-                          {}
+                          {appointment.patientFirstName} {appointment.patientLastName}
                         </td>
                         <td className="py-3 px-6">{appointment._id}</td>
                         <td className="py-3 px-6">{appointment.diagnosis}</td>

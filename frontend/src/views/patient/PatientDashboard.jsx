@@ -92,7 +92,7 @@ const PatientDashboard = () => {
                       {appointment.doctorId.lastName}
                     </td>
                     <td className="py-3 px-6">{appointment.reason}</td>
-                    <td className="py-3 px-6">{appointment.diagnosis}</td>
+                    <td className="py-3 px-6">{appointment.diagnosis?.name}</td>
                     <td className="py-3 px-6">{appointment.appt_status}</td>
                     <td className="py-3 px-6">
                     {appointment.appt_status === "Done" && (

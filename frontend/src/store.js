@@ -13,14 +13,13 @@ export const useStore = create((set) => ({
         },
       })
       .then((res) => {
-        
-        const sortedAppointments = res.data.sort(
-          (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
-        );
-
-
-
-        set({ appointments: sortedAppointments });
+        if (Array.isArray(res.data)) {
+          // Data is an array, set it as appointments
+          set({ appointments: res.data });
+        } else {
+          // Data is a string, meaning no appointments
+          set({ appointments: [] });
+        }
       })
       .catch((err) => console.log(err));
   },
@@ -34,7 +33,13 @@ export const useStore = create((set) => ({
       .then((res) => {
         
 
-        set({ appointments: res.data });
+        if (Array.isArray(res.data)) {
+          // Data is an array, set it as appointments
+          set({ appointments: res.data });
+        } else {
+          // Data is a string, meaning no appointments
+          set({ appointments: [] });
+        }
       })
       .catch((err) => console.log(err));
   },
@@ -51,12 +56,12 @@ export const useStore = create((set) => ({
     })
     .catch((err) => console.log(`Error: ${err}`));
   },
-  addDiagnosis: (id, diagnosis) => {
-    axios.put(`http://localhost:5000/api/doctor/appointment/diagnosis/${id}`, { diagnosis })
+  addDiagnosis: (id, selectedDiagnosis) => {
+    axios.put(`http://localhost:5000/api/doctor/appointment/diagnosis/${id}/${selectedDiagnosis}`)
       .then((res) => {
         set((state) => ({
           appointments: state.appointments.map((appointment) =>
-            appointment.id === id ? { ...appointment, diagnosis } : appointment
+            appointment.id === id ? { ...appointment, diagnosisId } : appointment
           ),
         }));
       })
