@@ -17,7 +17,6 @@ export const useStore = create((set) => ({
           // Data is an array, set it as appointments
           set({ appointments: res.data });
         } else {
-          // Data is a string, meaning no appointments
           set({ appointments: [] });
         }
       })

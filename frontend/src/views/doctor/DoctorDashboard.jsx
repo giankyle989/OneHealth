@@ -15,7 +15,7 @@ const DoctorDashboard = () => {
     const token = tokenObject.token;
     // Fetch appointments and update the store
     getTodaysAppointments(token);
-    console.log(appointments);
+
   }, []);
 
   const doughnutChartData = [
