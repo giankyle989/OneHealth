@@ -13,15 +13,22 @@ export const useStore = create((set) => ({
         },
       })
       .then((res) => {
-        if (Array.isArray(res.data)) {
-          // Data is an array, set it as appointments
-          set({ appointments: res.data });
-        } else {
-          set({ appointments: [] });
-        }
+        // Assuming res.data is an array of appointments with a 'date' property
+        const today = new Date().toISOString().split('T')[0];
+  
+        // Filter appointments for today only
+        const todaysAppointments = res.data.filter(appointment => {
+          // Check if appointment.date exists before attempting to split
+          return appointment.date && appointment.date.split('T')[0] === today;
+        });
+  
+        // Set the state with filtered appointments
+        set({ appointments: todaysAppointments });
       })
       .catch((err) => console.log(err));
   },
+  
+  
   getAllTimeAppointments: (token) => {
     axios
       .get("http://localhost:5000/api/doctor/appointment/get", {
@@ -37,7 +44,7 @@ export const useStore = create((set) => ({
           set({ appointments: res.data });
         } else {
           // Data is a string, meaning no appointments
-          set({ appointments: [] });
+          set({ appointments: res });
         }
       })
       .catch((err) => console.log(err));
@@ -122,6 +129,7 @@ export const useStore = create((set) => ({
 
 export const useReceptionistStore = create((set) =>({
   appointments: [],
+  availabilities: [],
   getAllTodaysAppointments: (token) => {
     axios
       .get("http://localhost:5000/api/receptionist/appointment/get", {
@@ -140,6 +148,22 @@ export const useReceptionistStore = create((set) =>({
       })
       .catch((err) => console.log(err));
   },
+  getAllAppointments: () => {
+    axios
+    .get("http://localhost:5000/api/receptionist/appointment/")
+    .then((res) => {
+      set({ appointments: res.data });
+    })
+    .catch((err) => console.log(err));
+  },
+  getAllAvailability: () => {
+    axios
+    .get("http://localhost:5000/api/receptionist/availability/get")
+    .then((res) => {
+      set({ availabilities: res.data });
+    })
+    .catch((err) => console.log(err));
+  }
 }))
 
 
