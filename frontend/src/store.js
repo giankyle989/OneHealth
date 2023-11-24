@@ -5,28 +5,18 @@ export const useStore = create((set) => ({
   appointments: [],
   
   //Doctor Functions
-  getTodaysAppointments: (token) => {
-    axios
-      .get("http://localhost:5000/api/doctor/appointment/get", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        // Assuming res.data is an array of appointments with a 'date' property
-        const today = new Date().toISOString().split('T')[0];
-  
-        // Filter appointments for today only
-        const todaysAppointments = res.data.filter(appointment => {
-          // Check if appointment.date exists before attempting to split
-          return appointment.date && appointment.date.split('T')[0] === today;
-        });
-  
-        // Set the state with filtered appointments
-        set({ appointments: todaysAppointments });
-      })
-      .catch((err) => console.log(err));
-  },
+getTodaysAppointments: (token) => {
+  axios
+    .get("http://localhost:5000/api/doctor/appointment/today", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => {
+      set({appointments: res.data})
+    })
+    .catch((err) => console.log(err));
+},
   
   
   getAllTimeAppointments: (token) => {
@@ -39,9 +29,10 @@ export const useStore = create((set) => ({
       .then((res) => {
         // Ensure that res.data is an array
         const appointmentsData = Array.isArray(res.data) ? res.data : [];
-  
+
         // Update the state with the array
         set({ appointments: appointmentsData });
+
       })
       .catch((err) => console.log(err));
   },
@@ -173,7 +164,8 @@ export const usePatientStore = create((set) => ({
         },
       })
       .then((res) => {
-        set({ appointments: res.data})
+        const appointmentsData = Array.isArray(res.data) ? res.data : [];
+        set({ appointments: appointmentsData})
       })
       .catch((err) => {
         console.log(err);

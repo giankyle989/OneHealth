@@ -17,10 +17,6 @@ const PatientCreateAppointment = () => {
   const [availabilities, setAvailabilities] = useState([]);
   const [selectedAvailability, setSelectedAvailability] = useState("");
   const [appointmentDateTime, setAppointmentDateTime] = useState("");
-  const [patientFirstName, setPatientFirstName] = useState("");
-  const [patientLastName, setPatientLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
   const [reason, setReason] = useState("Medical Check up");
   const [availableDates, setAvailableDates] = useState([]);
   const [startDate, setStartDate] = useState(
@@ -128,10 +124,6 @@ const PatientCreateAppointment = () => {
     }
 
     const appointment = {
-      patientFirstName,
-      patientLastName,
-      email,
-      mobileNumber,
       doctorId: selectedDoctor,
       appointmentDateTime,
       reason,
@@ -146,11 +138,6 @@ const PatientCreateAppointment = () => {
         headerToken
       )
       .then((res) => {
-        // console.log(res.data);
-        setPatientFirstName("");
-        setPatientLastName("");
-        setEmail("");
-        setMobileNumber("");
         setSelectedDoctor("");
         setAppointmentDateTime("");
         notify()
@@ -175,51 +162,6 @@ const PatientCreateAppointment = () => {
             Book an Appointment
           </h1>
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-x-2">
-              <div className="mb-4">
-                <label className="block">First Name:</label>
-                <input
-                  className="border border-gray-300 p-2 w-full"
-                  type="text"
-                  placeholder="Enter your first name"
-                  value={patientFirstName}
-                  onChange={(e) => setPatientFirstName(e.target.value)}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">Last Name:</label>
-                <input
-                  className="border border-gray-300 p-2 w-full"
-                  type="text"
-                  placeholder="Enter your last name"
-                  value={patientLastName}
-                  onChange={(e) => setPatientLastName(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-x-2">
-              <div className="mb-4">
-                <label className="block">Email:</label>
-                <input
-                  className="border border-gray-300 p-2 w-full"
-                  type="text"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block">Mobile Number:</label>
-                <input
-                  className="border border-gray-300 p-2 w-full"
-                  type="number"
-                  placeholder="Enter your mobile number"
-                  value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value)}
-                />
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-x-2">
               <div className="mb-4">
                 <label className="block">Department:</label>

@@ -46,7 +46,6 @@ const PatientDashboard = () => {
               <tr className="text-white text-center">
                 <th className="py-6 px-6 bg-[#4867D6]">Date</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Time</th>
-                <th className="py-6 px-6 bg-[#4867D6]">Patient's Name</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Appointment ID</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Department</th>
                 <th className="py-6 px-6 bg-[#4867D6]">Doctor's Name</th>
@@ -78,10 +77,6 @@ const PatientDashboard = () => {
                       {new Date(
                         appointment.appointmentDateTime
                       ).toLocaleTimeString()}
-                    </td>
-                    <td className="py-3 px-6">
-                      {appointment.patientFirstName}{" "}
-                      {appointment.patientLastName}
                     </td>
                     <td className="py-3 px-6">APPT-{appointment._id}</td>
                     <td className="py-3 px-6">

@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Appointment = require("../models/appointment.model");
 const { DateTime } = require("luxon");
 const nodemailer = require("nodemailer");
-
+const Patient = require('../models/patientModel')
 //Nurse get appointments
 const getAllTodaysAppointment = asyncHandler(async (req, res) => {
   // Get tomorrow's date in Singapore time zone
@@ -47,7 +47,8 @@ const getAllAppointments = asyncHandler(async (req, res) => {
 const getAppointment = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({ patientId: req.user.id })
-      .sort({ appointmentDateTime: -1 }) //Sort appointment
+      .sort({ appointmentDateTime: -1 })
+      .populate('patientId')
       .populate({
         path: "doctorId",
         select: "firstName lastName  dept_id ",
@@ -101,6 +102,39 @@ const doctorGetAppointments = asyncHandler(async (req, res) => {
   }
 });
 
+const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
+  try {
+    // Get today's date in Singapore time zone
+    const todayInSingapore = DateTime.now().setZone("Asia/Singapore");
+    const startOfToday = todayInSingapore.startOf("day");
+    const endOfToday = todayInSingapore.endOf("day");
+
+    const appointments = await Appointment.find({
+      doctorId: req.user.id,
+      appointmentDateTime: {
+        $gte: startOfToday.toJSDate(),
+        $lt: endOfToday.toJSDate(),
+      },
+    })
+      .populate({
+        path: "doctorId",
+        select: "firstName lastName dept_id",
+        populate: {
+          path: "dept_id",
+          select: "name",
+        },
+      });
+
+    if (appointments.length === 0) {
+      return res.status(200).json("No Appointments for Today");
+    }
+
+    res.json(appointments);
+  } catch (err) {
+    res.status(400).json("Error: " + err);
+  }
+})
+
 const doctorGetAppointmentsWithPatient = asyncHandler(async (req, res) => {
   try {
     const doctorId = req.user.id;
@@ -124,22 +158,12 @@ const doctorGetAppointmentsWithPatient = asyncHandler(async (req, res) => {
 const createAppointment = asyncHandler(async (req, res) => {
   const patientId = req.user.id;
   const {
-    patientFirstName,
-    patientLastName,
-    email,
-    mobileNumber,
     doctorId,
     appointmentDateTime,
     reason,
   } = req.body;
 
-  if (
-    !patientFirstName ||
-    !patientLastName ||
-    !doctorId ||
-    !appointmentDateTime ||
-    !reason
-  ) {
+  if (!doctorId || !appointmentDateTime || !reason) {
     res.status(400);
     throw new Error("Please fill all fields");
   }
@@ -149,14 +173,16 @@ const createAppointment = asyncHandler(async (req, res) => {
     zone: "Asia/Singapore",
   });
 
-  const formattedAppointmentDate =
-    appointmentDate.toFormat("MMMM dd, yyyy - t");
+  const formattedAppointmentDate = appointmentDate.toFormat("MMMM dd, yyyy - t");
+
+  // Fetch patient's email address based on patientId
+  const patient = await Patient.findById(patientId);
+  if (!patient || !patient.email) {
+    res.status(400);
+    throw new Error("Patient not found or missing email address");
+  }
 
   const newAppointment = new Appointment({
-    patientFirstName,
-    patientLastName,
-    email,
-    mobileNumber,
     patientId,
     doctorId,
     appointmentDateTime: appointmentDate.toJSDate(),
@@ -167,11 +193,12 @@ const createAppointment = asyncHandler(async (req, res) => {
     .save()
     .then((appointment) => {
       // Sending confirmation email after successfully booking the appointment
-      sendAppointmentConfirmationEmail(email, formattedAppointmentDate);
+      sendAppointmentConfirmationEmail(patient.email, formattedAppointmentDate);
       res.json("Created New Appointment");
     })
     .catch((err) => res.status(400).json("Error :" + err));
 });
+
 
 //Need patientId validation and error handling
 const createAppointmentByReceptionist = asyncHandler(async (req, res) => {
@@ -286,7 +313,8 @@ module.exports = {
   addDiagnosis,
   getAppointmentById,
   doctorGetAppointmentsWithPatient,
-  getAllAppointments
+  getAllAppointments,
+  doctorGetTodaysAppointments
 };
 
 const transporter = nodemailer.createTransport({

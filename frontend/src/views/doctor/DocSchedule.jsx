@@ -52,6 +52,7 @@ const DocSchedule = () => {
   };
 
 
+
   const receptionAppointments = appointments.filter(
     (appointment) => appointment.appt_status === "Reception"
   );

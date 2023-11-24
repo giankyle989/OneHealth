@@ -18,29 +18,36 @@ const DoctorDashboard = () => {
     getAllTimeAppointments(token);
   }, []);
 
-  const diagnosisFrequency = Array.isArray(appointments)
-    ? appointments.reduce((acc, appointment) => {
-        const diagnosis = appointment.diagnosis
-          ? appointment.diagnosis.name
-          : "Unknown";
-        acc[diagnosis] = (acc[diagnosis] || 0) + 1;
-        return acc;
-      }, {})
-    : {};
+  // Filter appointments with diagnosis name
+  const appointmentsWithDiagnosis = appointments.filter(
+    (appointment) => appointment.diagnosis && appointment.diagnosis.name
+  );
 
-    console.log(appointments)
+  // Calculate diagnosis frequency
+  const diagnosisFrequency = appointmentsWithDiagnosis.reduce(
+    (acc, appointment) => {
+      const diagnosisName = appointment.diagnosis.name;
+      acc[diagnosisName] = (acc[diagnosisName] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
+
+  // Format data for the pie chart
+  const pieChartData = Object.entries(diagnosisFrequency).map(
+    ([diagnosisName, count]) => ({
+      name: diagnosisName,
+      value: count,
+    })
+  );
+
+  // Check if pieChartData is empty
+  const isPieChartDataEmpty = pieChartData.length === 0;
+
   // Sort the diagnoses by frequency in descending order
   const sortedDiagnoses = Object.entries(diagnosisFrequency)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
-
-  const pieChartData = sortedDiagnoses.map(([name, value]) => ({
-    name,
-    value,
-  }));
-
-  // Check if pieChartData is empty
-  const isPieChartDataEmpty = pieChartData.length === 0;
 
   const sortedAppointments = [...appointments].sort((a, b) => {
     const startTimeA = new Date(a.start);
@@ -52,10 +59,12 @@ const DoctorDashboard = () => {
 
   // Filter appointments for today
   const appointmentsForToday = sortedAppointments.filter((appointment) => {
-    const appointmentDate = new Date(appointment.start).toLocaleDateString();
+    const appointmentDate = new Date(
+      appointment.appointmentDateTime
+    ).toLocaleDateString();
     return appointmentDate === today;
   });
-
+  console.log(appointmentsForToday);
   const nextPatient =
     appointmentsForToday.length > 0 ? appointmentsForToday[0] : null;
   return (
@@ -66,7 +75,9 @@ const DoctorDashboard = () => {
         <div className="flex gap-x-2 p-2 h-1/2">
           <div className="bg-white rounded-md w-1/5 flex items-center shadow-lg p-4">
             {appointmentsForToday.length === 0 ? (
-              <p className="text-center">No appointments for today </p>
+              <p className="font-bold text-3xl text-center">
+                No appointments for today{" "}
+              </p>
             ) : (
               <p className="text-center">
                 TOTAL NUMBER OF PATIENTS BOOKED FOR THE DAY:{" "}
@@ -88,67 +99,79 @@ const DoctorDashboard = () => {
               />
             </div>
           </div>
-          <div className="bg-white rounded-md w-2/5 shadow-lg p-4">
-            <p className="text-center">NEXT PATIENT DETAILS</p>
-            {nextPatient ? (
-              <>
-                <div className="grid grid-cols-2 gap-x-4">
-                  <p>
-                    Name: {nextPatient.patientFirstName}{" "}
-                    {nextPatient.patientLastName}
-                  </p>
-                  <p>Appointment ID: {nextPatient._id}</p>
-                </div>
-                <div className="grid grid-cols-3 gap-x-4">
-                  <p>
-                    Birthday: {nextPatient.patientBirthday || "Not available"}
-                  </p>
-                  <p>Sex: {nextPatient.patientSex || "Not available"}</p>
-                  <p>
-                    Last Appointment:{" "}
-                    {nextPatient.lastAppointment
-                      ? new Date(
-                          nextPatient.lastAppointment
-                        ).toLocaleDateString()
-                      : "Not available"}
-                  </p>
-                </div>
-                <div className="grid grid-cols-1">
-                  <p>
-                    Patient History:{" "}
-                    {nextPatient.patientHistory || "Not available"}
-                  </p>
-                </div>
-              </>
-            ) : (
-              <p className="text-center">No upcoming appointments for today</p>
-            )}
-          </div>
+<div className="bg-white rounded-md w-2/3 shadow-lg p-8">
+  <p className="font-bold text-3xl text-center mb-6">
+    NEXT PATIENT DETAILS
+  </p>
+
+  {nextPatient ? (
+    <>
+      <div className="grid grid-cols-2 gap-x-4 mb-4">
+        <p>
+          Name: {nextPatient.patientId.firstName} {nextPatient.patientId.lastName}
+        </p>
+        <p>Appointment ID: {nextPatient._id}</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-x-4 mb-4">
+        <p>
+          Birthday:{" "}
+          {nextPatient.patientId.birthday
+            ? new Date(nextPatient.patientId.birthday).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "Not available"}
+        </p>
+
+        <p>Sex: {nextPatient.patientId.sex || "Not available"}</p>
+        
+        <p>
+          Last Appointment:{" "}
+          {nextPatient.lastAppointment
+            ? new Date(nextPatient.lastAppointment).toLocaleDateString()
+            : "Not available"}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 mb-4">
+        <p>
+          Patient History: {nextPatient.patientHistory || "Not available"}
+        </p>
+      </div>
+    </>
+  ) : (
+    <p className="text-center">No upcoming appointments for today</p>
+  )}
+</div>
+
         </div>
         <div className="grid grid-cols-2 gap-x-4 p-4 min-h-1/2">
           <div className="flex justify-center items-center bg-white shadow-lg rounded-md p-4 min-h-1/2">
             <div>
-            <p className="font-bold text-3xl text-center">Monthly Diagnosis</p>
-            {isPieChartDataEmpty ? (
-              <p>No data available for the pie chart</p>
-            ) : (
-              <PieChart width={400} height={400}>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value" // Use dataKey instead of valueKey
-                  label
-                />
-                <Tooltip />
-              </PieChart>
-            )}
+              <p className="font-bold text-3xl text-center">
+                Your Monthly Diagnosis
+              </p>
+              {isPieChartDataEmpty ? (
+                <p>No data available for the pie chart</p>
+              ) : (
+                <PieChart width={400} height={400}>
+                  <Pie
+                    data={pieChartData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value" // Use dataKey instead of valueKey
+                    label
+                  />
+                  <Tooltip />
+                </PieChart>
+              )}
             </div>
             <div className="bg-white shadow-lg rounded-md p-4">
-              <h2>Additional Information</h2>
-              <p>Total Appointments: {appointments.length}</p>
+              <p>Total Diagnoses: {appointmentsWithDiagnosis.length}</p>
               <p>Most Common Diagnosis: {sortedDiagnoses[0]?.[0] || "N/A"}</p>
               <p>
                 Second Most Common Diagnosis: {sortedDiagnoses[1]?.[0] || "N/A"}
@@ -160,14 +183,16 @@ const DoctorDashboard = () => {
           </div>
 
           <div className="bg-white shadow-lg rounded-md p-4">
-            <h2>APPOINTMENT TODAY</h2>
+            <h2 className="font-bold text-3xl text-center">
+              APPOINTMENT TODAY
+            </h2>
             {appointmentsForToday.length > 0 ? (
               <ul>
                 {appointmentsForToday.map((appointment) => (
                   <li className="grid grid-cols-2" key={appointment._id}>
                     <p>
-                      Name: {appointment.patientFirstName}{" "}
-                      {appointment.patientLastName}
+                      Name: {appointment.patientId.firstName}{" "}
+                      {appointment.patientId.lastName}
                     </p>
                     <p>
                       Time:{" "}
@@ -180,7 +205,7 @@ const DoctorDashboard = () => {
                 ))}
               </ul>
             ) : (
-              <p>No appointments for today</p>
+              <p className="text-center">No appointments for today</p>
             )}
           </div>
         </div>

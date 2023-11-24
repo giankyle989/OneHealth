@@ -23,24 +23,6 @@ const appointmentSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "labResult",
     },
-    patientFirstName: { 
-      type: String,
-      required: true,
-      trim:true
-    },
-    patientLastName: { 
-      type: String,
-      required: true,
-      trim:true
-    },
-    email: { 
-      type: String,
-      trim:true
-    },
-    mobileNumber: { 
-      type: String,
-      trim:true
-    },
     appointmentDateTime: { 
       type: Date,
       required: true

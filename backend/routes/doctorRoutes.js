@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {  updateAppointment, doctorGetAppointments, addDiagnosis, getAppointmentById, doctorGetAppointmentsWithPatient } = require("../controllers/appointmentController");
+const {  updateAppointment, doctorGetAppointments, addDiagnosis, getAppointmentById, doctorGetAppointmentsWithPatient, doctorGetTodaysAppointments } = require("../controllers/appointmentController");
 const { createAvailability, getAvailability, deleteAvailability, getAvailabilityByDoctorId } = require("../controllers/availabilityController");
 const { getDepartment } = require("../controllers/departmentController");
 const { getDiagnosis, getDiagnosesByDepartment,  } = require("../controllers/diagnosisController");
@@ -22,6 +22,7 @@ router.post('/logout', logoutDoctor)
 
 //Appointment Routes
 router.get('/appointment/get', protect(Doctor), doctorGetAppointments )
+router.get('/appointment/today', protect(Doctor), doctorGetTodaysAppointments )
 router.get('/appointment/:id', protect(Doctor), doctorGetAppointmentsWithPatient)
 router.get('/appointment/:appointmentId', getAppointmentById)
 router.put('/appointment/diagnosis/:id/:diagnosisId', addDiagnosis)

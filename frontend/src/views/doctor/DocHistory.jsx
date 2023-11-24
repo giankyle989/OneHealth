@@ -16,18 +16,21 @@ const DocHistory = () => {
     // Get token object
     const tokenObject = JSON.parse(localStorage.getItem("token"));
     const token = tokenObject.token;
+  
     // Fetch appointments and update the store
-    if (activeTab === 'today'){
-      getTodaysAppointments(token);
-    } else {
-      getAllTimeAppointments(token);
+    if (activeTab === 'today') {
+      getTodaysAppointments(token)
+      
+    } else if (activeTab === 'allTime') {
+      getAllTimeAppointments(token)
+      console.log("getall",appointments)
     }
-  }, [activeTab]);
+  }, [activeTab, getAllTimeAppointments]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-
+  console.log("get",appointments)
   const filteredAppointments = appointments.filter(
     (appointment) =>
       appointment.patientFirstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -80,7 +83,7 @@ const DocHistory = () => {
                 <tbody>
                   {filteredAppointments.length === 0 ? (
                     <tr>
-                      <td>No data</td>
+                      <td colSpan="7">No data</td>
                     </tr>
                   ) : (
                     filteredAppointments.map((appointment) => (
