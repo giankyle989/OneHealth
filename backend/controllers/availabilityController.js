@@ -17,7 +17,14 @@ const getAvailability = asyncHandler(async (req, res) => {
 });
 const getAllAvailability = asyncHandler(async (req, res) => {
   
-  Availability.find({ })
+  Availability.find({}).populate({
+    path: "doctorId",
+    select: "firstName lastName specialization dept_id",
+    populate: {
+      path: "dept_id",
+      select: "name",
+    },
+  })
     .then(availabilities => {
       res.json(availabilities);
     })

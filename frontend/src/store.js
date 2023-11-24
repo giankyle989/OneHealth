@@ -37,15 +37,11 @@ export const useStore = create((set) => ({
         },
       })
       .then((res) => {
-        
-
-        if (Array.isArray(res.data)) {
-          // Data is an array, set it as appointments
-          set({ appointments: res.data });
-        } else {
-          // Data is a string, meaning no appointments
-          set({ appointments: res });
-        }
+        // Ensure that res.data is an array
+        const appointmentsData = Array.isArray(res.data) ? res.data : [];
+  
+        // Update the state with the array
+        set({ appointments: appointmentsData });
       })
       .catch((err) => console.log(err));
   },

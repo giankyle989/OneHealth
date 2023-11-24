@@ -17,21 +17,30 @@ const DoctorDashboard = () => {
     // Fetch all-time appointments and update the store
     getAllTimeAppointments(token);
   }, []);
-  // Extract diagnoses from appointments and calculate frequency
-  const diagnosisFrequency = appointments.reduce((acc, appointment) => {
-    const diagnosis = appointment.diagnosis ? appointment.diagnosis.name : "Unknown";
-    acc[diagnosis] = (acc[diagnosis] || 0) + 1;
-    return acc;
-  }, {});
+
+  const diagnosisFrequency = Array.isArray(appointments)
+    ? appointments.reduce((acc, appointment) => {
+        const diagnosis = appointment.diagnosis
+          ? appointment.diagnosis.name
+          : "Unknown";
+        acc[diagnosis] = (acc[diagnosis] || 0) + 1;
+        return acc;
+      }, {})
+    : {};
+
+    console.log(appointments)
   // Sort the diagnoses by frequency in descending order
   const sortedDiagnoses = Object.entries(diagnosisFrequency)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 10); // Get top 10 diagnoses
+    .slice(0, 5);
 
   const pieChartData = sortedDiagnoses.map(([name, value]) => ({
     name,
     value,
   }));
+
+  // Check if pieChartData is empty
+  const isPieChartDataEmpty = pieChartData.length === 0;
 
   const sortedAppointments = [...appointments].sort((a, b) => {
     const startTimeA = new Date(a.start);
@@ -50,12 +59,12 @@ const DoctorDashboard = () => {
   const nextPatient =
     appointmentsForToday.length > 0 ? appointmentsForToday[0] : null;
   return (
-    <div>
+    <div className="bg-gray-200 min-h-screen">
       <Navbar userRole={userRole} />
       {/* Container */}
-      <section className="bg-gray-200 p-2">
+      <section className=" p-2">
         <div className="flex gap-x-2 p-2 h-1/2">
-          <div className="bg-white rounded-md w-1/5 flex items-center">
+          <div className="bg-white rounded-md w-1/5 flex items-center shadow-lg p-4">
             {appointmentsForToday.length === 0 ? (
               <p className="text-center">No appointments for today </p>
             ) : (
@@ -65,7 +74,7 @@ const DoctorDashboard = () => {
               </p>
             )}
           </div>
-          <div className="bg-white rounded-md w-2/5">
+          <div className="bg-white rounded-md w-2/5 shadow-lg p-4">
             <div className="w-full">
               <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
@@ -79,18 +88,18 @@ const DoctorDashboard = () => {
               />
             </div>
           </div>
-          <div className="bg-white rounded-md w-2/5">
+          <div className="bg-white rounded-md w-2/5 shadow-lg p-4">
             <p className="text-center">NEXT PATIENT DETAILS</p>
             {nextPatient ? (
               <>
-                <div className="grid grid-cols-2">
+                <div className="grid grid-cols-2 gap-x-4">
                   <p>
                     Name: {nextPatient.patientFirstName}{" "}
                     {nextPatient.patientLastName}
                   </p>
                   <p>Appointment ID: {nextPatient._id}</p>
                 </div>
-                <div className="grid grid-cols-3">
+                <div className="grid grid-cols-3 gap-x-4">
                   <p>
                     Birthday: {nextPatient.patientBirthday || "Not available"}
                   </p>
@@ -116,22 +125,41 @@ const DoctorDashboard = () => {
             )}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-x-4 p-2 h-1/2">
-          <div className="flex justify-center items-center bg-white">
-            <PieChart width={400} height={400}>
-              <Pie
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value" // Use dataKey instead of valueKey
-                label
-              />
-              <Tooltip />
-            </PieChart>
+        <div className="grid grid-cols-2 gap-x-4 p-4 min-h-1/2">
+          <div className="flex justify-center items-center bg-white shadow-lg rounded-md p-4 min-h-1/2">
+            <div>
+            <p className="font-bold text-3xl text-center">Monthly Diagnosis</p>
+            {isPieChartDataEmpty ? (
+              <p>No data available for the pie chart</p>
+            ) : (
+              <PieChart width={400} height={400}>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value" // Use dataKey instead of valueKey
+                  label
+                />
+                <Tooltip />
+              </PieChart>
+            )}
+            </div>
+            <div className="bg-white shadow-lg rounded-md p-4">
+              <h2>Additional Information</h2>
+              <p>Total Appointments: {appointments.length}</p>
+              <p>Most Common Diagnosis: {sortedDiagnoses[0]?.[0] || "N/A"}</p>
+              <p>
+                Second Most Common Diagnosis: {sortedDiagnoses[1]?.[0] || "N/A"}
+              </p>
+              <p>
+                Third Most Common Diagnosis: {sortedDiagnoses[2]?.[0] || "N/A"}
+              </p>
+            </div>
           </div>
-          <div className=" bg-white">
+
+          <div className="bg-white shadow-lg rounded-md p-4">
             <h2>APPOINTMENT TODAY</h2>
             {appointmentsForToday.length > 0 ? (
               <ul>
