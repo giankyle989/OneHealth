@@ -5,18 +5,22 @@ export const useStore = create((set) => ({
   appointments: [],
   
   //Doctor Functions
-getTodaysAppointments: (token) => {
-  axios
-    .get("http://localhost:5000/api/doctor/appointment/today", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => {
-      set({appointments: res.data})
-    })
-    .catch((err) => console.log(err));
-},
+  getTodaysAppointments: (token) => {
+    axios
+      .get("http://localhost:5000/api/doctor/appointment/today", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          set({ appointments: res.data });
+        } else {
+          console.log("Response is not an array");
+        }
+      })
+      .catch((err) => console.log(err));
+  },
   
   
   getAllTimeAppointments: (token) => {
@@ -73,8 +77,6 @@ getTodaysAppointments: (token) => {
       // Handle error scenarios or inform the user accordingly
     }
  },
-
-
  //Nurse Functions
   getAllTodaysAppointments: (token) => {
     axios
@@ -94,8 +96,6 @@ getTodaysAppointments: (token) => {
       })
       .catch((err) => console.log(err));
   },
-
-
   createLabResult: async (id, formData) => {
     console.log(formData)
     try {

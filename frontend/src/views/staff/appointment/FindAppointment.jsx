@@ -42,7 +42,7 @@ const FindAppointment = () => {
 
   const filteredAppointments = appointments.filter(
     (appointment) =>
-      appointment.patientFirstName
+      appointment.patientId.firstName
         .toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
       appointment.appt_status === "Reception" ||
@@ -102,8 +102,8 @@ const FindAppointment = () => {
                         </td>
                         <td className="py-3 px-6">{appointment._id}</td>
                         <td className="py-3 px-6">
-                          {appointment.patientFirstName}{" "}
-                          {appointment.patientLastName}
+                          {appointment.patientId.firstName}{" "}
+                          {appointment.patientId.lastName}
                         </td>
                         <td className="py-3 px-6">
                           {appointment.doctorId.firstName}{" "}

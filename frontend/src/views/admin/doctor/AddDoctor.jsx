@@ -14,6 +14,7 @@ const AddDoctor = () => {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [departments, setDepartments] = useState([]);
   const [departmentName, setDepartmentName] = useState("");
+  const [signature, setSignature] = useState([])
 
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   const token = tokenObject.token;
@@ -43,6 +44,7 @@ const AddDoctor = () => {
       specialization,
       licenseNumber,
       departmentName,
+      signature
     };
     axios
       .post(
@@ -58,6 +60,7 @@ const AddDoctor = () => {
         setSpecialization("");
         setLicenseNumber("");
         setDepartmentName("");
+        setSignature('')
         notify()
         
         setTimeout(() => {
@@ -75,6 +78,22 @@ const AddDoctor = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+    //handle and convert it in base 64
+    const handleSignature = (e) => {
+      const file = e.target.files[0];
+      setFileToBase(file);
+      console.log("handleSignature: ",file);
+    };
+  
+    const setFileToBase = (file) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setSignature(reader.result);
+        console.log("setFileToBase: ", reader.result);
+      };
+    };
   return (
     <>
       <div className="w-screen flex">
@@ -84,6 +103,7 @@ const AddDoctor = () => {
           <h1 className="mt-8 font-bold text-center">Add New Doctor</h1>
           <div className="max-w-md mx-auto">
             <form
+            encType="multipart/form-data"
               className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
               onSubmit={handleSubmit}
             >
@@ -192,13 +212,9 @@ const AddDoctor = () => {
                 </div>
                 <div className="mb-4">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Retype Password
+                    Upload Signature
                   </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    type="text"
-                    placeholder="Retype Password"
-                  />
+                  <input onChange={handleSignature}  type="file" name="signature"/>
                 </div>
               </div>
               <div className="text-center">

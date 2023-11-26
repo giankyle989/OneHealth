@@ -8,8 +8,16 @@ const labResultSchema = new Schema(
       ref: "appointment",
       required: true,
     },
-    filename: { type: String },
-    url: { type: String },
+    labFile: {
+      public_id: {
+          type: String,
+          required: true
+      },
+      url: {
+          type: String,
+          required: true
+      }
+  },
   },
   {
     timestamps: true,

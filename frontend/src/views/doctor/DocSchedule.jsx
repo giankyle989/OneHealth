@@ -69,9 +69,10 @@ const DocSchedule = () => {
 
 // Filter appointments based on search query and exclude appointments with status 'Done'
 const filteredAppointments = appointments.filter(appointment =>
-  appointment.patientFirstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+  appointment.patientId.firstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
   appointment.appt_status !== "Done" && appointment.appt_status !== "Upcoming"
 );
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar userRole={userRole} />
@@ -110,7 +111,7 @@ const filteredAppointments = appointments.filter(appointment =>
               filteredAppointments.map((appointment) => (
                 <tr key={appointment._id} className="text-center">
                   <td className="p-2">
-                    {appointment.patientFirstName} {appointment.patientLastName}
+                    {appointment.patientId.firstName} {appointment.patientId.lastName}
                   </td>
 
                   <td className="p-2" key={`reception-${appointment._id}`}>

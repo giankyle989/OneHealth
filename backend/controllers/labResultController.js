@@ -1,46 +1,58 @@
 const asyncHandler = require("express-async-handler");
-const cloudinary = require("cloudinary").v2;
-const LabResult = require('../models/labResultModel');
-const Appointment = require('../models/appointment.model');
-const multer = require('multer');
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
-const storage = multer.memoryStorage(); // You can adjust storage settings based on your needs
-const upload = multer({ storage: storage });
+const cloudinary = require("../utils/cloudinary");
+const LabResult = require("../models/labResultModel");
+const Appointment = require("../models/appointment.model");
 
 const createLabResult = asyncHandler(async (req, res) => {
-  const { appointmentId } = req.body;
+  const { appointmentId, labFiles } = req.body;
 
-  // Upload file to Cloudinary
-  const result = await cloudinary.uploader.upload(req.file.buffer, {
-    folder: "lab-results", // You can customize the folder structure
-    resource_type: "auto", // Automatically determine the resource type
-  });
+  try {
+    if (!appointmentId) {
+      return res.status(400).json({ error: "appointmentId is required" });
+    }
 
-  // Create LabResult entry in the database
-  const labResult = new LabResult({
-    appointmentId,
-    filename: req.body.filename,
-    url: result.secure_url,
-  });
+    const uploadedFiles = await Promise.all(
+      labFiles.map(async (labFile) => {
+        const result = await cloudinary.uploader.upload(labFile, {
+          resource_type: "auto", // Set resource_type to 'raw' to preserve original file type
+          folder: "lab_results",
+        });
 
-  await labResult.save();
+        return {
+          public_id: result.public_id,
+          url: result.secure_url,
+        };
+      })
+    );
 
-  // Optionally, update the Appointment model with the lab result information
-  await Appointment.findByIdAndUpdate(
-    appointmentId,
-    { $set: { labResult: labResult._id } },
-    { new: true }
-  );
+    // Create LabResult documents
+    const labResults = await LabResult.create(
+      uploadedFiles.map((file) => ({
+        appointmentId,
+        labFile: file,
+      }))
+    );
 
-  res.status(201).json(labResult);
+    // Update the Appointment model with references to the created LabResult documents
+    await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { $push: { labResult: { $each: labResults.map(result => result._id) } } },
+      { new: true }
+    );
+
+    res.status(201).json(labResults);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = {
-  createLabResult
+  createLabResult,
+};
+
+
+
+module.exports = {
+  createLabResult,
 };

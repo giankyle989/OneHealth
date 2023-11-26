@@ -5,12 +5,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction";
 import { usePatientStore } from "../../store";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const PatientProfile = () => {
   const [userRole, setUserRole] = useState("patient");
-  const [id , setId] = useState()
+  const [id, setId] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
   const [sex, setSex] = useState();
@@ -30,11 +30,11 @@ const PatientProfile = () => {
   const { getAppointments, appointments } = usePatientStore();
 
   const calendarEvents = appointments.map((appointment) => {
-    const newDate = new Date(appointment.appointmentDateTime)
+    const newDate = new Date(appointment.appointmentDateTime);
     newDate.setHours(newDate.getHours() + 8);
     return {
       title: "Appointment",
-      start: newDate
+      start: newDate,
     };
   });
   const today = new Date();
@@ -67,61 +67,71 @@ const PatientProfile = () => {
     axios
       .get("http://localhost:5000/api/patient/get", headerToken)
       .then((res) => {
-        const { firstName, lastName, sex, birthday, email, mobileNumber, _id} = res.data;
+        const { firstName, lastName, sex, birthday, email, mobileNumber, _id } =
+          res.data;
         setFirstName(firstName);
         setLastName(lastName);
         setSex(sex);
         setBirthday(formatDate(birthday));
         setEmail(email);
         setMobileNumber(mobileNumber);
-        setId(_id)
+        setId(_id);
       })
       .catch((err) => console.log(err));
 
-      getAppointments(token);
+    getAppointments(token);
   }, []);
 
-
   const notify = () => {
-
     toast.success("Updated Profile !", {
       position: toast.POSITION.TOP_CENTER,
       autoClose: 4500,
     });
-
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const updatePatient = {
       firstName,
       lastName,
       email,
-      mobileNumber
-    }
+      mobileNumber,
+    };
 
-    axios.put(`http://localhost:5000/api/patient/${id}`, updatePatient ,headerToken)
-          .then((res) => {
-            notify()
-            setTimeout(() => {
-              window.location = "/";
-            }, 5000);
-          })
-          .catch((err) => console.log("Error: " + err))
-    
+    axios
+      .put(
+        `http://localhost:5000/api/patient/${id}`,
+        updatePatient,
+        headerToken
+      )
+      .then((res) => {
+        notify();
+        setTimeout(() => {
+          window.location = "/";
+        }, 5000);
+      })
+      .catch((err) => console.log("Error: " + err));
+  };
 
-  }
-
+  const recentDoneAppointment = appointments
+    .filter((appointment) => appointment.appt_status === "Done")
+    .sort(
+      (a, b) =>
+        new Date(b.appointmentDateTime) - new Date(a.appointmentDateTime)
+    )[0];
   return (
     <>
-    <ToastContainer/>
+      <ToastContainer />
       <Navbar userRole={userRole} />
-      <div className="h-screen flex flex-col lg:flex-row p-8 gap-x-4 bg-slate-100">
-        <section className="h-full lg:w-2/5 bg-white shadow-lg rounded-lg border-2">
+      <div className=" flex flex-col lg:flex-row p-8 gap-x-4 bg-slate-100 gap-y-4">
+        <section className=" lg:w-1/3 bg-white shadow-lg rounded-lg border-2">
           <h1 className="text-center font-semibold text-2xl mt-8 text-[#4867D6] mb-8">
             User Profile
           </h1>
-          <form className="grid grid-cols-1 w-4/5 mx-auto" onSubmit={handleSubmit}>
+          <form
+            className="grid grid-cols-1 w-4/5 mx-auto"
+            onSubmit={handleSubmit}
+          >
             <div className="grid grid-cols-1 text-left text-lg break-words text-[#4867D6]">
               <div className="grid grid-cols-2 mb-8 ">
                 <label className="font-semibold">First Name:</label>
@@ -168,10 +178,93 @@ const PatientProfile = () => {
                 />
               </div>
             </div>
-            <button className="mt-4 p-4 bg-[#4867D6] text-white rounded-full mx-auto" type="submit">Update Profile</button>
+            <div className="text-center mb-4">
+              <button className="mt-4 p-4 bg-[#4867D6] mr-2 text-white rounded-full mx-auto">
+                Change Password
+              </button>
+              <button
+                className="mt-4 p-4 bg-[#4867D6] ml02 text-white rounded-full mx-auto"
+                type="submit"
+              >
+                Update Profile
+              </button>
+            </div>
           </form>
         </section>
-        <section className="h-full w-full bg-white shadow-lg rounded-lg border-2 p-8">
+        <section className=" lg:w-1/3 bg-white shadow-lg rounded-lg border-2">
+          <h1 className="text-center font-semibold text-2xl mt-8 text-[#4867D6] mb-2">
+            Medications
+          </h1>
+          {recentDoneAppointment ? (
+            <div className="text-center pb-4">
+              <h2 className="text-2xl">
+                Appointment Date:
+              </h2>
+              <p className="text-sm mb-2">
+                  {formatAppointmentDate(
+                    recentDoneAppointment.appointmentDateTime
+                  )}
+                </p>
+              <ul>
+                {recentDoneAppointment.prescription.medicines.map(
+                  (medicine, index) => (
+                    <>
+                      <li key={index}>
+                        Medicine Name: {medicine.name}
+                      </li>
+                      <li key={index}>Dosage: {medicine.dosage}</li>
+                      <li key={index}>Qty: {medicine.quantity}</li>
+
+                      <li key={index}>Notes: {medicine.notes}</li>
+                    </>
+                  )
+                )}
+              </ul>
+            </div>
+          ) : (
+            <p>No recent "done" appointments.</p>
+          )}
+        </section>
+        <section className=" lg:w-1/3 bg-white shadow-lg rounded-lg border-2">
+          <h1 className="text-center font-semibold text-2xl mt-8 text-[#4867D6] mb-8">
+            Lab Result
+          </h1>
+          {recentDoneAppointment ? (
+            <div className="text-center text-2xl">
+              <h2>
+                Appointment Date:
+                <p className="text-sm">
+                  {formatAppointmentDate(
+                    recentDoneAppointment.appointmentDateTime
+                  )}
+                </p>
+              </h2>
+              <ul className="mt-6 mb-4">
+                {recentDoneAppointment.labResult.map((labResult, index) => (
+                  <>
+                    <li key={index}>
+                      <a
+                        key={index}
+                        href={labResult.labFile.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline cursor-pointer"
+                      >
+                        File {index + 1}
+                      </a>
+                    </li>
+                  </>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <p>No recent "done" appointments.</p>
+          )}
+        </section>
+      </div>
+
+      <div className=" flex flex-col lg:flex-row p-2 gap-x-4 bg-slate-100">
+        <section className=" w-full bg-white shadow-lg rounded-lg border-2 p-8">
           <div className="">
             <FullCalendar
               plugins={[dayGridPlugin, interactionPlugin]}
@@ -211,7 +304,10 @@ const PatientProfile = () => {
                 ))
               )}
             </div>
-            <a href="/patient/view-appointment" className="mt-4 p-4 bg-[#4867D6] text-white rounded-full mx-auto">
+            <a
+              href="/patient/view-appointment"
+              className="mt-4 p-4 bg-[#4867D6] text-white rounded-full mx-auto"
+            >
               View Appointment History
             </a>
           </div>

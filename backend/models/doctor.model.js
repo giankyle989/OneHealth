@@ -34,6 +34,16 @@ const doctorSchema = new Schema(
       required: true,
       trim: true,
     },
+    signature:{
+      public_id: {
+          type: String,
+          required: true
+      },
+      url: {
+          type: String,
+          required: true
+      }
+  },
     admin: {
       type: mongoose.Schema.Types.ObjectId,
       required:true,

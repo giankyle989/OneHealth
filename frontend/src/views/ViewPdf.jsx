@@ -35,7 +35,7 @@ const styles = {
   },
   footer: {
     width: "30%",
-    height: "10vh",
+    height: "20vh",
     position: "absolute",
     bottom: 0,
     right: 0,
@@ -176,6 +176,12 @@ const ViewPdf = () => {
                   </View>
 
                   <View style={styles.footer}>
+                    {appointmentData.doctorId.signature && (
+                      <Image
+                        style={{ width: '100%', height: 150, }}
+                        src={appointmentData.doctorId.signature.url}
+                      />
+                    )}
                     <Text
                       style={{
                         marginBottom: 5,
@@ -186,11 +192,11 @@ const ViewPdf = () => {
                       {appointmentData.doctorId.firstName}{" "}
                       {appointmentData.doctorId.lastName}, M.D.
                     </Text>
-                    <Text style={{ fontSize: 14 }}>
+                    <Text style={{marginTop: 15,marginBottom: 5, fontSize: 14 }}>
                       Lic No.: {appointmentData.doctorId.licenseNumber}
                     </Text>
-                    <Text style={{ fontSize: 14 }}>PTR No.</Text>
-                    <Text style={{ fontSize: 14 }}>S2 No.</Text>
+                    <Text style={{marginTop: 15,marginBottom: 5, fontSize: 14 }}>PTR No.</Text>
+                    <Text style={{marginTop: 15, fontSize: 14 }}>S2 No.</Text>
                   </View>
                 </View>
               </View>

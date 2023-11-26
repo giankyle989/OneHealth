@@ -57,16 +57,19 @@ const DoctorDashboard = () => {
 
   const today = new Date().toLocaleDateString();
 
-  // Filter appointments for today
+  // Filter appointments for today excluding those with appt_status set to "Done"
   const appointmentsForToday = sortedAppointments.filter((appointment) => {
     const appointmentDate = new Date(
       appointment.appointmentDateTime
     ).toLocaleDateString();
-    return appointmentDate === today;
+
+    // Add a condition to check appt_status !== "Done"
+    return appointmentDate === today && appointment.appt_status !== "Done";
   });
-  console.log(appointmentsForToday);
+
   const nextPatient =
     appointmentsForToday.length > 0 ? appointmentsForToday[0] : null;
+
   return (
     <div className="bg-gray-200 min-h-screen">
       <Navbar userRole={userRole} />
@@ -99,53 +102,58 @@ const DoctorDashboard = () => {
               />
             </div>
           </div>
-<div className="bg-white rounded-md w-2/3 shadow-lg p-8">
-  <p className="font-bold text-3xl text-center mb-6">
-    NEXT PATIENT DETAILS
-  </p>
+          <div className="bg-white rounded-md w-2/3 shadow-lg p-8">
+            <p className="font-bold text-3xl text-center mb-6">
+              NEXT PATIENT DETAILS
+            </p>
 
-  {nextPatient ? (
-    <>
-      <div className="grid grid-cols-2 gap-x-4 mb-4">
-        <p>
-          Name: {nextPatient.patientId.firstName} {nextPatient.patientId.lastName}
-        </p>
-        <p>Appointment ID: {nextPatient._id}</p>
-      </div>
+            {nextPatient ? (
+              <>
+                <div className="grid grid-cols-2 gap-x-4 mb-4">
+                  <p>
+                    Name: {nextPatient.patientId.firstName}{" "}
+                    {nextPatient.patientId.lastName}
+                  </p>
+                  <p>Appointment ID: {nextPatient._id}</p>
+                </div>
 
-      <div className="grid grid-cols-3 gap-x-4 mb-4">
-        <p>
-          Birthday:{" "}
-          {nextPatient.patientId.birthday
-            ? new Date(nextPatient.patientId.birthday).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })
-            : "Not available"}
-        </p>
+                <div className="grid grid-cols-3 gap-x-4 mb-4">
+                  <p>
+                    Birthday:{" "}
+                    {nextPatient.patientId.birthday
+                      ? new Date(
+                          nextPatient.patientId.birthday
+                        ).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "Not available"}
+                  </p>
 
-        <p>Sex: {nextPatient.patientId.sex || "Not available"}</p>
-        
-        <p>
-          Last Appointment:{" "}
-          {nextPatient.lastAppointment
-            ? new Date(nextPatient.lastAppointment).toLocaleDateString()
-            : "Not available"}
-        </p>
-      </div>
+                  <p>Sex: {nextPatient.patientId.sex || "Not available"}</p>
 
-      <div className="grid grid-cols-1 mb-4">
-        <p>
-          Patient History: {nextPatient.patientHistory || "Not available"}
-        </p>
-      </div>
-    </>
-  ) : (
-    <p className="text-center">No upcoming appointments for today</p>
-  )}
-</div>
+                  <p>
+                    Last Appointment:{" "}
+                    {nextPatient.lastAppointment
+                      ? new Date(
+                          nextPatient.lastAppointment
+                        ).toLocaleDateString()
+                      : "Not available"}
+                  </p>
+                </div>
 
+                <div className="grid grid-cols-1 mb-4">
+                  <p>
+                    Patient History:{" "}
+                    {nextPatient.patientHistory || "Not available"}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <p className="text-center">No upcoming appointments for today</p>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-x-4 p-4 min-h-1/2">
           <div className="flex justify-center items-center bg-white shadow-lg rounded-md p-4 min-h-1/2">

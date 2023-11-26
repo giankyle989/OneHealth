@@ -1,35 +1,66 @@
 import React, { useState } from "react";
 import { useStore } from "../../store";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const UploadFile = ({ visible, onClose, id }) => {
-  const [file, setFile] = useState(null);
-  const [filename, setFilename] = useState('');
-
-  const handleFileChange = async (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    await setFilename(selectedFile.name); // Wait for the state to be updated
-  };
-
+  const [labFiles, setLabFiles] = useState([]);
   const { createLabResult } = useStore();
 
-  const handleUpdate = async () => {
-    
-    try {
-      const formData = new FormData();
-      formData.append('appointmentId', id);
-      formData.append('filename', filename);
-      formData.append('file', file);
+  // handle and convert files to base64
+  const handleLabFiles = (e) => {
+    const files = e.target.files;
+    const filesArray = [];
   
-      await createLabResult(id, formData);
-      onClose();
-      console.log("Frontend: "+ formData)
-    } catch (error) {
-      console.error('Error creating lab result:', error);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+  
+      // Check if the file type is either an image or PDF
+      if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+        setFileToBase(file);
+        filesArray.push(file);
+      } else {
+        // Display a message or handle the invalid file type as needed
+        console.log(`Invalid file type: ${file.type}`);
+      }
     }
-    
+  
+    console.log("handleLabFiles: ", filesArray, id);
+  };
+  
+
+  // set files to base64
+  const setFileToBase = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setLabFiles((prevFiles) => [...prevFiles, reader.result]);
+      console.log("setFileToBase: ", reader.result);
+    };
   };
 
+  // submit the form
+  const submitForm = async (e) => {
+    e.preventDefault();
+    try {
+      // Use axios to send an array of files
+      const { data } = await axios.post(
+        "http://localhost:5000/api/nurse/appointment/labresult/create/",
+        { appointmentId: id, labFiles }
+      );
+
+      if (data.success === true) {
+        setLabFiles([]);
+        toast.success("Uploaded successfully");
+      }
+      console.log("Uploaded successfully");
+      onClose();
+    } catch (error) {
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+    }
+  };
 
   if (!visible) return null;
   return (
@@ -55,20 +86,24 @@ const UploadFile = ({ visible, onClose, id }) => {
             />
           </svg>
         </button>
-        <div className="modal-header bg-[#4867D6] text-white p-4 rounded-t-lg">
-          <h2 className="text-2xl font-semibold">Upload Lab Result</h2>
-        </div>
-        <div className="modal-content p-4">
-        <input name='file' type="file" onChange={handleFileChange} />
-        </div>
-        <div className="modal-footer bg-gray-100 p-4 rounded-b-lg flex justify-end">
-          <button
-            onClick={handleUpdate}
-            className="bg-[#4867D6] hover:bg-[#32499b] text-white px-4 py-2 rounded-lg focus:outline-none"
-          >
-            Submit
-          </button>
-        </div>
+        <form action="" encType="multipart/form-data" onSubmit={submitForm}>
+          <div className="modal-header bg-[#4867D6] text-white p-4 rounded-t-lg">
+            <h2 className="text-2xl font-semibold">Upload Lab Result</h2>
+          </div>
+
+          <div className="modal-content p-4">
+          <input onChange={handleLabFiles} type="file" name="labFiles" multiple />
+          </div>
+
+          <div className="modal-footer bg-gray-100 p-4 rounded-b-lg flex justify-end">
+            <button
+              type="submit"
+              className="bg-[#4867D6] hover:bg-[#32499b] text-white px-4 py-2 rounded-lg focus:outline-none"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

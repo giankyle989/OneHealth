@@ -6,22 +6,16 @@ const ViewPatientModal = ({ visible, onClose, appointment }) => {
 
   const navigate = useNavigate();
 
-  const {
-    _id,
-    patientFirstName,
-    patientLastName,
-    email,
-    mobileNumber,
-    appointmentDateTime,
-  } = appointment;
+  const { _id, appointmentDateTime, labResult } = appointment;
 
   const patientId = appointment.patientId._id;
-  const { firstName, lastName } = appointment.patientId;
+  const { firstName, lastName, email, mobileNumber } = appointment.patientId;
 
   const openPdfPage = (_id) => {
     // Navigate to the PDF view page and pass appointment data via state
     navigate("/pdf", { state: { appointmentId: _id } });
   };
+  console.log(appointment.labResult);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -49,13 +43,12 @@ const ViewPatientModal = ({ visible, onClose, appointment }) => {
         <div className="bg-[#4867D6] text-white p-4 rounded-t-lg">
           <h2 className="text-2xl font-semibold">Patient's Details</h2>
         </div>
-        <div className="p-4 grid g">
+        <div className="p-4 grid grid-cols-2">
           <p className="mb-2">
             <span className="font-semibold">Patient ID:</span> {patientId}
           </p>
           <p className="mb-2">
-            <span className="font-semibold">Name:</span> {patientFirstName}{" "}
-            {patientLastName}
+            <span className="font-semibold">Name:</span> {firstName} {lastName}
           </p>
           <p className="mb-2">
             <span className="font-semibold">Email:</span> {email}
@@ -64,11 +57,37 @@ const ViewPatientModal = ({ visible, onClose, appointment }) => {
             <span className="font-semibold">Mobile Number:</span> {mobileNumber}
           </p>
         </div>
+        <div className="p-4">
+          <label className="block text-lg font-semibold mb-2">
+            Lab results:
+          </label>
+          {appointment.labResult && appointment.labResult.length > 0 ? (
+            <div>
+              {/* Display each lab result with improved styling */}
+              {appointment.labResult.map((result, index) => (
+                <p key={result._id} className="mb-2">
+                  <a
+                    href={result.labFile.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline cursor-pointer"
+                  >
+                    Laboratory Result {index + 1}
+                  </a>
+                </p>
+              ))}
+            </div>
+          ) : (
+            <p>No lab results available</p>
+          )}
+        </div>
         <div className="bg-gray-100 p-4 rounded-b-lg flex justify-center">
-          <button className="bg-[#4867D6] p-2 text-white rounded-sm mr-2" onClick={() => openPdfPage(_id)}>
+          <button
+            className="bg-[#4867D6] p-2 text-white rounded-sm mr-2"
+            onClick={() => openPdfPage(_id)}
+          >
             View Prescription
           </button>
-          <button className="bg-[#4867D6] p-2 text-white rounded-sm">View Lab Result</button>
         </div>
       </div>
     </div>

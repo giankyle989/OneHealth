@@ -4,6 +4,7 @@ const Doctor = require("../models/doctor.model");
 const Department = require("../models/department.model");
 const Admin = require("../models/adminModel");
 const { generateToken } = require("../middlewares/generateToken");
+const cloudinary = require("../utils/cloudinary");
 
 //Get Doctor by Admin User
 const getDoctor = asyncHandler(async (req, res) => {
@@ -14,7 +15,7 @@ const getDoctor = asyncHandler(async (req, res) => {
 
 //Get Doctor By Receptionist User
 const getDoctorByReceptionist = asyncHandler(async (req, res) => {
-  Doctor.find({}).populate('dept_id', 'name')
+  Doctor.find({}).populate('dept_id', 'name').populate('signature')
     .then((doctor) => res.json(doctor))
     .catch((err) => res.status(400).json("Error: " + err));
 });
@@ -33,13 +34,19 @@ const getDoctorByDepartment = asyncHandler(async (req,res) => {
 //Register doctor
 const registerDoctor = asyncHandler(async (req, res) => {
   const admin = req.user.id;
-  const { firstName, lastName, email, password, specialization, licenseNumber, departmentName } = req.body;
+  const { firstName, lastName, email, password, specialization, licenseNumber, departmentName, signature } = req.body;
 
   if (!firstName || !lastName || !email || !password || !specialization || !licenseNumber || !departmentName) {
     res.status(400);
     throw new Error("Please fill all fields");
   }
 
+  const result = await cloudinary.uploader.upload(signature, {
+    resource_type: 'auto',
+    folder: "signature",
+    // width: 300,
+    // crop: "scale"
+  });
   //Check if doctor exists
   const doctorExists = await Doctor.findOne({ email });
   if (doctorExists) {
@@ -65,6 +72,10 @@ const registerDoctor = asyncHandler(async (req, res) => {
     specialization,
     licenseNumber,
     dept_id: department._id,
+    signature:{
+      public_id: result.public_id,
+      url: result.secure_url,
+    }
   });
 
   if (doctor) {

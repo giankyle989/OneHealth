@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Appointment = require("../models/appointment.model");
 const { DateTime } = require("luxon");
 const nodemailer = require("nodemailer");
-const Patient = require('../models/patientModel')
+const Patient = require("../models/patientModel");
 //Nurse get appointments
 const getAllTodaysAppointment = asyncHandler(async (req, res) => {
   // Get tomorrow's date in Singapore time zone
@@ -16,6 +16,8 @@ const getAllTodaysAppointment = asyncHandler(async (req, res) => {
       $lt: endOfTomorrow.toJSDate(),
     },
   })
+    .populate("patientId")
+    .populate("labResult")
     .populate({
       path: "doctorId",
       select: "firstName lastName dept_id",
@@ -33,7 +35,8 @@ const getAllAppointments = asyncHandler(async (req, res) => {
     const appointments = await Appointment.find({})
       .populate("patientId")
       .populate("doctorId")
-      .populate("diagnosis");
+      .populate("diagnosis")
+      .populate("labResult");
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
     }
@@ -48,7 +51,7 @@ const getAppointment = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({ patientId: req.user.id })
       .sort({ appointmentDateTime: -1 })
-      .populate('patientId')
+      .populate("patientId")
       .populate({
         path: "doctorId",
         select: "firstName lastName  dept_id ",
@@ -57,7 +60,9 @@ const getAppointment = asyncHandler(async (req, res) => {
           select: "name",
         },
       })
-      .populate("diagnosis");
+      .populate("diagnosis")
+      .populate("labResult")
+      .populate('prescription')
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
     }
@@ -73,7 +78,8 @@ const getAppointmentById = asyncHandler(async (req, res) => {
     const appointment = await Appointment.findById(appointmentId)
       .populate("doctorId")
       .populate("prescription")
-      .populate("patientId");
+      .populate("patientId")
+      .populate("labResult");
 
     if (!appointment) {
       return res.status(404).json("Appointment not found");
@@ -90,7 +96,8 @@ const doctorGetAppointments = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({ doctorId: req.user.id })
       .populate("patientId")
-      .populate("diagnosis");
+      .populate("diagnosis")
+      .populate("labResult");
 
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
@@ -116,6 +123,8 @@ const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
         $lt: endOfToday.toJSDate(),
       },
     })
+      .populate("patientId")
+      .populate("labResult")
       .populate({
         path: "doctorId",
         select: "firstName lastName dept_id",
@@ -133,7 +142,8 @@ const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
-})
+});
+
 
 const doctorGetAppointmentsWithPatient = asyncHandler(async (req, res) => {
   try {
@@ -143,7 +153,9 @@ const doctorGetAppointmentsWithPatient = asyncHandler(async (req, res) => {
     const appointments = await Appointment.find({
       doctorId,
       patientId,
-    }).populate("patientId");
+    })
+      .populate("patientId")
+      .populate("labResult");
 
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
@@ -157,11 +169,7 @@ const doctorGetAppointmentsWithPatient = asyncHandler(async (req, res) => {
 
 const createAppointment = asyncHandler(async (req, res) => {
   const patientId = req.user.id;
-  const {
-    doctorId,
-    appointmentDateTime,
-    reason,
-  } = req.body;
+  const { doctorId, appointmentDateTime, reason } = req.body;
 
   if (!doctorId || !appointmentDateTime || !reason) {
     res.status(400);
@@ -173,7 +181,8 @@ const createAppointment = asyncHandler(async (req, res) => {
     zone: "Asia/Singapore",
   });
 
-  const formattedAppointmentDate = appointmentDate.toFormat("MMMM dd, yyyy - t");
+  const formattedAppointmentDate =
+    appointmentDate.toFormat("MMMM dd, yyyy - t");
 
   // Fetch patient's email address based on patientId
   const patient = await Patient.findById(patientId);
@@ -198,7 +207,6 @@ const createAppointment = asyncHandler(async (req, res) => {
     })
     .catch((err) => res.status(400).json("Error :" + err));
 });
-
 
 //Need patientId validation and error handling
 const createAppointmentByReceptionist = asyncHandler(async (req, res) => {
@@ -314,7 +322,7 @@ module.exports = {
   getAppointmentById,
   doctorGetAppointmentsWithPatient,
   getAllAppointments,
-  doctorGetTodaysAppointments
+  doctorGetTodaysAppointments,
 };
 
 const transporter = nodemailer.createTransport({

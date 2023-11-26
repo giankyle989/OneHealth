@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import io from 'socket.io-client'; // Import Socket.IO client
+import io from "socket.io-client"; // Import Socket.IO client
 import { usePatientStore } from "../../store";
 
 const PatientDashboard = () => {
@@ -14,12 +14,10 @@ const PatientDashboard = () => {
   const token = tokenObject.token;
   const username = tokenObject.name;
 
-  const {getAppointments, appointments} = usePatientStore()
+  const { getAppointments, appointments } = usePatientStore();
 
-
-  
   useEffect(() => {
-    getAppointments(token)
+    getAppointments(token);
   }, []);
 
   // Initialize react-router's navigate function
@@ -29,7 +27,6 @@ const PatientDashboard = () => {
   const openPdfPage = (appointmentId) => {
     // Navigate to the PDF view page and pass appointment data via state
     navigate("/pdf", { state: { appointmentId: appointmentId } });
-    
   };
   return (
     <>
@@ -90,13 +87,16 @@ const PatientDashboard = () => {
                     <td className="py-3 px-6">{appointment.diagnosis?.name}</td>
                     <td className="py-3 px-6">{appointment.appt_status}</td>
                     <td className="py-3 px-6">
-                    {appointment.appt_status === "Done" && (
-                        <button
-                          className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
-                          onClick={() => openPdfPage(appointment._id)}
-                        >
-                          View Prescription
-                        </button>
+                      {appointment.appt_status === "Done" && (
+                        <>
+                          <button
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
+                            onClick={() => openPdfPage(appointment._id)}
+                          >
+                            View Files
+                          </button>
+                          
+                        </>
                       )}
                     </td>
                   </tr>
