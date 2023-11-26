@@ -49,7 +49,6 @@ export const useStore = create((set) => ({
     .then((res) => {
       console.log("updated");
       set((state) => ({ appointments: [...state.appointments] }));
-      location.reload();
     })
     .catch((err) => console.log(`Error: ${err}`));
   },

@@ -82,13 +82,23 @@ const ViewPatientModal = ({ visible, onClose, appointment }) => {
           )}
         </div>
         <div className="bg-gray-100 p-4 rounded-b-lg flex justify-center">
+        {/* Conditionally render the button based on the presence of prescription */}
+        {appointment.prescription ? (
           <button
             className="bg-[#4867D6] p-2 text-white rounded-sm mr-2"
             onClick={() => openPdfPage(_id)}
           >
             View Prescription
           </button>
-        </div>
+        ) : (
+          <button
+            className="bg-[#4867D6] p-2 text-white rounded-sm mr-2"
+            disabled
+          >
+            No Prescription Available
+          </button>
+        )}
+      </div>
       </div>
     </div>
   );

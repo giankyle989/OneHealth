@@ -3,6 +3,7 @@ const Appointment = require("../models/appointment.model");
 const { DateTime } = require("luxon");
 const nodemailer = require("nodemailer");
 const Patient = require("../models/patientModel");
+
 //Nurse get appointments
 const getAllTodaysAppointment = asyncHandler(async (req, res) => {
   // Get tomorrow's date in Singapore time zone
@@ -95,6 +96,7 @@ const getAppointmentById = asyncHandler(async (req, res) => {
 const doctorGetAppointments = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({ doctorId: req.user.id })
+      .sort({ appointmentDateTime: -1 }) // Sort in descending order
       .populate("patientId")
       .populate("diagnosis")
       .populate("labResult");
@@ -103,11 +105,48 @@ const doctorGetAppointments = asyncHandler(async (req, res) => {
       return res.status(200).json("No Appointments");
     }
 
-    res.json(appointments);
+    // Group appointments by patientId
+    const appointmentsByPatient = appointments.reduce((acc, appointment) => {
+      const patientId = appointment.patientId.toString(); // Convert ObjectId to string
+      acc[patientId] = acc[patientId] || [];
+      acc[patientId].push(appointment);
+      return acc;
+    }, {});
+
+    // Calculate the last appointment date for each patient
+    const appointmentsWithLastAppointment = Object.values(appointmentsByPatient).flatMap(patientAppointments => {
+      patientAppointments.sort((a, b) => a.appointmentDateTime - b.appointmentDateTime);
+
+      // Use a Set to store unique diagnosis names
+      const uniqueDiagnoses = new Set();
+
+      const appointmentsWithDiagnoses = patientAppointments.map((appointment, index) => {
+        const diagnosis = appointment.diagnosis;
+
+        // Add the diagnosis name to the Set
+        if (diagnosis) {
+          uniqueDiagnoses.add(diagnosis.name);
+        }
+
+        return {
+          ...appointment.toObject(),
+          lastAppointment: index > 0 ? patientAppointments[index - 1].appointmentDateTime : null,
+          pastDiagnoses: Array.from(uniqueDiagnoses), // Convert Set to array for JSON response
+        };
+      });
+
+      return appointmentsWithDiagnoses;
+    });
+
+    io.emit("doctorRealTimeAppointments", appointmentsWithLastAppointment);
+    res.json(appointmentsWithLastAppointment);
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
 });
+
+
+
 
 const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
   try {
@@ -124,6 +163,7 @@ const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
       },
     })
       .populate("patientId")
+      .populate('diagnosis')
       .populate("labResult")
       .populate({
         path: "doctorId",
@@ -137,6 +177,7 @@ const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments for Today");
     }
+
 
     res.json(appointments);
   } catch (err) {
@@ -281,7 +322,9 @@ const updateAppointment = asyncHandler(async (req, res) => {
 
     // Save the updated appointment
     await appointment.save();
-
+    
+    // Emit the event to update the client side
+    io.emit("appointmentUpdated", appointment);
     return res.json(appointment);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });

@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../../components/Sidebar";
 import { useReceptionistStore, useStore } from "../../../store";
+import io from "socket.io-client"; // Import the socket.io-client library
+
+const socket = io("http://localhost:5000"); 
 
 const FindAppointment = () => {
   const [userRole, setUserRole] = useState("receptionist");
   const { getAllTodaysAppointments, appointments } = useReceptionistStore();
   const { updateAppointmentStatus } = useStore();
-  const tokenObject = JSON.parse(localStorage.getItem("token"));
-  const token = tokenObject.token;
+
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    const tokenObject = JSON.parse(localStorage.getItem("token"));
+    const token = tokenObject.token;
     getAllTodaysAppointments(token);
-  }, []);
+
+    // Set up Socket.IO event listeners
+    socket.on("appointmentUpdated", (updatedAppointment) => {
+      // Handle the updated appointment, you might want to update the state or perform other actions
+      console.log("Appointment Updated:", updatedAppointment);
+      getAllTodaysAppointments(token); // Refresh appointments after an update
+    });
+
+    // Clean up the Socket.IO event listener on component unmount
+    return () => {
+      socket.off("appointmentUpdated");
+    };
+  }, [getAllTodaysAppointments]);
 
   const handleUpdate = (id, currentStatus) => {
     let nextStatus;
@@ -58,13 +74,13 @@ const FindAppointment = () => {
               Appointments for today
             </h1>
             <div className="flex mt-4">
-              {/* <input
+              <input
                 type="text"
                 className="block px-4 py-2 text-sky-700 bg-white border rounded-full focus:border-sky-400 focus:ring-sky-300 focus:outline-none focus:ring focus:ring-opacity-40"
                 placeholder="Name"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-              /> */}
+              />
             </div>
           </div>
           <div className="mt-32">

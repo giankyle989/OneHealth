@@ -102,7 +102,7 @@ const DocHistory = () => {
                           {appointment.patientId.firstName} {appointment.patientId.lastName}
                         </td>
                         <td className="py-3 px-6">{appointment._id}</td>
-                        <td className="py-3 px-6">{appointment.diagnosis}</td>
+                        <td className="py-3 px-6">{appointment.diagnosis.name}</td>
                         <td className="py-3 px-6">{appointment.appt_status}</td>
                         <td className="py-3 px-6">
                           <button

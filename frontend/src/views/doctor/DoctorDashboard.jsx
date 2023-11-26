@@ -5,18 +5,29 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction";
 import { PieChart, Pie, Tooltip } from "recharts";
+import io from "socket.io-client";
+const socket = io("http://localhost:5000");
 
 const DoctorDashboard = () => {
   const [userRole, setUserRole] = useState("doctor");
   const { appointments, getAllTimeAppointments } = useStore();
 
   useEffect(() => {
-    // Get token object
     const tokenObject = JSON.parse(localStorage.getItem("token"));
     const token = tokenObject.token;
-    // Fetch all-time appointments and update the store
     getAllTimeAppointments(token);
-  }, []);
+
+    // Set up Socket.IO event listeners
+    socket.on("doctorRealTimeAppointments", (updatedAppointment) => {
+      // Handle the updated appointment, you might want to update the state or perform other actions
+      getAllTimeAppointments(token); // Refresh appointments after an update
+    });
+
+    // Clean up the Socket.IO event listener on component unmount
+    return () => {
+      socket.off("doctorRealTimeAppointments");
+    };
+  }, [getAllTimeAppointments]);
 
   // Filter appointments with diagnosis name
   const appointmentsWithDiagnosis = appointments.filter(
@@ -69,7 +80,6 @@ const DoctorDashboard = () => {
 
   const nextPatient =
     appointmentsForToday.length > 0 ? appointmentsForToday[0] : null;
-
   return (
     <div className="bg-gray-200 min-h-screen">
       <Navbar userRole={userRole} />
@@ -138,15 +148,29 @@ const DoctorDashboard = () => {
                     {nextPatient.lastAppointment
                       ? new Date(
                           nextPatient.lastAppointment
-                        ).toLocaleDateString()
-                      : "Not available"}
+                        ).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "No previous appointments"}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 mb-4">
-                  <p>
+                  <p className="">
                     Patient History:{" "}
-                    {nextPatient.patientHistory || "Not available"}
+                    {nextPatient.pastDiagnoses &&
+                    nextPatient.pastDiagnoses.length > 0
+                      ? nextPatient.pastDiagnoses.map((diagnosis, index) => (
+                          <span
+                            key={index}
+                            className=" mx-2 bg-[#4867D6] text-white p-1"
+                          >
+                            {diagnosis}
+                          </span>
+                        ))
+                      : "Not available"}
                   </p>
                 </div>
               </>

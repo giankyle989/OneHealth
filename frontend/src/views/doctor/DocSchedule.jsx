@@ -4,6 +4,9 @@ import { useStore } from "../../store";
 import AddPrescriptionModal from "../../components/modals/AddPrescriptionModal";
 import Diagnose from "../../components/modals/Diagnose";
 import { GrLinkNext } from "react-icons/gr";
+import io from "socket.io-client"; // Import the socket.io-client library
+
+const socket = io("http://localhost:5000"); 
 
 const DocSchedule = () => {
   const [userRole, setUserRole] = useState("doctor");
@@ -18,12 +21,22 @@ const DocSchedule = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    // Get token object
     const tokenObject = JSON.parse(localStorage.getItem("token"));
     const token = tokenObject.token;
-    // Fetch appointments and update the store
     getTodaysAppointments(token);
-  }, []);
+
+    // Set up Socket.IO event listeners
+    socket.on("appointmentUpdated", (updatedAppointment) => {
+      // Handle the updated appointment, you might want to update the state or perform other actions
+      console.log("Appointment Updated:", updatedAppointment);
+      getTodaysAppointments(token); // Refresh appointments after an update
+    });
+
+    // Clean up the Socket.IO event listener on component unmount
+    return () => {
+      socket.off("appointmentUpdated");
+    };
+  }, [getTodaysAppointments]);
 
   const handleUpdate = (id, currentStatus) => {
     let nextStatus;

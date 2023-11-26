@@ -37,6 +37,18 @@ app.use('/api/nurse', nurseRoutes)
 app.use('/api/receptionist', receptionistRoutes)
 
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running in port : ${port}`);
 });
+
+io = require ('socket.io')(server, {
+  cors: {
+    origin: '*',
+  },
+})
+
+io.on('connection', (socket) => {
+  console.log("Connected and Socket ID: "+ socket.id)
+
+  socket.emit("Data", "First Emit")
+})

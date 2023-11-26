@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { useStore } from "../../store";
 import UploadFile from "../../components/modals/UploadFile";
+import io from "socket.io-client";
+const socket = io("http://localhost:5000"); 
 
 const NurseSchedule = () => {
   const [userRole, setUserRole] = useState("nurse");
@@ -13,13 +15,23 @@ const NurseSchedule = () => {
   const { appointments, getAllTodaysAppointments, updateAppointmentStatus } =
     useStore();
 
-  useEffect(() => {
-    // Get token object
-    const tokenObject = JSON.parse(localStorage.getItem("token"));
-    const token = tokenObject.token;
-    // Fetch appointments and update the store
-    getAllTodaysAppointments(token);
-  }, []);
+    useEffect(() => {
+      const tokenObject = JSON.parse(localStorage.getItem("token"));
+      const token = tokenObject.token;
+      getAllTodaysAppointments(token);
+  
+      // Set up Socket.IO event listeners
+      socket.on("appointmentUpdated", (updatedAppointment) => {
+        // Handle the updated appointment, you might want to update the state or perform other actions
+        console.log("Appointment Updated:", updatedAppointment);
+        getAllTodaysAppointments(token); // Refresh appointments after an update
+      });
+  
+      // Clean up the Socket.IO event listener on component unmount
+      return () => {
+        socket.off("appointmentUpdated");
+      };
+    }, [getAllTodaysAppointments]);
 
   const handleUpdate = (id, currentStatus) => {
     let nextStatus;
