@@ -48,7 +48,7 @@ io = require ('socket.io')(server, {
 })
 
 io.on('connection', (socket) => {
-  console.log("Connected and Socket ID: "+ socket.id)
+
 
   socket.emit("Data", "First Emit")
 })

@@ -178,7 +178,7 @@ const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
       return res.status(200).json("No Appointments for Today");
     }
 
-
+    io.emit("DoctorTodayRealTime", appointments)
     res.json(appointments);
   } catch (err) {
     res.status(400).json("Error: " + err);
@@ -373,8 +373,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "onehealth.cainta@gmail.com",
-    pass: "iwpn cghe zpua sjyz",
+    user: process.env.EMAIL_USER ,
+    pass: process.env.EMAIL_PASS 
   },
 });
 

@@ -17,7 +17,7 @@ const PatientProfile = () => {
   const [birthday, setBirthday] = useState();
   const [email, setEmail] = useState();
   const [mobileNumber, setMobileNumber] = useState();
-
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false); // Add checkbox
   // Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   // Get token string only
@@ -177,14 +177,33 @@ const PatientProfile = () => {
                   onChange={(e) => setMobileNumber(e.target.value)}
                 />
               </div>
+              <div className="text-black">
+                <input
+                  type="checkbox"
+                  checked={isCheckboxChecked}
+                  onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}
+                />
+                <label className="text-sm ml-2">
+                  I agree to update my user information
+                </label>
+              </div>
             </div>
-            <div className="text-center mb-4">
-              <button className="mt-4 p-4 bg-[#4867D6] mr-2 text-white rounded-full mx-auto">
+            <div className="text-center space-x-2 mb-4">
+              <button
+                className={`mt-4 p-4 rounded-full mx-auto ${
+                  !isCheckboxChecked ? "bg-gray-500" : "bg-[#4867D6]"
+                } text-white`}
+                type="submit"
+                disabled={!isCheckboxChecked} // Disable the button if the checkbox is not checked
+              >
                 Change Password
               </button>
               <button
-                className="mt-4 p-4 bg-[#4867D6] ml02 text-white rounded-full mx-auto"
+                className={`mt-4 p-4 rounded-full mx-auto ${
+                  !isCheckboxChecked ? "bg-gray-500" : "bg-[#4867D6]"
+                } text-white`}
                 type="submit"
+                disabled={!isCheckboxChecked} // Disable the button if the checkbox is not checked
               >
                 Update Profile
               </button>
@@ -197,29 +216,28 @@ const PatientProfile = () => {
           </h1>
           {recentDoneAppointment ? (
             <div className="text-center pb-4">
-              <h2 className="text-2xl">
-                Appointment Date:
-              </h2>
+              <h2 className="text-2xl">Appointment Date:</h2>
               <p className="text-sm mb-2">
-                  {formatAppointmentDate(
-                    recentDoneAppointment.appointmentDateTime
-                  )}
-                </p>
-              <ul>
-                {recentDoneAppointment.prescription.medicines.map(
-                  (medicine, index) => (
-                    <>
-                      <li key={index}>
-                        Medicine Name: {medicine.name}
-                      </li>
-                      <li key={index}>Dosage: {medicine.dosage}</li>
-                      <li key={index}>Qty: {medicine.quantity}</li>
-
-                      <li key={index}>Notes: {medicine.notes}</li>
-                    </>
-                  )
+                {formatAppointmentDate(
+                  recentDoneAppointment.appointmentDateTime
                 )}
-              </ul>
+              </p>
+              {recentDoneAppointment.prescription ? (
+                <ul>
+                  {recentDoneAppointment.prescription.medicines.map(
+                    (medicine, index) => (
+                      <React.Fragment key={index}>
+                        <li>Medicine Name: {medicine.name}</li>
+                        <li>Dosage: {medicine.dosage}</li>
+                        <li>Qty: {medicine.quantity}</li>
+                        <li>Notes: {medicine.notes}</li>
+                      </React.Fragment>
+                    )
+                  )}
+                </ul>
+              ) : (
+                <p>No prescription information available.</p>
+              )}
             </div>
           ) : (
             <p>No recent "done" appointments.</p>
@@ -231,20 +249,17 @@ const PatientProfile = () => {
           </h1>
           {recentDoneAppointment ? (
             <div className="text-center text-2xl">
-              <h2>
-                Appointment Date:
-                <p className="text-sm">
-                  {formatAppointmentDate(
-                    recentDoneAppointment.appointmentDateTime
-                  )}
-                </p>
-              </h2>
-              <ul className="mt-6 mb-4">
-                {recentDoneAppointment.labResult.map((labResult, index) => (
-                  <>
+              <h2>Appointment Date:</h2>
+              <p className="text-sm">
+                {formatAppointmentDate(
+                  recentDoneAppointment.appointmentDateTime
+                )}
+              </p>
+              {recentDoneAppointment.labResult ? (
+                <ul className="mt-6 mb-4">
+                  {recentDoneAppointment.labResult.map((labResult, index) => (
                     <li key={index}>
                       <a
-                        key={index}
                         href={labResult.labFile.url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -253,9 +268,11 @@ const PatientProfile = () => {
                         File {index + 1}
                       </a>
                     </li>
-                  </>
-                ))}
-              </ul>
+                  ))}
+                </ul>
+              ) : (
+                <p>No lab results available.</p>
+              )}
             </div>
           ) : (
             <p>No recent "done" appointments.</p>

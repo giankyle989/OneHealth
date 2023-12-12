@@ -32,6 +32,7 @@ const DocSchedule = () => {
       getTodaysAppointments(token); // Refresh appointments after an update
     });
 
+
     // Clean up the Socket.IO event listener on component unmount
     return () => {
       socket.off("appointmentUpdated");

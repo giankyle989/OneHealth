@@ -4,6 +4,7 @@ import { useStore } from "../../store";
 import UploadFile from "../../components/modals/UploadFile";
 import io from "socket.io-client";
 const socket = io("http://localhost:5000"); 
+import { GrLinkNext } from "react-icons/gr";
 
 const NurseSchedule = () => {
   const [userRole, setUserRole] = useState("nurse");
@@ -137,12 +138,12 @@ const filteredAppointments = appointments.filter(appointment =>
                               In Progress
                             </span>
                             <button
-                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                              className="text-white px-3 py-1 rounded-md"
                               onClick={() =>
                                 handleUpdate(appointment._id, "Reception")
                               }
                             >
-                              Update
+                              <GrLinkNext />
                             </button>
                           </div>
                         );
@@ -161,12 +162,12 @@ const filteredAppointments = appointments.filter(appointment =>
                               In Progress
                             </span>
                             <button
-                              className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                              className="text-white px-3 py-1 rounded-md"
                               onClick={() =>
                                 handleUpdate(appointment._id, "Assessment")
                               }
                             >
-                              Update
+                              <GrLinkNext />
                             </button>
                           </div>
                         );
@@ -186,7 +187,7 @@ const filteredAppointments = appointments.filter(appointment =>
                             </span>
                             <div>
                               <button
-                                className="bg-blue-500 text-white px-3 py-1 rounded-md mr-4"
+                                className="bg-[#4867D6] text-white px-3 py-1 rounded-md mr-4"
                                 onClick={() => {
                                   setSelectedAppointmentId(appointment._id);
                                   setShowUpload(true);
@@ -195,12 +196,12 @@ const filteredAppointments = appointments.filter(appointment =>
                                 Lab Result
                               </button>
                               <button
-                                className="bg-blue-500 text-white px-3 py-1 rounded-md"
+                                className="text-white px-3 py-1 rounded-md"
                                 onClick={() =>
                                   handleUpdate(appointment._id, "Testing")
                                 }
                               >
-                                Update
+                                <GrLinkNext />
                               </button>
                             </div>
                             <UploadFile

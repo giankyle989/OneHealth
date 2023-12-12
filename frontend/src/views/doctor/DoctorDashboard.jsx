@@ -7,10 +7,16 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { PieChart, Pie, Tooltip } from "recharts";
 import io from "socket.io-client";
 const socket = io("http://localhost:5000");
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 const DoctorDashboard = () => {
   const [userRole, setUserRole] = useState("doctor");
   const { appointments, getAllTimeAppointments } = useStore();
+  const [isExportClicked, setIsExportClicked] = useState(false);
+
+  const handleExportClick = () => {
+    setIsExportClicked(true);
+  };
 
   useEffect(() => {
     const tokenObject = JSON.parse(localStorage.getItem("token"));
@@ -185,22 +191,54 @@ const DoctorDashboard = () => {
               <p className="font-bold text-3xl text-center">
                 Your Monthly Diagnosis
               </p>
-              {isPieChartDataEmpty ? (
-                <p>No data available for the pie chart</p>
-              ) : (
-                <PieChart width={400} height={400}>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value" // Use dataKey instead of valueKey
-                    label
-                  />
-                  <Tooltip />
-                </PieChart>
-              )}
+              <div className="text-center">
+                {isPieChartDataEmpty ? (
+                  <p>No data available for the pie chart</p>
+                ) : (
+                  <>
+                    <table
+                      id="diagnosisTable"
+                      style={{ display: isExportClicked ? "table" : "none" }}
+                    >
+                      <thead>
+                        <tr>
+                          <th>Diagnosis Name</th>
+                          <th>Frequency</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pieChartData.map((data, index) => (
+                          <tr key={index}>
+                            <td>{data.name}</td>
+                            <td>{data.value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>{" "}
+                    <PieChart width={400} height={400}>
+                      <Pie
+                        data={pieChartData}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value" // Use dataKey instead of valueKey
+                        label
+                      />
+                      <Tooltip />
+                    </PieChart>
+                    <ReactHTMLTableToExcel
+                      id="exportButton"
+                      className="p-2 text-white bg-[#4867D6]"
+                      table="diagnosisTable"
+                      filename={`diagnosis_data_${new Date().toISOString()}`}
+                      sheet="Sheet"
+                      buttonText="Export to Excel"
+                      onClick={handleExportClick}
+                    />
+                  </>
+                )}
+              </div>
             </div>
             <div className="bg-white shadow-lg rounded-md p-4">
               <p>Total Diagnoses: {appointmentsWithDiagnosis.length}</p>

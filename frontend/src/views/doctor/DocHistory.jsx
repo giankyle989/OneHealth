@@ -8,7 +8,8 @@ const DocHistory = () => {
   const [showViewPatient, setShowViewPatient] = useState(false);
   const handleClose = () => setShowViewPatient(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const { appointments, getTodaysAppointments, getAllTimeAppointments } = useStore();
+  const { appointments, getTodaysAppointments, getAllTimeAppointments } =
+    useStore();
   const [activeTab, setActiveTab] = useState("today");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -16,26 +17,34 @@ const DocHistory = () => {
     // Get token object
     const tokenObject = JSON.parse(localStorage.getItem("token"));
     const token = tokenObject.token;
-  
+
     // Fetch appointments and update the store
-    if (activeTab === 'today') {
-      getTodaysAppointments(token)
-      
-    } else if (activeTab === 'allTime') {
-      getAllTimeAppointments(token)
-      console.log("getall",appointments)
+    if (activeTab === "today") {
+      getTodaysAppointments(token);
+    } else if (activeTab === "allTime") {
+      getAllTimeAppointments(token);
+      console.log("getall", appointments);
     }
   }, [activeTab, getAllTimeAppointments]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
-  console.log("get",appointments)
+  console.log("get", appointments);
   const filteredAppointments = appointments.filter(
     (appointment) =>
-      appointment.patientId.firstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      appointment.appt_status.toLowerCase() === 'done'
+      appointment.patientId.firstName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) &&
+      appointment.appt_status.toLowerCase() === "done"
   );
+
+  const sortedAppointments = filteredAppointments.sort((a, b) => {
+    const dateA = new Date(a.appointmentDateTime);
+    const dateB = new Date(b.appointmentDateTime);
+    return dateB - dateA;
+  });
+  
 
   return (
     <div className="h-screen">
@@ -57,14 +66,20 @@ const DocHistory = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="flex justify-center space-x-4">
-                <button className={`${
+                <button
+                  className={`${
                     activeTab === "today" ? "bg-[#4867D6] text-white" : ""
-                  } px-4 py-2 rounded border border-[#4867D6]`} onClick={() => handleTabChange("today")}>
+                  } px-4 py-2 rounded border border-[#4867D6]`}
+                  onClick={() => handleTabChange("today")}
+                >
                   Today
                 </button>
-                <button className={`${
+                <button
+                  className={`${
                     activeTab === "allTime" ? "bg-[#4867D6] text-white" : ""
-                  } px-4 py-2 rounded border border-[#4867D6]`} onClick={() => handleTabChange("allTime")}>
+                  } px-4 py-2 rounded border border-[#4867D6]`}
+                  onClick={() => handleTabChange("allTime")}
+                >
                   All Time
                 </button>
               </div>
@@ -81,12 +96,12 @@ const DocHistory = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredAppointments.length === 0 ? (
+                  {sortedAppointments.length === 0 ? (
                     <tr>
                       <td colSpan="7">No data</td>
                     </tr>
                   ) : (
-                    filteredAppointments.map((appointment) => (
+                    sortedAppointments.map((appointment) => (
                       <tr className="text-center" key={appointment._id}>
                         <td className="py-3 px-6">
                           {new Date(
@@ -99,10 +114,15 @@ const DocHistory = () => {
                           ).toLocaleTimeString()}
                         </td>
                         <td className="py-3 px-6">
-                          {appointment.patientId.firstName} {appointment.patientId.lastName}
+                          {appointment.patientId.firstName}{" "}
+                          {appointment.patientId.lastName}
                         </td>
                         <td className="py-3 px-6">{appointment._id}</td>
-                        <td className="py-3 px-6">{appointment.diagnosis.name}</td>
+                        <td className="py-3 px-6">
+                          {appointment.diagnosis
+                            ? appointment.diagnosis.name
+                            : "No Diagnosis"}
+                        </td>
                         <td className="py-3 px-6">{appointment.appt_status}</td>
                         <td className="py-3 px-6">
                           <button

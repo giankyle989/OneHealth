@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const SelectTime = ({ visible, onClose, onDelete, initialStartTime = '', initialEndTime = '', selectInfo }) => {
+const SelectTime = ({ token, visible, onClose, onDelete, selectedDateInfo, initialStartTime = '', initialEndTime = '' }) => {
   const [startTime, setStartTime] = useState(initialStartTime);
   const [endTime, setEndTime] = useState(initialEndTime);
 
@@ -14,12 +15,45 @@ const SelectTime = ({ visible, onClose, onDelete, initialStartTime = '', initial
     setEndTime(e.target.value);
   };
 
-  
-
   const handleSubmit = () => {
-    startAppt = (selectInfo,startTime)
-    console.log(startAppt)
+    const headerToken = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+  
+    const startDateTime = new Date(selectedDateInfo.startStr);
+    const endDateTime = new Date(selectedDateInfo.endStr);
+  
+    // Extract time portion from input and set it to the date objects
+    const startTimeArray = startTime.split(':');
+    startDateTime.setHours(startDateTime.getHours() + parseInt(startTimeArray[0], 10), startTimeArray[1]);
+  
+    const endTimeArray = endTime.split(':');
+    endDateTime.setHours(endDateTime.getHours() + parseInt(endTimeArray[0], 10), endTimeArray[1]);
+  
+    // Add 8 hours to the start and end times
+    startDateTime.setHours(startDateTime.getHours());
+    endDateTime.setHours(endDateTime.getHours());
+  
+    const eventObject = {
+      title: "Availability",
+      start: startDateTime.toISOString(),
+      end: endDateTime.toISOString(),
+      eventTimezone: "Asia/Manila",
+      allDay: false,
+    };
+  
+    axios
+      .post("http://localhost:5000/api/doctor/availability/create", eventObject, headerToken)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.log("Error: " + err));
+    console.log(eventObject);
+    onClose();
   };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -51,23 +85,25 @@ const SelectTime = ({ visible, onClose, onDelete, initialStartTime = '', initial
           <h2 className="text-2xl font-semibold">Input Time</h2>
         </div>
         <div className="modal-content p-4">
+        <h1>Selected Start Date: {selectedDateInfo && selectedDateInfo.startStr}</h1>
+        <h1>Selected End Date: {selectedDateInfo && selectedDateInfo.endStr}</h1>
           <div className="mb-4">
             <label className="font-semibold">Start Time:</label>
             <input
-              type="time"
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={startTime}
-              onChange={handleStartTimeChange}
-            />
+            type="time"
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            value={startTime}
+            onChange={handleStartTimeChange}
+          />
           </div>
           <div className="mb-4">
             <label className="font-semibold">End Time:</label>
             <input
-              type="time"
-              className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-              value={endTime}
-              onChange={handleEndTimeChange}
-            />
+            type="time"
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            value={endTime}
+            onChange={handleEndTimeChange}
+          />
           </div>
         </div>
         <div className="modal-footer bg-gray-100 p-4 rounded-b-lg flex justify-between">

@@ -177,21 +177,33 @@ const updatePatient = asyncHandler(async (req, res) => {
 });
 //Login Patient
 const loginPatient = asyncHandler(async (req, res) => {
-  const { email, mobileNumber, password } = req.body;
+  const { loginIdentifier, password } = req.body;
 
-  const patient = await Patient.findOne({ $or: [ { email }, { mobileNumber } ] });
+  // Check if the loginIdentifier is a valid email or mobileNumber
+  const isEmail = loginIdentifier.includes('@');
+  const query = isEmail ? { email: loginIdentifier } : { mobileNumber: loginIdentifier };
 
-  if (patient && (await bcrypt.compare(password, patient.password))) {
-    res.json({
-      _id: patient.id,
-      name: patient.firstName,
-      token: generateToken(patient._id),
-    });
+  const patient = await Patient.findOne(query);
+
+  if (patient) {
+    const isPasswordValid = await bcrypt.compare(password, patient.password);
+
+    if (isPasswordValid) {
+      res.json({
+        _id: patient.id,
+        name: patient.firstName,
+        token: generateToken(patient._id),
+      });
+    } else {
+      res.status(401); // Unauthorized
+      throw new Error("Incorrect password. Please try again.");
+    }
   } else {
-    res.status(400);
-    throw new Error("Invalid patient data");
+    res.status(404); // Not Found
+    throw new Error("Patient not found. Please check your login details.");
   }
 });
+
 
 //Logout Patient
 const logoutPatient = asyncHandler(async (req, res) => {

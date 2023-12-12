@@ -9,6 +9,7 @@ import ReactHtmlTableToExcel from "react-html-table-to-excel";
 
 const ReceptionistDashboard = () => {
   const [userRole, setUserRole] = useState("receptionist");
+  const [selectedReason, setSelectedReason] = useState("All");
   const {
     appointments,
     availabilities,
@@ -21,16 +22,29 @@ const ReceptionistDashboard = () => {
     getAllAvailability();
   }, []);
 
-  // Get today's date in Singapore time
-  const singaporeTime = new Date().toLocaleString("en-US", {
-    timeZone: "Asia/Singapore",
-  });
-  const today = new Date(singaporeTime).toISOString().split("T")[0];
+  const today = new Date();
+  today.setHours(today.getHours()); // Adjust for Singapore time zone offset
+  const todayString =
+  today.getFullYear() +
+  "-" +
+  String(today.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(today.getDate()).padStart(2, "0");
+
+  const yesterday = new Date(today);
+yesterday.setDate(yesterday.getDate() - 1);
+const yesterdayString =
+  yesterday.getFullYear() +
+  "-" +
+  String(yesterday.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(yesterday.getDate()).padStart(2, "0");
 
   // Filter availabilities for today
   const todayAvailabilities = availabilities.filter(
     (availability) =>
-      availability.start.includes(today) || availability.end.includes(today)
+      availability.start.includes(yesterdayString) ||
+      availability.end.includes(yesterdayString)
   );
 
   // Get the list of available doctors
@@ -40,7 +54,7 @@ const ReceptionistDashboard = () => {
 
   // Filter appointments for today
   const todayAppointments = appointments.filter((appointment) =>
-    appointment.appointmentDateTime.includes(today)
+    appointment.appointmentDateTime.includes(todayString)
   );
 
   // Count checked-out patients
@@ -54,6 +68,8 @@ const ReceptionistDashboard = () => {
       appointment.appt_status !== "Upcoming" &&
       appointment.appt_status !== "Done"
   ).length;
+
+
 
   // Array of month names
   const monthNames = [
@@ -70,16 +86,25 @@ const ReceptionistDashboard = () => {
     "November",
     "December",
   ];
+  const filteredAppointments =
+    selectedReason === "All"
+      ? appointments
+      : appointments.filter(
+          (appointment) => appointment.reason === selectedReason
+        );
 
   // Aggregate appointments for each month
-  const monthlyAppointments = appointments.reduce((acc, appointment) => {
-    const appointmentMonth = new Date(
-      appointment.appointmentDateTime
-    ).getMonth();
-    acc[monthNames[appointmentMonth]] =
-      (acc[monthNames[appointmentMonth]] || 0) + 1;
-    return acc;
-  }, {});
+  const monthlyAppointments = filteredAppointments.reduce(
+    (acc, appointment) => {
+      const appointmentMonth = new Date(
+        appointment.appointmentDateTime
+      ).getMonth();
+      acc[monthNames[appointmentMonth]] =
+        (acc[monthNames[appointmentMonth]] || 0) + 1;
+      return acc;
+    },
+    {}
+  );
 
   // Prepare data for the bar chart
   const data = monthNames.map((month) => ({
@@ -87,6 +112,19 @@ const ReceptionistDashboard = () => {
     value: monthlyAppointments[month] || 0,
   }));
 
+  const getCurrentAndPreviousMonth = (date) => {
+    const currentMonth = date.getMonth();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+
+    return {
+      currentMonth: monthNames[currentMonth],
+      previousMonth: monthNames[previousMonth],
+    };
+  };
+
+  const { currentMonth, previousMonth } = getCurrentAndPreviousMonth(
+    new Date()
+  );
   // Calculate percentage change compared to the previous month
   const calculatePercentageChange = (currentMonth, previousMonth) => {
     if (previousMonth === 0 && currentMonth === 0) {
@@ -104,14 +142,12 @@ const ReceptionistDashboard = () => {
   };
 
   // Find the index of the previous month
-  const previousMonthIndex = monthNames.indexOf(
-    monthNames[monthNames.length - 2]
-  );
+  const previousMonthIndex = monthNames.indexOf(previousMonth);
 
   // Calculate the percentage change
   const percentageChange = calculatePercentageChange(
-    data[data.length - 1].value,
-    data[previousMonthIndex].value
+    monthlyAppointments[currentMonth] || 0,
+    monthlyAppointments[previousMonth] || 0
   );
 
   const busiestMonth = data.reduce((max, currentMonth) =>
@@ -160,7 +196,7 @@ const ReceptionistDashboard = () => {
                   center: "title",
                   end: "next",
                 }}
-                aspectRatio={2}
+                aspectRatio={1}
               />
             </div>
           </div>
@@ -177,22 +213,20 @@ const ReceptionistDashboard = () => {
                     <th className="py-2">Name</th>
                     <th className="py-2">Specialization</th>
                     <th className="py-2">Department</th>
-                    <th className="py-2">Time</th>
                   </tr>
                 </thead>
                 <tbody>
                   {availableDoctors.map((doctor) => (
-                    <tr key={doctor._id} className="border-b">
+                    <tr key={doctor?._id} className="border-b">
                       <td className="py-2 text-center">
-                        {doctor.firstName} {doctor.lastName}
+                        {doctor && doctor.firstName} {doctor && doctor.lastName}
                       </td>
                       <td className="py-2 text-center">
-                        {doctor.specialization}
+                        {doctor && doctor.specialization}
                       </td>
                       <td className="py-2 text-center">
-                        {doctor.dept_id.name}
+                        {doctor && doctor.dept_id && doctor.dept_id.name}
                       </td>
-                      <td className="py-2 text-center"></td>
                     </tr>
                   ))}
                 </tbody>
@@ -202,6 +236,17 @@ const ReceptionistDashboard = () => {
         </div>
         <div className="bg-white rounded-md p-4 shadow-lg">
           <div className="w-full">
+            <div className="flex items-center justify-center mb-4">
+              <label className="mr-2">Filter by Reason:</label>
+              <select
+                value={selectedReason}
+                onChange={(e) => setSelectedReason(e.target.value)}
+              >
+                <option value="All">All</option>
+                <option value="Medical Check up">Medical Check up</option>
+                <option value="Follow up Check-up">Follow up Check-up</option>
+              </select>
+            </div>
             <p className="text-center font-bold text-xl mb-4">
               Monthly Appointments
             </p>
@@ -230,7 +275,7 @@ const ReceptionistDashboard = () => {
             </p>
 
             <p className="text-center mt-4">
-              Busiest Day: {busiestMonth.month} ({busiestMonth.value}{" "}
+              Busiest Month: {busiestMonth.month} ({busiestMonth.value}{" "}
               Appointments)
             </p>
 

@@ -4,14 +4,25 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client"; // Import Socket.IO client
 import { usePatientStore } from "../../store";
+import ViewFilesModal from "../../components/modals/ViewFilesModal";
 
 const PatientDashboard = () => {
   const [userRole, setUserRole] = useState("patient");
-
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showViewFiles, setShowViewFiles] = useState(false)
+  const handleClose = () => setShowViewFiles(false)
   //Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   //Get token string only
-  const token = tokenObject.token;
+  const token = tokenObject ? tokenObject.token : null;
+
+  useEffect(() => {
+    if (token === null) {
+      // Redirect to another page or handle the case when token is null
+      window.location = "/login"; // Replace "/login" with the desired redirect path
+    }
+  }, [token]);
+  
   const username = tokenObject.name;
 
   const { getAppointments, appointments } = usePatientStore();
@@ -77,11 +88,11 @@ const PatientDashboard = () => {
                     </td>
                     <td className="py-3 px-6">APPT-{appointment._id}</td>
                     <td className="py-3 px-6">
-                      {appointment.doctorId.dept_id.name}
+                      {appointment.doctorId?.dept_id?.name}
                     </td>
                     <td className="py-3 px-6">
-                      Dr. {appointment.doctorId.firstName}{" "}
-                      {appointment.doctorId.lastName}
+                      Dr. {appointment.doctorId?.firstName}{" "}
+                      {appointment.doctorId?.lastName}
                     </td>
                     <td className="py-3 px-6">{appointment.reason}</td>
                     <td className="py-3 px-6">{appointment.diagnosis?.name}</td>
@@ -90,11 +101,22 @@ const PatientDashboard = () => {
                       {appointment.appt_status === "Done" && (
                         <>
                           <button
-                            className="bg-blue-500 text-white px-3 py-1 rounded-md mx-1"
-                            onClick={() => openPdfPage(appointment._id)}
+                            className="bg-[#4867D6] text-white px-3 py-1 rounded-md mr-4"
+                            onClick={() => {
+                              setSelectedAppointment(appointment);
+                              setShowViewFiles(true);
+                            }}
                           >
                             View Files
                           </button>
+                          <ViewFilesModal
+                            appointment={selectedAppointment}
+                            visible={showViewFiles}
+                            onClose={() => {
+                              setSelectedAppointment(null);
+                              setShowViewFiles(false);
+                            }}
+                          />
                           
                         </>
                       )}

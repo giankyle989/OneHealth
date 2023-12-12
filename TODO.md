@@ -6,18 +6,18 @@ Project Description
 
 ### Todo
 
-- [ ] doctor piechart export  
 - [ ] Private Routes  
-- [ ] doctor's select time for availability  
-- [ ] fix doc history gettAllTime bug  
-- [ ] Login using mobile Number  
 - [ ] Change Password Modal  
-- [ ] View Files Modal  
 
 ### In Progress
 
+- [ ] doctor's select time for availability  
 
 ### Done ✓
 
+- [x] Login using mobile Number  
+- [x] View Files Modal  
+- [x] doctor piechart export  
+- [x] fix doc history gettAllTime bug  
 - [x] real time patient status using socket io  
 
