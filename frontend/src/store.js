@@ -112,7 +112,7 @@ export const useStore = create((set) => ({
 
 
 }));
-
+s
 export const useReceptionistStore = create((set) =>({
   appointments: [],
   availabilities: [],
