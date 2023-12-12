@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 const StaffNavigation = () => {
   const [showPatientMenu, setShowPatientMenu] = useState(false);
   const [showAppointmentsMenu, setShowAppointmentsMenu] = useState(false);
@@ -40,6 +40,9 @@ const StaffNavigation = () => {
     <>
       <li className="py-4">
         <a href="/hospital/receptionist/">Dashboard</a>
+      </li>
+      <li className="">
+        <Link to="/hospital/receptionist/scanner">Scanner</Link>
       </li>
       <li className="py-4">
         <a href="/hospital/receptionist/doctor">Doctor</a>

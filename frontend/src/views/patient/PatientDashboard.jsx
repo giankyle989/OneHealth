@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import io from "socket.io-client"; // Import Socket.IO client
 import { usePatientStore } from "../../store";
 import ViewFilesModal from "../../components/modals/ViewFilesModal";
+import QRCode from "qrcode.react"; // Import QRCode library
 
 const PatientDashboard = () => {
   const [userRole, setUserRole] = useState("patient");
   const [selectedAppointment, setSelectedAppointment] = useState(null);
-  const [showViewFiles, setShowViewFiles] = useState(false)
-  const handleClose = () => setShowViewFiles(false)
+  const [showViewFiles, setShowViewFiles] = useState(false);
+  const handleClose = () => setShowViewFiles(false);
   //Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   //Get token string only
@@ -25,21 +23,25 @@ const PatientDashboard = () => {
 
   const username = tokenObject ? tokenObject.name : null;
 
-
   const { getAppointments, appointments } = usePatientStore();
 
   useEffect(() => {
     getAppointments(token);
   }, []);
 
-  // Initialize react-router's navigate function
-  const navigate = useNavigate();
-
-  // Function to handle opening the PDF in a new page
-  const openPdfPage = (appointmentId) => {
-    // Navigate to the PDF view page and pass appointment data via state
-    navigate("/pdf", { state: { appointmentId: appointmentId } });
+  const downloadQR = (appointmentId) => {
+    const canvas = document.getElementById(appointmentId);
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = "Appointment-QR.png";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
   };
+
   return (
     <>
       <Navbar userRole={userRole} />
@@ -87,9 +89,21 @@ const PatientDashboard = () => {
                         appointment.appointmentDateTime
                       ).toLocaleTimeString()}
                     </td>
-                    <td className="py-3 px-6">APPT-{appointment._id}</td>
                     <td className="py-3 px-6">
-                    {appointment.doctorId && appointment.doctorId.dept_id && appointment.doctorId.dept_id.name}
+                      APPT-{appointment._id}
+                      <QRCode
+                        className="hidden"
+                        id={appointment._id}
+                        value={appointment._id}
+                        size={290}
+                        level={"H"}
+                        includeMargin={true}
+                      />
+                    </td>
+                    <td className="py-3 px-6">
+                      {appointment.doctorId &&
+                        appointment.doctorId.dept_id &&
+                        appointment.doctorId.dept_id.name}
                     </td>
                     <td className="py-3 px-6">
                       Dr. {appointment.doctorId?.firstName}{" "}
@@ -99,6 +113,12 @@ const PatientDashboard = () => {
                     <td className="py-3 px-6">{appointment.diagnosis?.name}</td>
                     <td className="py-3 px-6">{appointment.appt_status}</td>
                     <td className="py-3 px-6">
+                      <a
+                        className="bg-[#4867D6] text-white px-3 py-1 rounded-md ml-2 cursor-pointer"
+                        onClick={() => downloadQR(appointment._id)}
+                      >
+                        Download QR
+                      </a>
                       {appointment.appt_status === "Done" && (
                         <>
                           <button
@@ -118,7 +138,6 @@ const PatientDashboard = () => {
                               setShowViewFiles(false);
                             }}
                           />
-                          
                         </>
                       )}
                     </td>

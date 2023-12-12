@@ -30,6 +30,9 @@ const DoctorNavigation = () => {
       <li className="">
         <Link to="/hospital/doctor/appointments">Appointment History</Link>
       </li>
+      <li className="">
+        <Link to="/hospital/doctor/scanner">Scanner</Link>
+      </li>
       <li>
         <Link to="/hospital/doctor/availability">Availability</Link>
       </li>

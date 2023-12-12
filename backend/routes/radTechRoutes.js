@@ -1,11 +1,13 @@
 const router = require("express").Router();
 const { getAllTodaysAppointment } = require("../controllers/appointmentController");
-const {loginNurse, logoutNurse} = require('../controllers/nurseController')
+const { loginRadTech, logoutRadTech } = require("../controllers/radTechController");
+
+
 
 //Get patients for the day.
 
-router.post('/login', loginNurse)
-router.post('/logout', logoutNurse)
+router.post('/login', loginRadTech)
+router.post('/logout', logoutRadTech)
 
 
 router.get('/appointment/get', getAllTodaysAppointment)

@@ -9,6 +9,8 @@ const patientRoutes = require('./routes/patientRoutes')
 const departmentRoutes = require('./routes/departmentRoutes')
 const nurseRoutes = require('./routes/nurseRoutes')
 const receptionistRoutes = require('./routes/receptionistRoutes')
+const medTechRoutes = require('./routes/medTechRoutes')
+const radTechRoutes = require('./routes/radTechRoutes')
 
 
 const app = express();
@@ -34,6 +36,8 @@ app.use('/api/doctor', doctorRoutes)
 app.use('/api/patient', patientRoutes)
 app.use('/api/department', departmentRoutes)
 app.use('/api/nurse', nurseRoutes)
+app.use('/api/medTech', medTechRoutes)
+app.use('/api/radTech', radTechRoutes)
 app.use('/api/receptionist', receptionistRoutes)
 
 

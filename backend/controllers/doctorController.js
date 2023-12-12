@@ -176,7 +176,8 @@ const loginDoctor = asyncHandler(async (req, res) => {
   if (doctor && (await bcrypt.compare(password, doctor.password))) {
     res.json({
       _id: doctor.id,
-      name: doctor.name,
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
       email: doctor.email,
       token: generateToken(doctor._id),
       message: "doctor logged in",

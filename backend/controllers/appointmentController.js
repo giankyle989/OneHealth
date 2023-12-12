@@ -80,19 +80,50 @@ const getAppointmentById = asyncHandler(async (req, res) => {
       .populate("doctorId")
       .populate("prescription")
       .populate("patientId")
-      .populate("labResult");
+      .populate("labResult")
+      .populate("diagnosis"); // Populate the diagnosis field
 
     if (!appointment) {
       return res.status(404).json("Appointment not found");
     }
 
-    res.json(appointment);
+    
+    // Fetch past diagnoses for the patient
+    const pastAppointments = await Appointment.find({
+      patientId: appointment.patientId,
+      appointmentDateTime: { $lt: appointment.appointmentDateTime }, // Find appointments before the current one
+    })
+      .sort({ appointmentDateTime: -1 }) // Sort in descending order
+      .populate("diagnosis");
+
+      
+    // Use a Set to store unique past diagnosis names
+    const uniquePastDiagnoses = new Set();
+
+    // Extract unique past diagnoses
+    pastAppointments.forEach((pastAppointment) => {
+      const pastDiagnosis = pastAppointment.diagnosis;
+      if (pastDiagnosis) {
+        uniquePastDiagnoses.add(pastDiagnosis.name);
+      }
+    });
+
+    const lastAppointment = pastAppointments.length > 0 ? pastAppointments[0].appointmentDateTime : null;
+
+    const appointmentWithPastDiagnoses = {
+      ...appointment.toObject(),
+      lastAppointment,
+      pastDiagnoses: Array.from(uniquePastDiagnoses),
+    };
+    
+    res.json(appointmentWithPastDiagnoses);
   } catch (err) {
     res.status(400).json("Error: " + err);
   }
 });
 
-//Doctor get appointments
+
+//Doctor get all appointments
 const doctorGetAppointments = asyncHandler(async (req, res) => {
   try {
     const appointments = await Appointment.find({ doctorId: req.user.id })
@@ -144,8 +175,6 @@ const doctorGetAppointments = asyncHandler(async (req, res) => {
     res.status(400).json("Error: " + err);
   }
 });
-
-
 
 
 const doctorGetTodaysAppointments = asyncHandler(async (req, res) => {
@@ -305,17 +334,7 @@ const updateAppointment = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Appointment not found" });
     }
 
-    // Check if the requested status is in the allowed states
-    const allowedStatus = [
-      "Reception",
-      "Assessment",
-      "Testing",
-      "Consultation",
-      "Done",
-    ];
-    if (!allowedStatus.includes(status)) {
-      return res.status(400).json({ error: "Invalid status" });
-    }
+
 
     // Update the appointment status
     appointment.appt_status = status;
