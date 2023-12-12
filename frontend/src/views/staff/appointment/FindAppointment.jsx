@@ -29,7 +29,6 @@ const FindAppointment = () => {
       socket.off("appointmentUpdated");
     };
   }, [getAllTodaysAppointments]);
-  
 
   const handleUpdate = (id, currentStatus) => {
     let nextStatus;
@@ -58,17 +57,12 @@ const FindAppointment = () => {
   };
 
   const filteredAppointments = appointments.filter(
-    (appointment) => {
-      console.log(appointment.patientId.firstName.toLowerCase());
-      console.log(searchQuery.toLowerCase());
-      return (
-        appointment.patientId.firstName
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        appointment.appt_status === "Reception" ||
-        appointment.appt_status === "Upcoming"
-      );
-    }
+    (appointment) =>
+      appointment.patientId.firstName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      appointment.appt_status === "Reception" ||
+      appointment.appt_status === "Upcoming"
   );
 
   const formatTime = (date) => {
@@ -78,21 +72,18 @@ const FindAppointment = () => {
 
   const sortedStatusOrder = ["Upcoming", "Reception", "Assessment", "Testing", "Consultation"];
 
-const compareStatus = (a, b) => {
-  const indexA = sortedStatusOrder.indexOf(a);
-  const indexB = sortedStatusOrder.indexOf(b);
-
-  return indexA - indexB;
-};
-
-const sortedAppointments = filteredAppointments.sort((a, b) => {
-  const statusA = a.appt_status;
-  const statusB = b.appt_status;
-
-  return compareStatus(statusA, statusB);
-});
-
-
+  const compareStatus = (a, b) => {
+    const indexA = sortedStatusOrder.indexOf(a);
+    const indexB = sortedStatusOrder.indexOf(b);
+  
+    return indexA - indexB;
+  };
+  const sortedAppointments = filteredAppointments.sort((a, b) => {
+    const statusA = a.appt_status;
+    const statusB = b.appt_status;
+  
+    return compareStatus(statusA, statusB);
+  });
   return (
     <>
       <div className="flex h-screen">

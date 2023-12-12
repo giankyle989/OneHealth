@@ -25,20 +25,20 @@ const ReceptionistDashboard = () => {
   const today = new Date();
   today.setHours(today.getHours()); // Adjust for Singapore time zone offset
   const todayString =
-  today.getFullYear() +
-  "-" +
-  String(today.getMonth() + 1).padStart(2, "0") +
-  "-" +
-  String(today.getDate()).padStart(2, "0");
+    today.getFullYear() +
+    "-" +
+    String(today.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(today.getDate()).padStart(2, "0");
 
   const yesterday = new Date(today);
-yesterday.setDate(yesterday.getDate() - 1);
-const yesterdayString =
-  yesterday.getFullYear() +
-  "-" +
-  String(yesterday.getMonth() + 1).padStart(2, "0") +
-  "-" +
-  String(yesterday.getDate()).padStart(2, "0");
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayString =
+    yesterday.getFullYear() +
+    "-" +
+    String(yesterday.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(yesterday.getDate()).padStart(2, "0");
 
   // Filter availabilities for today
   const todayAvailabilities = availabilities.filter(
@@ -68,8 +68,6 @@ const yesterdayString =
       appointment.appt_status !== "Upcoming" &&
       appointment.appt_status !== "Done"
   ).length;
-
-
 
   // Array of month names
   const monthNames = [

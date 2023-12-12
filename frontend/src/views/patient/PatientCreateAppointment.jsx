@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./datepicker.css";
 import { setMinutes, setHours } from "date-fns";
-import { toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 const PatientCreateAppointment = () => {
@@ -25,10 +25,12 @@ const PatientCreateAppointment = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const notify = () => {
+
     toast.success("Booked Successfully !", {
       position: toast.POSITION.TOP_CENTER,
       autoClose: 4500,
     });
+
   };
 
   const tokenObject = JSON.parse(localStorage.getItem("token"));
@@ -76,60 +78,35 @@ const PatientCreateAppointment = () => {
         .then((res) => {
           console.log(selectedDoctor);
           setAvailabilities(res.data);
-          console.log("Initial dates:", res.data);
+          console.log(res.data);
         });
     }
   }, [selectedDoctor]);
 
   useEffect(() => {
     if (availabilities.length > 0) {
-      const validDateRange = availabilities.map((availability, index) => {
-        const startDate = new Date(availability.start);
-        const endDate = new Date(availability.end);
-        startDate.setHours(startDate.getHours() - 8);
-        endDate.setHours(endDate.getHours() - 8);
-  
-        const dates = [];
-  
-        // For the first index, add dates from start to end of the day
-        if (index === 0) {
-          for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+      const validDateRange = availabilities
+        .map((availability) => {
+          const startDate = new Date(availability.start);
+          const endDate = new Date(availability.end);
+          const dates = [];
+          for (
+            let date = startDate;
+            date <= endDate;
+            date.setDate(date.getDate() + 1)
+          ) {
             dates.push(new Date(date));
           }
-        } else {
-          // For indices other than the first one, set the time to the end time of the availability
-          const previousEndDate = new Date(availabilities[index - 1].end);
-          previousEndDate.setHours(previousEndDate.getHours() - 8);
+          return dates;
+        })
+        .flat()
+        .filter((date) => date >= new Date());
   
-          // Check if the last index matches the last endDate
-          if (index === availabilities.length - 1) {
-            if (endDate.getTime() !== previousEndDate.getTime()) {
-              // Add the adjusted endDate if not matching
-              endDate.setHours(endDate.getHours() - 8);
-              dates.push(endDate);
-            }
-          }
-  
-          const clonedEndDate = new Date(endDate);
-          clonedEndDate.setHours(clonedEndDate.getHours()); // Adjusting for the 8-hour subtraction
-          clonedEndDate.setMinutes(1); // Set minutes to 1 for a different time
-  
-          dates.push(clonedEndDate);
-        }
-  
-        return dates;
-      })
-      .flat()
-      .filter((date) => date >= new Date());
-  
-      console.log("Available Dates:", validDateRange);
+      console.log("Available Dates:", validDateRange); // Add this line
   
       setAvailableDates(validDateRange);
     }
   }, [availabilities]);
-  
-
-  const includeTimes = availableDates.map((date) => date.getTime());
 
   const handleDateChange = (date) => {
     const selectedDate = new Date(date);
@@ -170,20 +147,23 @@ const PatientCreateAppointment = () => {
       .then((res) => {
         setSelectedDoctor("");
         setAppointmentDateTime("");
-        notify();
+        notify()
 
         setTimeout(() => {
           window.location = "/";
         }, 5000);
+        
       })
       .catch((err) => console.log("Error: " + err));
   };
 
+
+
   return (
     <>
-      <Navbar userRole={userRole} />
+      <Navbar userRole={userRole}/>
       <div className="flex justify-center items-center ">
-        <ToastContainer />
+        <ToastContainer/>
         <div className=" p-6 md:w-4/5">
           <h1 className="text-3xl font-semibold mb-4 text-center text-[#4867D6]">
             Book an Appointment
@@ -246,14 +226,26 @@ const PatientCreateAppointment = () => {
                   </span>
                 </label>
                 <DatePicker
-                  includeTimes={includeTimes}
+                  includeTimes={[
+                    new Date().setHours(8, 0, 0, 0),
+                    new Date().setHours(9, 0, 0, 0),
+                    new Date().setHours(10, 0),
+                    new Date().setHours(11, 0),
+                    new Date().setHours(13, 0),
+                    new Date().setHours(14, 0),
+                    new Date().setHours(15, 0),
+                    new Date().setHours(16, 0),
+                    new Date().setHours(17, 0),
+                  ]}
                   filterTime={filterPassedTime}
                   selected={startDate}
                   onChange={handleDateChange}
                   dateFormat="yyyy/MM/d h:mm aa"
                   includeDates={availableDates}
                   showTimeSelect
-                  timeIntervals={60}
+                  timeIntervals={60} // Set the time intervals as needed
+                  minTime={new Date().setHours(8, 0, 0)} // 8:00 AM
+                  maxTime={new Date().setHours(17, 0, 0)} // 2:00 PM
                   disabled={!selectedDoctor}
                   placeholderText="Select Date and Time "
                 />
