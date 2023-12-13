@@ -14,7 +14,7 @@ Project Description
 
 ### In Progress
 
-- [ ] Complete the frontend of medtech and radtech  
+- [ ] Day Availabilities.  
 
 ### Done ✓
 
@@ -26,4 +26,5 @@ Project Description
 - [x] fix doc history gettAllTime bug  
 - [x] real time patient status using socket io  
 - [x] Generate QR Code for each appointments.  
+- [x] Complete the frontend of medtech and radtech  
 

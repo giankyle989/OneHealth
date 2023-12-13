@@ -6,8 +6,8 @@ import io from "socket.io-client";
 const socket = io("http://localhost:5000"); 
 import { GrLinkNext } from "react-icons/gr";
 
-const NurseSchedule = () => {
-  const [userRole, setUserRole] = useState("nurse");
+const RadTechTracker = () => {
+  const [userRole, setUserRole] = useState("radTech");
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
   const handleClose = () => setShowUpload(false);
@@ -88,7 +88,7 @@ const filteredAppointments = appointments.filter(appointment =>
 
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold text-[#4867D6] text-center mb-4">
-          Patient Status (Nurse)
+          Patient Status (Rad Tech)
         </h1>
 
         <div className="flex justify-center mb-4">
@@ -246,4 +246,4 @@ const filteredAppointments = appointments.filter(appointment =>
   );
 };
 
-export default NurseSchedule;
+export default RadTechTracker;

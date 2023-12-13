@@ -31,9 +31,16 @@ const Scanner = ({ role, doctorFirstName, doctorLastName }) => {
         case "receptionist":
           appointmentStatus = "In Reception Area";
           break;
+        case "medTech":
+          appointmentStatus = "Medical Technologist's Evaluation";
+          break;
+        case "radTech":
+          appointmentStatus = "Radiologic Technologist's Imaging";
+          break;
         default:
           appointmentStatus = "Unknown";
       }
+      
 
       // Use the updateAppointmentStatus function to update status with the determined appointment status
       updateAppointmentStatus(data.text, appointmentStatus, token);

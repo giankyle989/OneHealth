@@ -1,12 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-const NurseNavigation = () => {
+const MedTechNavigation = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     axios
-      .post("http://localhost:5000/api/nurse/logout", null)
+      .post("http://localhost:5000/api/medTech/logout", null)
       .then((res) => {
         localStorage.removeItem("token");
         navigate("/hospital/auth/login");
@@ -21,10 +21,10 @@ const NurseNavigation = () => {
   return (
     <>
       <li className="">
-        <Link to="/hospital/nurse">Tracker</Link>
+        <Link to="/hospital/medtech">Tracker</Link>
       </li>
       <li className="">
-        <Link to="/hospital/nurse/scanner">Scanner</Link>
+        <Link to="/hospital/medtech/scanner">Scanner</Link>
       </li>
       <li className="">
         {isLoggedIn ? (
@@ -37,4 +37,4 @@ const NurseNavigation = () => {
   );
 };
 
-export default NurseNavigation;
+export default MedTechNavigation;

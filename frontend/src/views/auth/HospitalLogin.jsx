@@ -38,6 +38,30 @@ const HospitalLogin = () => {
           navigate("/hospital/nurse");
         })
         .catch((err) => console.log("Error: " + err));
+    } else if (role === "Med Tech") {
+      axios
+        .post("http://localhost:5000/api/medTech/login", {
+          email,
+          password,
+        })
+        .then((res) => {
+          localStorage.setItem("token", JSON.stringify(res.data));
+          console.log("Login Successfully as Staff");
+          navigate("/hospital/medtech/");
+        })
+        .catch((err) => console.log("Error: " + err));
+    } else if (role === "Rad Tech") {
+      axios
+        .post("http://localhost:5000/api/radTech/login", {
+          email,
+          password,
+        })
+        .then((res) => {
+          localStorage.setItem("token", JSON.stringify(res.data));
+          console.log("Login Successfully as Staff");
+          navigate("/hospital/radtech/");
+        })
+        .catch((err) => console.log("Error: " + err));
     } else if (role === "Staff") {
       axios
         .post("http://localhost:5000/api/receptionist/login", {
@@ -89,6 +113,8 @@ const HospitalLogin = () => {
               <option value="Admin">Admin</option>
               <option value="Doctor">Doctor</option>
               <option value="Nurse">Nurse</option>
+              <option value="Med Tech">Med Tech</option>
+              <option value="Rad Tech">Rad Tech</option>
               <option value="Staff">Staff</option>
             </select>
           </div>
