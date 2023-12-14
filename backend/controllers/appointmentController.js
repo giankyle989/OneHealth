@@ -334,14 +334,18 @@ const updateAppointment = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Appointment not found" });
     }
 
-
-
-    // Update the appointment status
-    appointment.appt_status = status;
+    // Check if the new status is the same as the old status
+    if (appointment.appt_status === status) {
+      // If yes, alternate between the current status and "Done"
+      appointment.appt_status = appointment.appt_status === "Done" ? status : "Done";
+    } else {
+      // If not, update the appointment status with the provided status
+      appointment.appt_status = status;
+    }
 
     // Save the updated appointment
     await appointment.save();
-    
+
     // Emit the event to update the client side
     io.emit("appointmentUpdated", appointment);
     return res.json(appointment);
@@ -349,6 +353,7 @@ const updateAppointment = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 const addDiagnosis = asyncHandler(async (req, res) => {
   const appointmentId = req.params.id;

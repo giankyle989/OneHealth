@@ -6,16 +6,16 @@ Project Description
 
 ### Todo
 
-- [ ] Edit Patient Tracker Designs  
-- [ ] Add Diagnosis Notes  
 - [ ] Private Routes  
 - [ ] Change Password Modal  
 
 ### In Progress
 
+- [ ] Edit Patient Tracker Designs  
 
 ### Done ✓
 
+- [x] Add Diagnosis Notes  
 - [x] doctor's select time for availability  
 - [x] Day Availabilities.  
 - [x] Manage Availability onsubmit reload  

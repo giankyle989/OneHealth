@@ -3,7 +3,7 @@ import Navbar from "../../components/Navbar";
 import { useStore } from "../../store";
 import UploadFile from "../../components/modals/UploadFile";
 import io from "socket.io-client";
-const socket = io("http://localhost:5000"); 
+const socket = io("http://localhost:5000");
 import { GrLinkNext } from "react-icons/gr";
 
 const MedTechTracker = () => {
@@ -13,74 +13,40 @@ const MedTechTracker = () => {
   const handleClose = () => setShowUpload(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { appointments, getAllTodaysAppointments, updateAppointmentStatus } =
+  const { appointments, getAllTodaysAppointments } =
     useStore();
 
-    useEffect(() => {
-      const tokenObject = JSON.parse(localStorage.getItem("token"));
-      const token = tokenObject.token;
-      getAllTodaysAppointments(token);
-  
-      // Set up Socket.IO event listeners
-      socket.on("appointmentUpdated", (updatedAppointment) => {
-        // Handle the updated appointment, you might want to update the state or perform other actions
-        console.log("Appointment Updated:", updatedAppointment);
-        getAllTodaysAppointments(token); // Refresh appointments after an update
-      });
-  
-      // Clean up the Socket.IO event listener on component unmount
-      return () => {
-        socket.off("appointmentUpdated");
-      };
-    }, [getAllTodaysAppointments]);
+  useEffect(() => {
+    const tokenObject = JSON.parse(localStorage.getItem("token"));
+    const token = tokenObject.token;
+    getAllTodaysAppointments(token);
 
-  const handleUpdate = (id, currentStatus) => {
-    let nextStatus;
+    // Set up Socket.IO event listeners
+    socket.on("appointmentUpdated", (updatedAppointment) => {
+      // Handle the updated appointment, you might want to update the state or perform other actions
+      console.log("Appointment Updated:", updatedAppointment);
+      getAllTodaysAppointments(token); // Refresh appointments after an update
+    });
 
-    switch (currentStatus) {
-      case "Upcoming":
-        nextStatus = "Reception";
-        break;
-      case "Reception":
-        nextStatus = "Assessment";
-        break;
-      case "Assessment":
-        nextStatus = "Testing";
-        break;
-      case "Testing":
-        nextStatus = "Consultation";
-        break;
-      case "Consultation":
-        nextStatus = "Done";
-        break;
-      default:
-        return;
-    }
-
-    updateAppointmentStatus(id, nextStatus);
-  };
+    // Clean up the Socket.IO event listener on component unmount
+    return () => {
+      socket.off("appointmentUpdated");
+    };
+  }, [getAllTodaysAppointments]);
 
 
 
-  const receptionAppointments = appointments.filter(
-    (appointment) => appointment.appt_status === "Reception"
-  );
-  const assessmentAppointments = appointments.filter(
-    (appointment) => appointment.appt_status === "Assessment"
-  );
-  const testingAppointments = appointments.filter(
-    (appointment) => appointment.appt_status === "Testing"
-  );
 
-  const consultationAppointments = appointments.filter(
-    (appointment) => appointment.appt_status === "Consultation"
-  );
 
   // Filter appointments based on search query and exclude appointments with status 'Done'
-const filteredAppointments = appointments.filter(appointment =>
-  appointment.patientId.firstName.toLowerCase().includes(searchQuery.toLowerCase()) &&
-  appointment.appt_status !== "Done" && appointment.appt_status !== "Upcoming"
-);
+  const filteredAppointments = appointments.filter(
+    (appointment) =>
+      appointment.patientId.firstName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) &&
+      appointment.appt_status !== "Done" &&
+      appointment.appt_status !== "Upcoming"
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -106,10 +72,8 @@ const filteredAppointments = appointments.filter(appointment =>
             <tr>
               <th className="py-4">Patient Name</th>
               <th className="py-4">Doctor Name</th>
-              <th className="py-4">Reception</th>
-              <th className="py-4">Assessment</th>
-              <th className="py-4">Testing</th>
-              <th className="py-4">Consultation</th>
+              <th className="py-4">Status</th>
+              <th className="py-4">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -121,90 +85,28 @@ const filteredAppointments = appointments.filter(appointment =>
               filteredAppointments.map((appointment) => (
                 <tr key={appointment._id} className="text-center">
                   <td className="p-2">
-                    {appointment.patientId.firstName} {appointment.patientId.lastName}
+                    {appointment.patientId.firstName}{" "}
+                    {appointment.patientId.lastName}
                   </td>
                   <td className="p-2">
                     {appointment.doctorId.firstName}{" "}
                     {appointment.doctorId.lastName}
                   </td>
-
-
-                  <td className="p-2" key={`reception-${appointment._id}`}>
-                    {receptionAppointments.map((receptionAppt) => {
-                      if (receptionAppt._id === appointment._id) {
-                        return (
-                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
-                            <span className="text-blue-700 font-semibold">
-                              In Progress
-                            </span>
-                            <button
-                              className="px-3 py-1 rounded-md"
-                              onClick={() =>
-                                handleUpdate(appointment._id, "Reception")
-                              }
-                            >
-                              <GrLinkNext />
-                            </button>
-                          </div>
-                        );
-                      } else {
-                        return null;
-                      }
-                    })}
-                  </td>
-
-                  <td className="p-2" key={`assessment-${appointment._id}`}>
-                    {assessmentAppointments.map((assessmentAppt) => {
-                      if (assessmentAppt._id === appointment._id) {
-                        return (
-                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
-                            <span className="text-blue-700 font-semibold">
-                              In Progress
-                            </span>
-                            <button
-                              className="px-3 py-1 rounded-md"
-                              onClick={() =>
-                                handleUpdate(appointment._id, "Assessment")
-                              }
-                            >
-                              <GrLinkNext />
-                            </button>
-                          </div>
-                        );
-                      } else {
-                        return null;
-                      }
-                    })}
-                  </td>
-
-                  <td className="p-2" key={`testing-${appointment._id}`}>
-                    {testingAppointments.map((testingAppt) => {
-                      if (testingAppt._id === appointment._id) {
-                        return (
-                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
-                            <span className="text-blue-700 font-semibold">
-                              In Progress
-                            </span>
-                            <div>
-                              <button
-                                className="bg-[#4867D6] px-3 py-1 rounded-md mr-4"
-                                onClick={() => {
-                                  setSelectedAppointmentId(appointment._id);
-                                  setShowUpload(true);
-                                }}
-                              >
-                                Lab Result
-                              </button>
-                              <button
-                                className="px-3 py-1 rounded-md"
-                                onClick={() =>
-                                  handleUpdate(appointment._id, "Testing")
-                                }
-                              >
-                                <GrLinkNext />
-                              </button>
-                            </div>
-                            <UploadFile
+                  <td className="p-2">{appointment.appt_status}</td>
+                  <td>
+                    {appointment.appt_status ===
+                      `Medical Technologist's Evaluation` && (
+                      <div>
+                        <button
+                          className="bg-[#4867D6] px-3 py-1 text-white rounded-md mr-4"
+                          onClick={() => {
+                            setSelectedAppointmentId(appointment._id);
+                            setShowUpload(true);
+                          }}
+                        >
+                          Lab Result
+                        </button>
+                        <UploadFile
                               id={selectedAppointmentId}
                               visible={showUpload}
                               onClose={() => {
@@ -212,29 +114,8 @@ const filteredAppointments = appointments.filter(appointment =>
                                 setShowUpload(false);
                               }}
                             />
-                          </div>
-                        );
-                      } else {
-                        return null;
-                      }
-                    })}
-                  </td>
-
-                  <td className="p-2" key={`consultation-${appointment._id}`}>
-                    {consultationAppointments.map((consultationAppt) => {
-                      if (consultationAppt._id === appointment._id) {
-                        return (
-                          <div className="bg-blue-100 p-3 border border-blue-300 rounded-md flex items-center justify-between">
-                            <span className="text-blue-700 font-semibold">
-                              In Progress
-                            </span>
-                            <div></div>
-                          </div>
-                        );
-                      } else {
-                        return null;
-                      }
-                    })}
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const AppointmentPopup = ({ appointmentId, onClose }) => {
+const AppointmentPopup = ({ appointmentId, onClose, role }) => {
   const [appointmentInfo, setAppointmentInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -144,20 +144,21 @@ const AppointmentPopup = ({ appointmentId, onClose }) => {
                 : "No Data"}
             </span>
           </p>
-          <p className="font-semibold">
-            Patient Past Diagnoses: 
-            {appointmentInfo.pastDiagnoses.length > 0
-              ? appointmentInfo.pastDiagnoses.map((diagnosis, index) => (
-                  <span
-                    key={index}
-                    className="bg-[#4867D6] ml-1 font-normal text-white px-2 py-1 rounded mr-2"
-                  >
-                    {diagnosis}
-                  </span>
-                ))
-              : "No Data"}
-
-          </p>
+          {role === "doctor" || role === "nurse" ? (
+            <p className="font-semibold">
+              Patient Past Diagnoses:{" "}
+              {appointmentInfo.pastDiagnoses.length > 0
+                ? appointmentInfo.pastDiagnoses.map((diagnosis, index) => (
+                    <span
+                      key={index}
+                      className="bg-[#4867D6] ml-1 font-normal text-white px-2 py-1 rounded mr-2"
+                    >
+                      {diagnosis}
+                    </span>
+                  ))
+                : "No Data"}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

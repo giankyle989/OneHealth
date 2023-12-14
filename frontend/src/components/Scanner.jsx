@@ -1,5 +1,5 @@
 // Scanner.jsx
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import QrReader from "react-qr-scanner";
 import { useStore } from "../store";
 import AppointmentPopup from "./modals/AppointmentPopup";
@@ -13,9 +13,10 @@ const Scanner = ({ role, doctorFirstName, doctorLastName }) => {
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   // Get token string only
   const token = tokenObject ? tokenObject.token : null;
+  const [shouldScan, setShouldScan] = useState(true);
 
   const handleScan = (data) => {
-    if (data) {
+    if (data && shouldScan) {
       // Log the scanned data to the console
       console.log("QR Code Scanned:", data);
 
@@ -40,13 +41,14 @@ const Scanner = ({ role, doctorFirstName, doctorLastName }) => {
         default:
           appointmentStatus = "Unknown";
       }
-      
 
       // Use the updateAppointmentStatus function to update status with the determined appointment status
       updateAppointmentStatus(data.text, appointmentStatus, token);
       setScanResult(data.text); // Only storing the 'text' property
 
       setShowPopup(true);
+
+      setShouldScan(false);
     }
   };
 
@@ -61,13 +63,21 @@ const Scanner = ({ role, doctorFirstName, doctorLastName }) => {
   }
 
   const handleClosePopup = () => {
-    // Close the popup when the user clicks the close button
     setShowPopup(false);
+
+    // Resume scanning when the popup is closed
+    setShouldScan(true);
   };
+  // Use useMemo to create a new key whenever shouldScan changes
+  const qrKey = useMemo(
+    () => Math.random().toString(36).substring(7),
+    [shouldScan]
+  );
 
   return (
     <div className="mt-4 flex flex-col items-center justify-center">
       <QrReader
+        key={qrKey}
         onScan={handleScan}
         onError={handleError}
         style={{ width: "30%" }} // Adjust the width as needed
@@ -76,6 +86,7 @@ const Scanner = ({ role, doctorFirstName, doctorLastName }) => {
       {scanResult && <p className="mt-4">Scanned result: {scanResult}</p>}
       {showPopup && (
         <AppointmentPopup
+          role={role}
           appointmentId={scanResult}
           onClose={handleClosePopup}
         />
