@@ -6,18 +6,19 @@ Project Description
 
 ### Todo
 
-- [ ] Manage Availability onsubmit reload  
-- [ ] Select Time Modal - remove delete button  
+- [ ] Edit Patient Tracker Designs  
+- [ ] Add Diagnosis Notes  
 - [ ] Private Routes  
 - [ ] Change Password Modal  
-- [ ] doctor's select time for availability  
 
 ### In Progress
 
-- [ ] Day Availabilities.  
 
 ### Done ✓
 
+- [x] doctor's select time for availability  
+- [x] Day Availabilities.  
+- [x] Manage Availability onsubmit reload  
 - [x] Create a pop up when QR has been scanned. It should contain patient informations.  
 - [x] Update the appointments using QR Code Scanner.  
 - [x] Login using mobile Number  
