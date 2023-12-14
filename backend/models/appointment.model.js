@@ -36,6 +36,10 @@ const appointmentSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'diagnosis'
     },
+    diagnosisNotes: { 
+      type: String,
+      trim:true
+    },
     appt_status: {
       type: String,
       default:"Upcoming",

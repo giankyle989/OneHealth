@@ -352,7 +352,8 @@ const updateAppointment = asyncHandler(async (req, res) => {
 
 const addDiagnosis = asyncHandler(async (req, res) => {
   const appointmentId = req.params.id;
-  const diagnosisId = req.params.diagnosisId;
+  const diagnosisNotes = req.body.diagnosisNotes
+  const diagnosisId = req.params.selectedDiagnosis;
 
   try {
     const appointment = await Appointment.findById(appointmentId);
@@ -361,8 +362,10 @@ const addDiagnosis = asyncHandler(async (req, res) => {
       return res.status(404).json({ error: "Appointment not found" });
     }
 
+
     // Update the appointment status
     appointment.diagnosis = diagnosisId;
+    appointment.diagnosisNotes = diagnosisNotes;
 
     // Save the updated appointment
     await appointment.save();

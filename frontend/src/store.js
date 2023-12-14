@@ -52,14 +52,16 @@ export const useStore = create((set) => ({
     })
     .catch((err) => console.log(`Error: ${err}`));
   },
-  addDiagnosis: (id, selectedDiagnosis) => {
-    axios.put(`http://localhost:5000/api/doctor/appointment/diagnosis/${id}/${selectedDiagnosis}`)
+  addDiagnosis: (id, selectedDiagnosis, diagnosisNotes) => {
+    console.log(diagnosisNotes, selectedDiagnosis)
+    axios.put(`http://localhost:5000/api/doctor/appointment/diagnosis/${id}/${selectedDiagnosis}`, {diagnosisNotes: diagnosisNotes})
       .then((res) => {
         set((state) => ({
           appointments: state.appointments.map((appointment) =>
             appointment.id === id ? { ...appointment, diagnosisId } : appointment
           ),
         }));
+        console.log("success")
       })
       .catch((err) => console.log(`Error: ${err}`));
   },

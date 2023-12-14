@@ -6,6 +6,12 @@ const Admin = require("../models/adminModel");
 const { generateToken } = require("../middlewares/generateToken");
 const cloudinary = require("../utils/cloudinary");
 
+const getDoctorInfo = asyncHandler(async (req, res) => {
+  Doctor.findById(req.user.id)
+    .then((doctor) => res.json(doctor))
+    .catch((err) => res.status(400).json("Error: " + err));
+});
+
 //Get Doctor by Admin User
 const getDoctor = asyncHandler(async (req, res) => {
   Doctor.find({}).populate('dept_id', 'name')
@@ -200,6 +206,7 @@ const logoutDoctor = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  getDoctorInfo,
   getDoctor,
   registerDoctor,
   deleteDoctor,

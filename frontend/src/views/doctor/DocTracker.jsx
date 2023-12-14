@@ -8,7 +8,7 @@ import io from "socket.io-client";
 
 const socket = io("http://localhost:5000"); 
 
-const DocSchedule = () => {
+const DocTracker = () => {
   const [userRole, setUserRole] = useState("doctor");
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [showDiagnose, setShowDiagnose] = useState(false);
@@ -19,10 +19,16 @@ const DocSchedule = () => {
   const { appointments, getTodaysAppointments, updateAppointmentStatus } =
     useStore();
   const [searchQuery, setSearchQuery] = useState("");
+  const tokenObject = JSON.parse(localStorage.getItem("token"));
+  const token = tokenObject.token;
 
+  const headerToken = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   useEffect(() => {
-    const tokenObject = JSON.parse(localStorage.getItem("token"));
-    const token = tokenObject.token;
+
     getTodaysAppointments(token);
 
     // Set up Socket.IO event listeners
@@ -210,7 +216,7 @@ const filteredAppointments = appointments.filter(appointment =>
                             </span>
                             <div>
                               <button
-                                className="bg-blue-500  px-3 py-1 rounded-md mx-1"
+                                className="bg-blue-500 text-white  px-3 py-1 rounded-md mx-1"
                                 onClick={() => {
                                   setSelectedAppointmentId(appointment._id);
                                   setShowDiagnose(true);
@@ -219,7 +225,7 @@ const filteredAppointments = appointments.filter(appointment =>
                                 D
                               </button>
                               <button
-                                className="bg-blue-500  px-3 py-1 rounded-md mr-4"
+                                className="bg-blue-500 text-white  px-3 py-1 rounded-md mr-4"
                                 onClick={() => {
                                   setSelectedAppointmentId(appointment._id);
                                   setShowAddPrescriptionModal(true);
@@ -235,6 +241,7 @@ const filteredAppointments = appointments.filter(appointment =>
                                 <GrLinkNext />
                               </button>
                               <Diagnose
+                              token={headerToken}
                                 id={selectedAppointmentId}
                                 visible={showDiagnose}
                                 onClose={() => {
@@ -268,4 +275,4 @@ const filteredAppointments = appointments.filter(appointment =>
   );
 };
 
-export default DocSchedule;
+export default DocTracker;

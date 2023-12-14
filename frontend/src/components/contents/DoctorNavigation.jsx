@@ -25,7 +25,7 @@ const DoctorNavigation = () => {
         <Link to="/hospital/doctor/">Dashboard</Link>
       </li>
       <li className="">
-        <Link to="/hospital/doctor/schedule">Visit Patient Status</Link>
+        <Link to="/hospital/doctor/tracker">Tracker</Link>
       </li>
       <li className="">
         <Link to="/hospital/doctor/appointments">Appointment History</Link>

@@ -3,10 +3,12 @@ const {  updateAppointment, doctorGetAppointments, addDiagnosis, getAppointmentB
 const { createAvailability, getAvailability, deleteAvailability, getAvailabilityByDoctorId, updateAvailability } = require("../controllers/availabilityController");
 const { getDepartment } = require("../controllers/departmentController");
 const { getDiagnosis, getDiagnosesByDepartment,  } = require("../controllers/diagnosisController");
-const { loginDoctor, logoutDoctor, getDoctorByDepartment, } = require("../controllers/doctorController");
+const { loginDoctor, logoutDoctor, getDoctorByDepartment, getDoctorInfo, } = require("../controllers/doctorController");
 const { createPrescription } = require("../controllers/prescriptionController");
 const {protect} = require('../middlewares/authMiddleware');
 const Doctor = require("../models/doctor.model");
+
+router.get('/get', protect(Doctor), getDoctorInfo)
 
 //Department Route
 router.get('/department', getDepartment)
@@ -25,7 +27,7 @@ router.get('/appointment/get', protect(Doctor), doctorGetAppointments )
 router.get('/appointment/today', protect(Doctor), doctorGetTodaysAppointments )
 router.get('/appointment/:id', protect(Doctor), doctorGetAppointmentsWithPatient)
 router.get('/appointment/spec/:appointmentId', getAppointmentById)
-router.put('/appointment/diagnosis/:id/:diagnosisId', addDiagnosis)
+router.put('/appointment/diagnosis/:id/:selectedDiagnosis', addDiagnosis)
 router.put('/appointment/:id', updateAppointment )
 router.post('/appointment/prescription/create', createPrescription)
 

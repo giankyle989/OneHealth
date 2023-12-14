@@ -15,7 +15,7 @@ import ManageNurse from "./views/admin/nurse/ManageNurse";
 import ManageStaff from "./views/admin/staff/Staff";
 import HospitalLogin from "./views/auth/HospitalLogin";
 import DocHistory from "./views/doctor/DocHistory";
-import DocSchedule from "./views/doctor/DocSchedule";
+import DocTracker from "./views/doctor/DocTracker";
 import ManageSchedule from "./views/doctor/ManageSchedule";
 import FindAppointment from "./views/staff/appointment/FindAppointment";
 import CreateAppointment from "./views/staff/appointment/CreateAppointment";
@@ -92,7 +92,7 @@ function App() {
         {/**Doctor Routes */}
         <Route path="hospital/doctor/scanner" element={<DocScanner />} />
         <Route path="/hospital/doctor" element={<DoctorDashboard />} />
-        <Route path="/hospital/doctor/schedule" element={<DocSchedule />} />
+        <Route path="/hospital/doctor/tracker" element={<DocTracker />} />
         <Route path="/hospital/doctor/appointments" element={<DocHistory />} />
         <Route
           path="/hospital/doctor/availability"
