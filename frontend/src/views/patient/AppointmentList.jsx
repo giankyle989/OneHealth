@@ -24,7 +24,7 @@ const AppointmentList = ({ appointments, onAppointmentClick }) => {
   };
 
   return (
-    <div className="container mx-auto my-8 p-8 bg-white rounded md:shadow-2xl">
+    <div className="container mx-auto my-8 p-8 bg-white rounded md:shadow-2xl border ">
       <h1 className="text-3xl font-semibold text-center mb-6">Appointment List</h1>
       <ul className="space-y-4">
         {currentAppointments.map((appointment) => (

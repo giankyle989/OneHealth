@@ -52,7 +52,7 @@ const PatientDashboard = () => {
           {username}'s Appointment
         </h1>
       </header>
-      <section className="pt-10 grid grid-cols-1 md:grid-cols-2 md:gap-x-2">
+      <section className="pt-10 px-4 grid grid-cols-1 md:grid-cols-2 md:gap-x-2">
         <AppointmentList appointments={appointments} onAppointmentClick={handleAppointmentClick}/>
         <AppointmentDetails  selectedAppointment={selectedAppointment}/>
       </section>

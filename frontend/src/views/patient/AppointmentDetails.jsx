@@ -30,7 +30,7 @@ const AppointmentDetails = ({ selectedAppointment }) => {
     navigate("/pdf", { state: { appointmentId: _id } });
   };
   return (
-    <div className="container mx-auto my-8 p-8 bg-white rounded md:shadow-2xl break-words">
+    <div className="container mx-auto my-8 p-8 bg-white rounded md:shadow-2xl break-words border">
       <h1 className="text-3xl text-center font-semibold mb-6">
         Appointment Details
       </h1>
