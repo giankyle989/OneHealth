@@ -11,10 +11,12 @@ Project Description
 
 ### In Progress
 
-- [ ] Edit Patient Tracker Designs  
 
 ### Done ✓
 
+- [x] Realtime Patient's Appointment History  
+- [x] Redesign Patient Dashboard.  
+- [x] Edit Patient Tracker Designs  
 - [x] Add Diagnosis Notes  
 - [x] doctor's select time for availability  
 - [x] Day Availabilities.  

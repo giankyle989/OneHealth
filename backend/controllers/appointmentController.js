@@ -67,6 +67,7 @@ const getAppointment = asyncHandler(async (req, res) => {
     if (appointments.length === 0) {
       return res.status(200).json("No Appointments");
     }
+    io.emit("patientRealTimeAppointments", appointments);
     res.json(appointments);
   } catch (err) {
     res.status(400).json("Error: " + err);
