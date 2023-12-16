@@ -152,12 +152,12 @@ const AppointmentDetails = ({ selectedAppointment }) => {
                 <QRCode
                   id={selectedAppointment._id}
                   value={selectedAppointment._id}
-                  size={80}
+                  size={300}
                   level={"H"}
                   includeMargin={true}
                 />
                 <a
-                  className="p-1 bg-[#4867D6] text-white"
+                  className="p-1 bg-[#4867D6] text-white cursor-pointer"
                   onClick={() => downloadQR(selectedAppointment._id)}
                 >
                   Download QR Code
