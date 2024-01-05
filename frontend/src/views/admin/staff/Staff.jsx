@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import Sidebar from "../../../components/Sidebar";
 import axios from 'axios';
+import EditReceptionistModal from '../../../components/modals/EditReceptionistModal';
 const Staff = () => {
   const [userRole, setUserRole] = useState('admin');
   const [receptionists, setReceptionists] = useState([])
@@ -8,7 +9,9 @@ const Staff = () => {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
+  const [selectedReceptionist, setSelectedReceptionist] = useState(null);
+  const [showEditReceptionist, setShowEditReceptionist] = useState(false);
+  const handleClose = () => setShowEditReceptionist(false);
   //Get token object
   const tokenObject = JSON.parse(localStorage.getItem("token"));
   //Get token string only
@@ -163,12 +166,25 @@ const Staff = () => {
                     <td className="border  text-center p-2">{receptionist.firstName} {receptionist.lastName}</td>
                     <td className="border  text-center p-2">{receptionist.email}</td>
                     <td className="border  text-center p-2">
-                      <button className="px-4 py-2 bg-blue-500 text-white rounded mr-2">
+                      <button className="px-4 py-2 bg-blue-500 text-white rounded mr-2"
+                      onClick={() => {
+                        setSelectedReceptionist(receptionist)
+                        setShowEditReceptionist(true)
+                      }}>
                         Edit
                       </button>
                       <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleDelete(receptionist._id)}>
                         Delete
                       </button>
+                      <EditReceptionistModal
+                      receptionist={selectedReceptionist}
+                      visible={showEditReceptionist}
+                      onClose={() => {
+                        setSelectedReceptionist(null)
+                        setShowEditReceptionist(false)
+                      }}
+                      headerToken={headerToken}
+                      />
                     </td>
                   </tr>
                   )))}
