@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const {registerAdmin, loginAdmin, logoutAdmin, getAdmin} = require('../controllers/adminController');
+const { getAnnouncement, createAnnouncement, updateAnnouncement, deleteAnnouncement } = require("../controllers/announcementController");
 const { getDepartment, createDepartment, deleteDepartment, updateDepartment } = require("../controllers/departmentController");
 const { createDiagnosis, getDiagnosisByCategory } = require("../controllers/diagnosisController");
 const { getDoctor, registerDoctor, updateDoctor, deleteDoctor } = require("../controllers/doctorController");
@@ -18,6 +19,12 @@ router.get('/', protect(AdminModel), getAdmin)
 router.post('/register', registerAdmin)
 router.post('/login', loginAdmin)
 router.post('/logout', logoutAdmin)
+
+//For Announcement
+router.get('/announcement/get', getAnnouncement)
+router.post('/announcement/create', createAnnouncement)
+router.post('/announcement/update', updateAnnouncement)
+router.delete('/announcement/delete/:id', protect(AdminModel), deleteAnnouncement)
 
 //For Diagnosis
 router.post('/diagnosis/create', createDiagnosis)
