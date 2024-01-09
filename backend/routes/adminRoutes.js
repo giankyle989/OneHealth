@@ -2,7 +2,7 @@ const router = require("express").Router();
 const {registerAdmin, loginAdmin, logoutAdmin, getAdmin} = require('../controllers/adminController');
 const { getAnnouncement, createAnnouncement, updateAnnouncement, deleteAnnouncement } = require("../controllers/announcementController");
 const { getDepartment, createDepartment, deleteDepartment, updateDepartment } = require("../controllers/departmentController");
-const { createDiagnosis, getDiagnosisByCategory } = require("../controllers/diagnosisController");
+const { createDiagnosis, getDiagnosis, deleteDiagnosis } = require("../controllers/diagnosisController");
 const { getDoctor, registerDoctor, updateDoctor, deleteDoctor } = require("../controllers/doctorController");
 const { getMedTech, registerMedTech, deleteMedTech, updateMedtech } = require("../controllers/medTechController");
 const { getNurse, registerNurse, deleteNurse, updateNurse } = require("../controllers/nurseController");
@@ -28,6 +28,8 @@ router.delete('/announcement/delete/:id', protect(AdminModel), deleteAnnouncemen
 
 //For Diagnosis
 router.post('/diagnosis/create', createDiagnosis)
+router.get('/diagnosis/get', getDiagnosis)
+router.delete('/diagnosis/:id', protect(AdminModel), deleteDiagnosis)
 
 
 //For department
