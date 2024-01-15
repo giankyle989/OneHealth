@@ -155,6 +155,27 @@ export const useReceptionistStore = create((set) =>({
   }
 }))
 
+export const useUnifiedPatientTrackerStore = create((set) => ({
+  appointments: [],
+  getAllTodaysAppointments: (token) => {
+    axios
+      .get("http://localhost:5000/api/receptionist/appointment/get", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        // Process your data as needed
+        const sortedAppointments = res.data.sort(
+          (a, b) => new Date(a.appointmentDateTime) - new Date(b.appointmentDateTime)
+        );
+  
+  
+        set({ appointments: sortedAppointments });
+      })
+      .catch((err) => console.log(err));
+  }
+}))
 
 export const usePatientStore = create((set) => ({
   appointments:[],

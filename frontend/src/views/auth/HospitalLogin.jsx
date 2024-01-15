@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HospitalLogin = () => {
   const [email, setEmail] = useState("");
@@ -17,9 +19,27 @@ const HospitalLogin = () => {
         .then((res) => {
           localStorage.setItem("token", JSON.stringify(res.data));
           console.log("Login Successfully as Admin");
-          navigate("/hospital/admin");
+          navigate("/hospital/admin/dashboard");
         })
-        .catch((err) => console.log("Error: " + err));
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.status === 401) {
+              // Unauthorized - Incorrect password
+              toast.error("Incorrect password. Please try again.");
+            } else if (err.response.status === 404) {
+              toast.error("Admin not found. Please check your login details.");
+            } else {
+              // Other status codes
+              toast.error("Invalid login data. Try again.");
+            }
+          } else if (err.request) {
+            // No response received
+            toast.error("No response received. Please try again later.");
+          } else {
+            // Something else went wrong
+            toast.error("An unexpected error occurred.");
+          }
+        });
     } else if (role === "Doctor") {
       axios
         .post("http://localhost:5000/api/doctor/login", { email, password })
@@ -28,7 +48,25 @@ const HospitalLogin = () => {
           console.log("Login Successfully as Doctor");
           navigate("/hospital/doctor/");
         })
-        .catch((err) => console.log("Error: " + err));
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.status === 401) {
+              // Unauthorized - Incorrect password
+              toast.error("Incorrect password. Please try again.");
+            } else if (err.response.status === 404) {
+              toast.error("Doctor not found. Please check your login details.");
+            } else {
+              // Other status codes
+              toast.error("Invalid login data. Try again.");
+            }
+          } else if (err.request) {
+            // No response received
+            toast.error("No response received. Please try again later.");
+          } else {
+            // Something else went wrong
+            toast.error("An unexpected error occurred.");
+          }
+        });
     } else if (role === "Nurse") {
       axios
         .post("http://localhost:5000/api/nurse/login", { email, password })
@@ -37,7 +75,25 @@ const HospitalLogin = () => {
           console.log("Login Successfully as Nurse");
           navigate("/hospital/nurse");
         })
-        .catch((err) => console.log("Error: " + err));
+        .catch((err) => {
+                    if (err.response) {
+            if (err.response.status === 401) {
+              // Unauthorized - Incorrect password
+              toast.error("Incorrect password. Please try again.");
+            } else if (err.response.status === 404) {
+              toast.error("Nurse not found. Please check your login details.");
+            } else {
+              // Other status codes
+              toast.error("Invalid login data. Try again.");
+            }
+          } else if (err.request) {
+            // No response received
+            toast.error("No response received. Please try again later.");
+          } else {
+            // Something else went wrong
+            toast.error("An unexpected error occurred.");
+          }
+        });
     } else if (role === "Med Tech") {
       axios
         .post("http://localhost:5000/api/medTech/login", {
@@ -49,7 +105,25 @@ const HospitalLogin = () => {
           console.log("Login Successfully as Staff");
           navigate("/hospital/medtech/");
         })
-        .catch((err) => console.log("Error: " + err));
+        .catch((err) => {
+                    if (err.response) {
+            if (err.response.status === 401) {
+              // Unauthorized - Incorrect password
+              toast.error("Incorrect password. Please try again.");
+            } else if (err.response.status === 404) {
+              toast.error("Med Tech not found. Please check your login details.");
+            } else {
+              // Other status codes
+              toast.error("Invalid login data. Try again.");
+            }
+          } else if (err.request) {
+            // No response received
+            toast.error("No response received. Please try again later.");
+          } else {
+            // Something else went wrong
+            toast.error("An unexpected error occurred.");
+          }
+        });
     } else if (role === "Rad Tech") {
       axios
         .post("http://localhost:5000/api/radTech/login", {
@@ -61,7 +135,25 @@ const HospitalLogin = () => {
           console.log("Login Successfully as Staff");
           navigate("/hospital/radtech/");
         })
-        .catch((err) => console.log("Error: " + err));
+        .catch((err) => {
+                    if (err.response) {
+            if (err.response.status === 401) {
+              // Unauthorized - Incorrect password
+              toast.error("Incorrect password. Please try again.");
+            } else if (err.response.status === 404) {
+              toast.error("Rad Tech not found. Please check your login details.");
+            } else {
+              // Other status codes
+              toast.error("Invalid login data. Try again.");
+            }
+          } else if (err.request) {
+            // No response received
+            toast.error("No response received. Please try again later.");
+          } else {
+            // Something else went wrong
+            toast.error("An unexpected error occurred.");
+          }
+        });
     } else if (role === "Staff") {
       axios
         .post("http://localhost:5000/api/receptionist/login", {
@@ -73,12 +165,31 @@ const HospitalLogin = () => {
           console.log("Login Successfully as Staff");
           navigate("/hospital/receptionist/");
         })
-        .catch((err) => console.log("Error: " + err));
+        .catch((err) => {
+                    if (err.response) {
+            if (err.response.status === 401) {
+              // Unauthorized - Incorrect password
+              toast.error("Incorrect password. Please try again.");
+            } else if (err.response.status === 404) {
+              toast.error("Information Desk Staff not found. Please check your login details.");
+            } else {
+              // Other status codes
+              toast.error("Invalid login data. Try again.");
+            }
+          } else if (err.request) {
+            // No response received
+            toast.error("No response received. Please try again later.");
+          } else {
+            // Something else went wrong
+            toast.error("An unexpected error occurred.");
+          }
+        });
     }
   };
   return (
     <>
       <div className="h-screen flex justify-center items-center">
+      <ToastContainer position="bottom-right"/>
         <form
           className="shadow-2xl p-8 space-y-4 rounded-lg bg-slate-200 w-[450px]"
           onSubmit={handleSubmit}
@@ -115,7 +226,7 @@ const HospitalLogin = () => {
               <option value="Nurse">Nurse</option>
               <option value="Med Tech">Med Tech</option>
               <option value="Rad Tech">Rad Tech</option>
-              <option value="Staff">Staff</option>
+              <option value="Staff">Information Desk</option>
             </select>
           </div>
           <button className="w-full border p-2 rounded-full text-white bg-[#4867D6]">

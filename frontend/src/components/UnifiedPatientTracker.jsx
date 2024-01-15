@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import io from "socket.io-client"; // Import the socket.io-client library
-import { useReceptionistStore } from "../store";
+import { useUnifiedPatientTrackerStore } from "../store";
+
 
 const socket = io("http://localhost:5000");
 
 const UnifiedPatientTracker = () => {
-  const { getAllTodaysAppointments, appointments } = useReceptionistStore();
+  const { getAllTodaysAppointments, appointments } = useUnifiedPatientTrackerStore()
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [doctors, setDoctors] = useState([]);
